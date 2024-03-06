@@ -12,10 +12,10 @@ spring:
         web-allow-others: true
       path: /h2-console
   datasource:
-    url: jdbc:h2:mem:companydb
-    username: sa
+    url: jdbc:mysql://localhost:3306/companydb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
     password:
-    driver-class-name: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
