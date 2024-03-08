@@ -1,5 +1,6 @@
 package com.example.companyservice.entity;
 
+import com.example.companyservice.dto.request.CompanyUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +20,7 @@ public class Company extends TimeStamped {
 
     private String email;
 
-    private boolean isDutyFree;
+    private Boolean isDutyFree;
 
     private String companyName;
 
@@ -37,15 +38,43 @@ public class Company extends TimeStamped {
 
     private String accountNumber;
 
-    private boolean isFreePass;
+    private Boolean isLooppass;
 
-    private String createStatus;
+    private Boolean isReservationService;
 
-    private boolean isOption1;
+    private int createStatus;
 
-    private boolean isOption2;
+    private Boolean isOption1;
+
+    private Boolean isOption2;
 
     private boolean isDelete;
 
     private Long companyLatePlanId;
+
+    public void updateCompany(CompanyUpdateRequestDto requestDto, Long companyLatePlanId) {
+        this.isOption1 = requestDto.isOption1();
+        this.isOption2 = requestDto.isOption2();
+        this.isDutyFree = requestDto.isDutyFree();
+        this.companyName = requestDto.getCompanyName();
+        this.representativeName = requestDto.getRepresentativeName();
+        this.phoneNumber = requestDto.getPhoneNumber();
+        this.businessNumber = requestDto.getBusinessNumber();
+        this.businessAddress = requestDto.getBusinessAddress();
+        this.openingDate = requestDto.getOpeningDate();
+        this.accountBank = requestDto.getAccountBank();
+        this.accountNumber = requestDto.getAccountNumber();
+        this.isLooppass = requestDto.isLooppass();
+        this.isReservationService = requestDto.isReservationService();
+        this.companyLatePlanId = companyLatePlanId;
+        this.createStatus = CreateStatusEnum.WAIT.getTypeValue();
+    }
+
+    public void updateCreateStatus(int status) {
+        this.createStatus = status;
+    }
+
+    public void deleteCompany() {
+        this.isDelete = true;
+    }
 }

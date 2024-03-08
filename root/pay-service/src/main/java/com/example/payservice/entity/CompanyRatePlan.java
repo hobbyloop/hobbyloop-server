@@ -1,5 +1,6 @@
 package com.example.payservice.entity;
 
+import com.example.payservice.dto.request.CompanyRatePlanRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,13 @@ public class CompanyRatePlan extends TimeStamped {
 
     private int totalPrice;
 
-    private boolean isDelete;
+    public static CompanyRatePlan from(CompanyRatePlanRequestDto requestDto) {
+        return CompanyRatePlan.builder()
+                .entryPermission(EntryAuthorityEnum.findByName(requestDto.getEntryPermission()).getEntryAuthorityType())
+                .paymentType(CompanyPaymentType.findByName(requestDto.getPaymentType()).getPaymentType())
+                .price(requestDto.getPrice())
+                .vat(requestDto.getVat())
+                .totalPrice(requestDto.getTotalPrice())
+                .build();
+    }
 }
