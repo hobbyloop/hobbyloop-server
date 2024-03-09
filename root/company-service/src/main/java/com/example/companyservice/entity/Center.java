@@ -1,5 +1,6 @@
 package com.example.companyservice.entity;
 
+import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -50,4 +51,21 @@ public class Center extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    public static Center of(CenterCreateRequestDto requestDto, Company company) {
+        return Center.builder()
+                .centerName(requestDto.getCenterName())
+                .address(requestDto.getAddress())
+                .announcement(requestDto.getAnnouncement())
+                .introduce(requestDto.getIntroduce())
+                .contact(requestDto.getContact())
+                .kakaoLink(requestDto.getKakaoLink())
+                .representativeName(requestDto.getRepresentativeName())
+                .openingDate(requestDto.getOpeningDate())
+                .businessNumber(requestDto.getBusinessNumber())
+                .onlineReportNumber(requestDto.getOnlineReportNumber())
+                .isDelete(false)
+                .company(company)
+                .build();
+    }
 }

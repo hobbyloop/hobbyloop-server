@@ -52,6 +52,13 @@ public class Company extends TimeStamped {
 
     private Long companyLatePlanId;
 
+    public static Company from(String email) {
+        return Company.builder()
+                .email(email)
+                .isDelete(false)
+                .build();
+    }
+
     public void updateCompany(CompanyUpdateRequestDto requestDto, Long companyLatePlanId) {
         this.isOption1 = requestDto.isOption1();
         this.isOption2 = requestDto.isOption2();

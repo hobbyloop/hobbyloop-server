@@ -21,11 +21,10 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PatchMapping("/companies")
-    public ResponseEntity<BaseResponseDto<Void>> updateCompanyInfo(HttpServletRequest request,
+    public ResponseEntity<BaseResponseDto<Long>> updateCompanyInfo(HttpServletRequest request,
                                                                    @RequestBody CompanyUpdateRequestDto requestDto) {
         long companyId = Utils.parseAuthorizedUserId(request);
-        companyService.updateCompanyInfo(companyId, requestDto);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>());
+                .body(new BaseResponseDto<>(companyService.updateCompanyInfo(companyId, requestDto)));
     }
 }

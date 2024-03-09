@@ -1,5 +1,6 @@
 package com.example.companyservice.entity;
 
+import com.example.companyservice.dto.request.OperatingHourListDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,5 +28,12 @@ public class CenterOpeningHour extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    private Long userTicketId;
+    public static CenterOpeningHour of(OperatingHourListDto dto, Center center) {
+        return CenterOpeningHour.builder()
+                .dayName(DayEnum.findByName(dto.getDay()).getTypeValue())
+                .openAt(dto.getOpenAt())
+                .closeAt(dto.getCloseAt())
+                .center(center)
+                .build();
+    }
 }

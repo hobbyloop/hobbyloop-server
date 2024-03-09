@@ -22,11 +22,12 @@ public class CompanyServiceImpl implements CompanyService{
 
     @Override
     @Transactional
-    public void updateCompanyInfo(long companyId, CompanyUpdateRequestDto requestDto) {
+    public Long updateCompanyInfo(long companyId, CompanyUpdateRequestDto requestDto) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
         CompanyRatePlanRequestDto companyRatePlanRequestDto = CompanyRatePlanRequestDto.from(requestDto);
         BaseResponseDto<Long> companyRatePlan = payServiceClient.createCompanyRatePlan(companyRatePlanRequestDto);
         company.updateCompany(requestDto, companyRatePlan.getData());
+        return company.getId();
     }
 }

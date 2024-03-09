@@ -4,5 +4,5 @@ import com.example.companyservice.dto.request.CompanyUpdateRequestDto;
 
 public interface CompanyService {
 
-    void updateCompanyInfo(long companyId, CompanyUpdateRequestDto requestDto);
+    Long updateCompanyInfo(long companyId, CompanyUpdateRequestDto requestDto);
 }

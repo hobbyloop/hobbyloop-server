@@ -1,5 +1,7 @@
 package com.example.companyservice.entity;
 
+import com.example.companyservice.dto.request.BreakHourListDto;
+import com.example.companyservice.dto.request.OperatingHourListDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,9 +25,16 @@ public class CenterBreakHour extends TimeStamped {
 
     private LocalTime closeAt;
 
-    private boolean isDelete;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
+
+    public static CenterBreakHour of(BreakHourListDto dto, Center center) {
+        return CenterBreakHour.builder()
+                .dayName(DayEnum.findByName(dto.getDay()).getTypeValue())
+                .openAt(dto.getOpenAt())
+                .closeAt(dto.getCloseAt())
+                .center(center)
+                .build();
+    }
 }
