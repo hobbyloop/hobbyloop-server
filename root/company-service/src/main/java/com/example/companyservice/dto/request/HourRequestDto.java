@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
-public class BreakHourListDto {
+public class HourRequestDto {
 
     private String day;
 

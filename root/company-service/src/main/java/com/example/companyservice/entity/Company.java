@@ -34,6 +34,10 @@ public class Company extends TimeStamped {
 
     private LocalDate openingDate;
 
+    private LocalDate startAt;
+
+    private LocalDate endAt;
+
     private String accountBank;
 
     private String accountNumber;

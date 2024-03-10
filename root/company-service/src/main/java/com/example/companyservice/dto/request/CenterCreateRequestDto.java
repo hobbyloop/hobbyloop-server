@@ -23,9 +23,9 @@ public class CenterCreateRequestDto {
 
     private String kakaoLink;
 
-    private List<OperatingHourListDto> operatingHourList;
+    private List<HourRequestDto> operatingHourList;
 
-    private List<BreakHourListDto> breakHourList;
+    private List<HourRequestDto> breakHourList;
 
     private String representativeName;
 

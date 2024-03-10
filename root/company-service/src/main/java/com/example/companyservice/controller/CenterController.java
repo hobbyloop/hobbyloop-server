@@ -3,6 +3,8 @@ package com.example.companyservice.controller;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.dto.response.CenterCreateResponseDto;
+import com.example.companyservice.dto.response.CenterResponseListDto;
 import com.example.companyservice.service.CenterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +23,19 @@ public class CenterController {
     private final CenterService centerService;
 
     @PostMapping("/centers")
-    public ResponseEntity<BaseResponseDto<Long>> createCenter(HttpServletRequest request,
-                                                              @RequestPart CenterCreateRequestDto requestDto,
-                                                              @RequestPart MultipartFile logo,
-                                                              @RequestPart List<MultipartFile> centerImageList) {
+    public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
+                                                                                 @RequestPart CenterCreateRequestDto requestDto,
+                                                                                 @RequestPart(required = false) MultipartFile logo,
+                                                                                 @RequestPart(required = false) List<MultipartFile> centerImageList) {
         long companyId = Utils.parseAuthorizedUserId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logo, centerImageList)));
+    }
+
+    @GetMapping("/centers")
+    public ResponseEntity<BaseResponseDto<CenterResponseListDto>> getCenterList(HttpServletRequest request) {
+        long companyId = Utils.parseAuthorizedUserId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getCenterList(companyId)));
     }
 }
