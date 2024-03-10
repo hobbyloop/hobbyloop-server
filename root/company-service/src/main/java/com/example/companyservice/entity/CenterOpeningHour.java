@@ -1,6 +1,6 @@
 package com.example.companyservice.entity;
 
-import com.example.companyservice.dto.request.OperatingHourListDto;
+import com.example.companyservice.dto.request.HourRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +18,7 @@ public class CenterOpeningHour extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int dayName;
+    private int day;
 
     private LocalTime openAt;
 
@@ -28,9 +28,9 @@ public class CenterOpeningHour extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    public static CenterOpeningHour of(OperatingHourListDto dto, Center center) {
+    public static CenterOpeningHour of(HourRequestDto dto, Center center) {
         return CenterOpeningHour.builder()
-                .dayName(DayEnum.findByName(dto.getDay()).getTypeValue())
+                .day(DayEnum.findByName(dto.getDay()).getTypeValue())
                 .openAt(dto.getOpenAt())
                 .closeAt(dto.getCloseAt())
                 .center(center)

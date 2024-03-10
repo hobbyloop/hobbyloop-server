@@ -1,7 +1,6 @@
 package com.example.companyservice.entity;
 
-import com.example.companyservice.dto.request.BreakHourListDto;
-import com.example.companyservice.dto.request.OperatingHourListDto;
+import com.example.companyservice.dto.request.HourRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,7 +18,7 @@ public class CenterBreakHour extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int dayName;
+    private int day;
 
     private LocalTime openAt;
 
@@ -29,9 +28,9 @@ public class CenterBreakHour extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    public static CenterBreakHour of(BreakHourListDto dto, Center center) {
+    public static CenterBreakHour of(HourRequestDto dto, Center center) {
         return CenterBreakHour.builder()
-                .dayName(DayEnum.findByName(dto.getDay()).getTypeValue())
+                .day(DayEnum.findByName(dto.getDay()).getTypeValue())
                 .openAt(dto.getOpenAt())
                 .closeAt(dto.getCloseAt())
                 .center(center)

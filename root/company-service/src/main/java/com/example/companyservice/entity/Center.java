@@ -46,6 +46,8 @@ public class Center extends TimeStamped {
 
     private int score;
 
+    private String logoImageUrl;
+
     private boolean isDelete;
 
     @ManyToOne(fetch = FetchType.LAZY)
