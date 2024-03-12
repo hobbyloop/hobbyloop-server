@@ -4,6 +4,7 @@ import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.client.dto.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.request.HourRequestDto;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,13 +71,13 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public CenterCompanyResponseDto getCenterCompany(long centerId) {
+    public CenterCompanyResponseDto getCenterBusiness(long centerId) {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
         List<String> centerImageUrlList = new ArrayList<>();
-        CompanyResponseDto companyResponseDto = CompanyResponseDto.from(center.getCompany());
-        return CenterCompanyResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, companyResponseDto);
+        CenterBusinessResponseDto centerBusinessResponseDto = CenterBusinessResponseDto.from(center);
+        return CenterCompanyResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, centerBusinessResponseDto);
     }
 
     @Override
@@ -103,6 +103,15 @@ public class CenterServiceImpl implements CenterService {
         quickButtonRepository.deleteAllByCenterId(centerId);
         List<QuickButton> quickButtonList = requestDto.stream().map(b -> QuickButton.of(b, center)).toList();
         quickButtonRepository.saveAll(quickButtonList);
+    }
+
+    @Override
+    @Transactional
+    public Long updateBusinessInfo(long centerId, BusinessRequestDto requestDto) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        center.businessInfoUpdate(requestDto);
+        return center.getId();
     }
 
     private List<Integer> getQuickButtonList(long centerId) {

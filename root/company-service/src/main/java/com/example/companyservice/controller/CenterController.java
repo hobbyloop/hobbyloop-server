@@ -2,6 +2,7 @@ package com.example.companyservice.controller;
 
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
+import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.response.CenterCompanyResponseDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
@@ -48,7 +49,7 @@ public class CenterController {
     @GetMapping("/centers/admin-ticket/{centerId}")
     public ResponseEntity<BaseResponseDto<CenterCompanyResponseDto>> getCenterCompany(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getCenterCompany(centerId)));
+                .body(new BaseResponseDto<>(centerService.getCenterBusiness(centerId)));
     }
 
     @PatchMapping("/centers/{centerId}")
@@ -64,5 +65,12 @@ public class CenterController {
         centerService.updateQuickButton(centerId, requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
+    }
+
+    @PatchMapping("/centers/business-info/{centerId}")
+    public ResponseEntity<BaseResponseDto<Long>> updateBusinessInfo(@PathVariable long centerId,
+                                                                    @RequestBody BusinessRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
     }
 }
