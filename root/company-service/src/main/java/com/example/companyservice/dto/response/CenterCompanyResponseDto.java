@@ -1,7 +1,5 @@
 package com.example.companyservice.dto.response;
 
-import com.example.companyservice.dto.response.CenterCreateResponseDto;
-import com.example.companyservice.dto.response.CompanyResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,17 +19,17 @@ public class CenterCompanyResponseDto {
 
     private List<String> centerImageUrlList;
 
-    private CompanyResponseDto companyInfo;
+    private CenterBusinessResponseDto businessmanInfo;
 
     public static CenterCompanyResponseDto of(CenterCreateResponseDto centerInfo,
                                               String logoImageUrl,
                                               List<String> centerImageUrlList,
-                                              CompanyResponseDto companyInfo) {
+                                              CenterBusinessResponseDto businessmanInfo) {
         return CenterCompanyResponseDto.builder()
                 .centerInfo(centerInfo)
                 .logoImageUrl(logoImageUrl)
                 .centerImageUrlList(centerImageUrlList)
-                .companyInfo(companyInfo)
+                .businessmanInfo(businessmanInfo)
                 .build();
     }
 }

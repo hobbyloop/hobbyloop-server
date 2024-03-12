@@ -1,5 +1,6 @@
 package com.example.companyservice.service;
 
+import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.response.CenterCompanyResponseDto;
@@ -18,9 +19,11 @@ public interface CenterService {
 
     CenterHomeResponseDto getCenterHome(long centerId);
 
-    CenterCompanyResponseDto getCenterCompany(long centerId);
+    CenterCompanyResponseDto getCenterBusiness(long centerId);
 
     Long updateCenter(long centerId, CenterUpdateRequestDto requestDto);
 
     void updateQuickButton(long centerId, List<Integer> requestDto);
+
+    Long updateBusinessInfo(long centerId, BusinessRequestDto requestDto);
 }
