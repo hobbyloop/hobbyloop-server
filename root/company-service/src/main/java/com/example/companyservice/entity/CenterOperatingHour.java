@@ -11,10 +11,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class CenterOpeningHour extends TimeStamped {
+public class CenterOperatingHour extends TimeStamped {
 
     @Id
-    @Column(name = "center_opening_hour_id")
+    @Column(name = "center_operating_hour_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -28,8 +28,8 @@ public class CenterOpeningHour extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    public static CenterOpeningHour of(HourRequestDto dto, Center center) {
-        return CenterOpeningHour.builder()
+    public static CenterOperatingHour of(HourRequestDto dto, Center center) {
+        return CenterOperatingHour.builder()
                 .day(DayEnum.findByName(dto.getDay()).getTypeValue())
                 .openAt(dto.getOpenAt())
                 .closeAt(dto.getCloseAt())

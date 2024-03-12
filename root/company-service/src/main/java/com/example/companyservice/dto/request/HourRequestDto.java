@@ -12,9 +12,9 @@ public class HourRequestDto {
 
     private String day;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH-mm", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalTime openAt;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH-mm", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
     private LocalTime closeAt;
 }

@@ -5,16 +5,10 @@ server:
 spring:
   application:
     name: ticket-service
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
-      path: /h2-console
   datasource:
-    url: jdbc:h2:mem:ticketdb
-    username: sa
-    password:
+    url: jdbc:mysql://localhost:3306/ticketdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: kp23156385@
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
