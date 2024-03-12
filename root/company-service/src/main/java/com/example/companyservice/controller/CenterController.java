@@ -4,6 +4,7 @@ import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.response.CenterCreateResponseDto;
+import com.example.companyservice.dto.response.CenterHomeResponseDto;
 import com.example.companyservice.dto.response.CenterResponseListDto;
 import com.example.companyservice.service.CenterService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,12 +25,10 @@ public class CenterController {
 
     @PostMapping("/centers")
     public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
-                                                                                 @RequestPart CenterCreateRequestDto requestDto,
-                                                                                 @RequestPart(required = false) MultipartFile logo,
-                                                                                 @RequestPart(required = false) List<MultipartFile> centerImageList) {
+                                                                                 @RequestBody CenterCreateRequestDto requestDto) {
         long companyId = Utils.parseAuthorizedUserId(request);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logo, centerImageList)));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto)));
     }
 
     @GetMapping("/centers")
@@ -37,5 +36,11 @@ public class CenterController {
         long companyId = Utils.parseAuthorizedUserId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterList(companyId)));
+    }
+
+    @GetMapping("/centers/admin-home/{centerId}")
+    public ResponseEntity<BaseResponseDto<CenterHomeResponseDto>> getCenterHome(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getCenterHome(centerId)));
     }
 }

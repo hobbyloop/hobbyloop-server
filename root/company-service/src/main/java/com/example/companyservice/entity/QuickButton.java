@@ -17,8 +17,6 @@ public class QuickButton extends TimeStamped {
 
     private int buttonId;
 
-    private boolean isDelete;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
