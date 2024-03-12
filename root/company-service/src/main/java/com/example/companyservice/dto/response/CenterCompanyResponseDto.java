@@ -21,17 +21,17 @@ public class CenterCompanyResponseDto {
 
     private List<String> centerImageUrlList;
 
-    private CompanyResponseDto companyResponseDto;
+    private CompanyResponseDto companyInfo;
 
     public static CenterCompanyResponseDto of(CenterCreateResponseDto centerInfo,
                                               String logoImageUrl,
                                               List<String> centerImageUrlList,
-                                              CompanyResponseDto companyResponseDto) {
+                                              CompanyResponseDto companyInfo) {
         return CenterCompanyResponseDto.builder()
                 .centerInfo(centerInfo)
                 .logoImageUrl(logoImageUrl)
                 .centerImageUrlList(centerImageUrlList)
-                .companyResponseDto(companyResponseDto)
+                .companyInfo(companyInfo)
                 .build();
     }
 }

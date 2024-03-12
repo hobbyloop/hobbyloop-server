@@ -20,4 +20,11 @@ public class QuickButton extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
+
+    public static QuickButton of(int buttonId, Center center) {
+        return QuickButton.builder()
+                .buttonId(buttonId)
+                .center(center)
+                .build();
+    }
 }

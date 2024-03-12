@@ -8,4 +8,6 @@ import java.util.List;
 public interface QuickButtonRepository extends JpaRepository<QuickButton, Long> {
 
     List<QuickButton> findAllByCenterId(long centerId);
+
+    void deleteAllByCenterId(long centerId);
 }

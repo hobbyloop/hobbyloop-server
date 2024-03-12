@@ -2,6 +2,7 @@ package com.example.companyservice.controller;
 
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
+import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.response.CenterCompanyResponseDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.response.CenterCreateResponseDto;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +49,20 @@ public class CenterController {
     public ResponseEntity<BaseResponseDto<CenterCompanyResponseDto>> getCenterCompany(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterCompany(centerId)));
+    }
+
+    @PatchMapping("/centers/{centerId}")
+    public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable long centerId,
+                                                              @RequestBody CenterUpdateRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto)));
+    }
+
+    @PostMapping("/centers/quick-button/{centerId}")
+    public ResponseEntity<BaseResponseDto<Void>> updateQuickButton(@PathVariable long centerId,
+                                                                   @RequestBody List<Integer> requestDto) {
+        centerService.updateQuickButton(centerId, requestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>());
     }
 }
