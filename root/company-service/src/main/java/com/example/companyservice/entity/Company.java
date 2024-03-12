@@ -38,6 +38,8 @@ public class Company extends TimeStamped {
 
     private LocalDate endAt;
 
+    private String onlineReportNumber;
+
     private String accountBank;
 
     private String accountNumber;
@@ -73,6 +75,7 @@ public class Company extends TimeStamped {
         this.businessNumber = requestDto.getBusinessNumber();
         this.businessAddress = requestDto.getBusinessAddress();
         this.openingDate = requestDto.getOpeningDate();
+        this.onlineReportNumber = requestDto.getOnlineReportNumber();
         this.accountBank = requestDto.getAccountBank();
         this.accountNumber = requestDto.getAccountNumber();
         this.isLooppass = requestDto.isLooppass();
