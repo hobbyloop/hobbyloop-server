@@ -2,6 +2,7 @@ package com.example.companyservice.controller;
 
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
+import com.example.companyservice.dto.response.CenterCompanyResponseDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.response.CenterCreateResponseDto;
 import com.example.companyservice.dto.response.CenterHomeResponseDto;
@@ -12,9 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,5 +40,11 @@ public class CenterController {
     public ResponseEntity<BaseResponseDto<CenterHomeResponseDto>> getCenterHome(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterHome(centerId)));
+    }
+
+    @GetMapping("/centers/admin-ticket/{centerId}")
+    public ResponseEntity<BaseResponseDto<CenterCompanyResponseDto>> getCenterCompany(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getCenterCompany(centerId)));
     }
 }

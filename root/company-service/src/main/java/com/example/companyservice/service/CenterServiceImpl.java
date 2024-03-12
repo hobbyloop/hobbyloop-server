@@ -11,9 +11,7 @@ import com.example.companyservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +64,17 @@ public class CenterServiceImpl implements CenterService {
         List<Integer> quickButtonList = getQuickButtonList(centerId);
         List<TicketResponseDto> ticketResponseDtoList = ticketServiceClient.getTicketList(centerId).getData();
         return new CenterHomeResponseDto(centerResponseDto, quickButtonList, ticketResponseDtoList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CenterCompanyResponseDto getCenterCompany(long centerId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
+        List<String> centerImageUrlList = new ArrayList<>();
+        CompanyResponseDto companyResponseDto = CompanyResponseDto.from(center.getCompany());
+        return CenterCompanyResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, companyResponseDto);
     }
 
     private List<Integer> getQuickButtonList(long centerId) {
