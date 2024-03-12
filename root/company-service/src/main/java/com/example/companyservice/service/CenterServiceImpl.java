@@ -5,6 +5,8 @@ import com.example.companyservice.client.dto.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.dto.request.CenterUpdateRequestDto;
+import com.example.companyservice.dto.request.HourRequestDto;
 import com.example.companyservice.dto.response.*;
 import com.example.companyservice.entity.*;
 import com.example.companyservice.repository.*;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,8 +42,8 @@ public class CenterServiceImpl implements CenterService {
         Center center = Center.of(requestDto, company);
         Center saveCenter = centerRepository.save(center);
 
-        List<HourResponseDto> operatingHourResponseDtoList = saveOperatingHour(requestDto, saveCenter);
-        List<HourResponseDto> breakHourResponseDtoList = saveBreakHour(requestDto, saveCenter);
+        List<HourResponseDto> operatingHourResponseDtoList = saveOperatingHour(requestDto.getOperatingHourList(), saveCenter);
+        List<HourResponseDto> breakHourResponseDtoList = saveBreakHour(requestDto.getBreakHourList(), saveCenter);
 
         return CenterCreateResponseDto.of(saveCenter, operatingHourResponseDtoList, breakHourResponseDtoList);
     }
@@ -77,6 +80,31 @@ public class CenterServiceImpl implements CenterService {
         return CenterCompanyResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, companyResponseDto);
     }
 
+    @Override
+    @Transactional
+    public Long updateCenter(long centerId, CenterUpdateRequestDto requestDto) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        center.centerUpdate(requestDto);
+
+        centerOperatingHourRepository.deleteAllByCenterId(centerId);
+        centerBreakHourRepository.deleteAllByCenterId(centerId);
+
+        saveOperatingHour(requestDto.getOperatingHourList(), center);
+        saveBreakHour(requestDto.getBreakHourList(), center);
+        return center.getId();
+    }
+
+    @Override
+    @Transactional
+    public void updateQuickButton(long centerId, List<Integer> requestDto) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        quickButtonRepository.deleteAllByCenterId(centerId);
+        List<QuickButton> quickButtonList = requestDto.stream().map(b -> QuickButton.of(b, center)).toList();
+        quickButtonRepository.saveAll(quickButtonList);
+    }
+
     private List<Integer> getQuickButtonList(long centerId) {
         List<QuickButton> quickButtonList = quickButtonRepository.findAllByCenterId(centerId);
         return quickButtonList
@@ -101,9 +129,9 @@ public class CenterServiceImpl implements CenterService {
         return CenterCreateResponseDto.of(center, operationHourDtoList, breakHourDtoList);
     }
 
-    private List<HourResponseDto> saveBreakHour(CenterCreateRequestDto requestDto, Center center) {
+    private List<HourResponseDto> saveBreakHour(List<HourRequestDto> requestDto, Center center) {
         List<HourResponseDto> breakHourDtoList = new ArrayList<>();
-        requestDto.getBreakHourList().forEach(b -> {
+        requestDto.forEach(b -> {
             CenterBreakHour centerBreakHour = CenterBreakHour.of(b, center);
             centerBreakHourRepository.save(centerBreakHour);
             breakHourDtoList.add(HourResponseDto.of(
@@ -115,9 +143,9 @@ public class CenterServiceImpl implements CenterService {
         return breakHourDtoList;
     }
 
-    private List<HourResponseDto> saveOperatingHour(CenterCreateRequestDto requestDto, Center center) {
+    private List<HourResponseDto> saveOperatingHour(List<HourRequestDto> requestDto, Center center) {
         List<HourResponseDto> operatingHourDtoList = new ArrayList<>();
-        requestDto.getOperatingHourList().forEach(o -> {
+        requestDto.forEach(o -> {
             CenterOperatingHour centerOpeningHour = CenterOperatingHour.of(o, center);
             centerOperatingHourRepository.save(centerOpeningHour);
             operatingHourDtoList.add(HourResponseDto.of(

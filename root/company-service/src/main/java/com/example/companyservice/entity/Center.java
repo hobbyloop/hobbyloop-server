@@ -1,6 +1,7 @@
 package com.example.companyservice.entity;
 
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -71,5 +72,14 @@ public class Center extends TimeStamped {
                 .isDelete(false)
                 .company(company)
                 .build();
+    }
+
+    public void centerUpdate(CenterUpdateRequestDto requestDto) {
+        this.centerName = requestDto.getCenterName();
+        this.address = requestDto.getAddress();
+        this.announcement = requestDto.getAnnouncement();
+        this.introduce = requestDto.getIntroduce();
+        this.contact = requestDto.getContact();
+        this.kakaoLink = requestDto.getKakaoLink();
     }
 }

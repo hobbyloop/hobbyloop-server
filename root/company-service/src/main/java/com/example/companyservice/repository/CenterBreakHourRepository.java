@@ -8,4 +8,6 @@ import java.util.List;
 public interface CenterBreakHourRepository extends JpaRepository<CenterBreakHour, Long> {
 
     List<CenterBreakHour> findAllByCenterId(long centerId);
+
+    void deleteAllByCenterId(long centerId);
 }
