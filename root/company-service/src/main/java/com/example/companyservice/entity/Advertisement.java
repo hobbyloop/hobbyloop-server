@@ -1,5 +1,6 @@
 package com.example.companyservice.entity;
 
+import com.example.companyservice.dto.request.AdvertisementRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,7 +34,7 @@ public class Advertisement extends TimeStamped {
 
     private LocalDate adEnd;
 
-    private int adRanking;
+    private int adRank;
 
     private int adPrice;
 
@@ -56,4 +57,27 @@ public class Advertisement extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
+
+    public static Advertisement of(AdvertisementRequestDto requestDto, Center center) {
+        return Advertisement.builder()
+                .campaignName(requestDto.getCampaignName())
+                .adType(AdvertisementTypeEnum.findByName(requestDto.getAdType()).getTypeValue())
+                .price(requestDto.getPrice())
+                .content(requestDto.getContent())
+                .keyword(requestDto.getKeyword())
+                .adStart(requestDto.getAdStart())
+                .adEnd(requestDto.getAdEnd())
+                .adRank(requestDto.getAdRank())
+                .adPrice(requestDto.getAdPrice())
+                .discountPrice(requestDto.getDiscountPrice())
+                .vat(requestDto.getVat())
+                .paymentType(PaymentTypeEnum.findByName(requestDto.getPaymentType()).getTypeValue())
+                .totalPrice(requestDto.getTotalPrice())
+                .bankName(requestDto.getBankName())
+                .accountNumber(requestDto.getAccountNumber())
+                .isOpen(false)
+                .isDelete(false)
+                .center(center)
+                .build();
+    }
 }
