@@ -30,4 +30,12 @@ public class CompanyServiceImpl implements CompanyService{
         company.updateCompany(requestDto, companyRatePlan.getData());
         return company.getId();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean checkTaxFree(long companyId) {
+        Company company = companyRepository.findById(companyId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
+        return company.getIsDutyFree();
+    }
 }
