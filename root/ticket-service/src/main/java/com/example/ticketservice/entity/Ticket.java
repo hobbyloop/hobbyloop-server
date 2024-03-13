@@ -57,5 +57,7 @@ public class Ticket extends TimeStamped {
 
     private boolean isUpload;
 
+    private int score;
+
     private Long centerId;
 }

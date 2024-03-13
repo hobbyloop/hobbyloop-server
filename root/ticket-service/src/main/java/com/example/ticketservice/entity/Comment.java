@@ -1,4 +1,4 @@
-package com.example.companyservice.entity;
+package com.example.ticketservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,28 +8,20 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Review extends TimeStamped {
+public class Comment extends TimeStamped {
 
     @Id
-    @Column(name = "review_id")
+    @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float rating;
-
     private String content;
-
-    private boolean isBlind;
-
-    private String blindReqReason;
 
     private boolean isDelete;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "center_id")
-    private Center center;
+    @JoinColumn(name = "review_id")
+    private Review review;
 
     private Long memberId;
-
-    private Long ticketId;
 }
