@@ -1,7 +1,7 @@
 package com.example.companyservice.service;
 
 import com.example.companyservice.client.PayServiceClient;
-import com.example.companyservice.client.dto.CompanyRatePlanRequestDto;
+import com.example.companyservice.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.dto.BaseResponseDto;

@@ -1,6 +1,7 @@
 package com.example.ticketservice.controller;
 
 import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.dto.response.AdminTicketResponseDto;
 import com.example.ticketservice.dto.response.TicketResponseDto;
 import com.example.ticketservice.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +21,15 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @GetMapping("/ticket/{centerId}")
+    @GetMapping("/tickets/{centerId}")
     public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketList(centerId)));
+    }
+
+    @GetMapping("/tickets/admin-page/{centerId}")
+    public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getAdminTicketList(centerId)));
     }
 }

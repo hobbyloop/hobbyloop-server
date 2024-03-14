@@ -1,4 +1,4 @@
-package com.example.companyservice.client.dto;
+package com.example.companyservice.client.dto.request;
 
 import com.example.companyservice.dto.request.CompanyUpdateRequestDto;
 import lombok.AllArgsConstructor;
