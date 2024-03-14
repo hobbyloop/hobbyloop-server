@@ -25,3 +25,11 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: ticket-service
+          uri: lb://TICKET-SERVICE
+          predicates:
+            - Path=/ticket-service/**
+            - Method=GET, POST, PATCH, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/ticket-service/(?<segment>.*), /$\{segment}

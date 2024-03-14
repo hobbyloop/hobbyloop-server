@@ -1,6 +1,6 @@
 package com.example.companyservice.client;
 
-import com.example.companyservice.client.dto.CompanyRatePlanRequestDto;
+import com.example.companyservice.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.dto.BaseResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;

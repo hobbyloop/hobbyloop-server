@@ -17,6 +17,8 @@ public class Ticket extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int category;
+
     private String name;
 
     private String introduce;
@@ -25,13 +27,13 @@ public class Ticket extends TimeStamped {
 
     private LocalDate expirationEndDate;
 
-    private int periodAfterPurchase;
+    private int duration;
 
-    private int hasTotalCount;
+    private int useCount;
+
+    private int isTotalCount;
 
     private int totalCount;
-
-    private int issueCount;
 
     private int price;
 
@@ -41,23 +43,21 @@ public class Ticket extends TimeStamped {
 
     private int calculatedPrice;
 
-    private boolean isAvailable;
-
-    private int category;
-
     private int refundRegulation;
 
     private int refundPercentage;
 
-    private int duration;
+    private int periodAfterPurchase;
 
-    private int useCount;
+    private int issueCount;
 
     private int purchaseCount;
 
-    private boolean isUpload;
-
     private int score;
+
+    private boolean isAvailable;
+
+    private boolean isUpload;
 
     private Long centerId;
 }

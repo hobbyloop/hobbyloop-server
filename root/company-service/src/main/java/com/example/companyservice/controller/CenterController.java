@@ -4,11 +4,8 @@ import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
-import com.example.companyservice.dto.response.CenterCompanyResponseDto;
+import com.example.companyservice.dto.response.*;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
-import com.example.companyservice.dto.response.CenterCreateResponseDto;
-import com.example.companyservice.dto.response.CenterHomeResponseDto;
-import com.example.companyservice.dto.response.CenterResponseListDto;
 import com.example.companyservice.service.CenterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +69,11 @@ public class CenterController {
                                                                     @RequestBody BusinessRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
+    }
+
+    @GetMapping("/centers/info/{centerId}")
+    public ResponseEntity<BaseResponseDto<CenterInfoResponseDto>> getCenterInfo(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getCenterInfo(centerId)));
     }
 }

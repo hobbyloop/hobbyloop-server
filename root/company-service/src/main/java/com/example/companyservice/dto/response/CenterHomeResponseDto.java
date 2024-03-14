@@ -1,6 +1,6 @@
 package com.example.companyservice.dto.response;
 
-import com.example.companyservice.client.dto.TicketResponseDto;
+import com.example.companyservice.client.dto.response.TicketResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

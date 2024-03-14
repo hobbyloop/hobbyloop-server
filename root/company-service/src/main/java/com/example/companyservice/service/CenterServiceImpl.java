@@ -1,7 +1,7 @@
 package com.example.companyservice.service;
 
 import com.example.companyservice.client.TicketServiceClient;
-import com.example.companyservice.client.dto.TicketResponseDto;
+import com.example.companyservice.client.dto.response.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.dto.request.BusinessRequestDto;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -112,6 +113,24 @@ public class CenterServiceImpl implements CenterService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         center.businessInfoUpdate(requestDto);
         return center.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CenterInfoResponseDto getCenterInfo(long centerId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        List<CenterOperatingHour> centerOperatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> operatingHourResponseDtoList = centerOperatingHourList
+                .stream()
+                .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
+                .toList();
+        List<CenterBreakHour> centerBreakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> breakHourResponseDtoList = centerBreakHourList
+                .stream()
+                .map(b -> HourResponseDto.of(b.getDay(), b.getOpenAt(), b.getCloseAt()))
+                .toList();
+        return CenterInfoResponseDto.of(center, operatingHourResponseDtoList, breakHourResponseDtoList);
     }
 
     private List<Integer> getQuickButtonList(long centerId) {
