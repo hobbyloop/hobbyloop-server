@@ -15,7 +15,7 @@ public class Review extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float rating;
+    private float score;
 
     private String content;
 
@@ -30,6 +30,8 @@ public class Review extends TimeStamped {
     private Ticket ticket;
 
     private Long memberId;
+
+    private String nickname;
 
     private Long centerId;
 }
