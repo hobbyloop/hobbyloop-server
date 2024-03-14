@@ -23,5 +23,5 @@ public class Comment extends TimeStamped {
     @JoinColumn(name = "review_id")
     private Review review;
 
-    private Long memberId;
+    private Long companyId;
 }

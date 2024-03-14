@@ -53,7 +53,7 @@ public class Ticket extends TimeStamped {
 
     private int purchaseCount;
 
-    private int score;
+    private float score;
 
     private boolean isAvailable;
 
