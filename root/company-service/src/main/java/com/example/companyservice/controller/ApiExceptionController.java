@@ -130,7 +130,7 @@ public class ApiExceptionController {
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiExceptionEntity> accessDeniedException() {
 
-        ApiException e = new ApiException(ExceptionEnum.COMPANY_ACCESS_EXCEPTION);
+        ApiException e = new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
                         e.getError().getCode(),

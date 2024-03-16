@@ -25,6 +25,30 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: instructor-service
+          uri: lb://INSTRUCTOR-SERVICE
+          predicates:
+            - Path=/instructor-service/**
+            - Method=GET, POST, PATCH, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/instructor-service/(?<segment>.*), /$\{segment}
+        - id: member-service
+          uri: lb://MEMBER-SERVICE
+          predicates:
+            - Path=/member-service/**
+            - Method=GET, POST, PATCH, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/member-service/(?<segment>.*), /$\{segment}
+        - id: pay-service
+          uri: lb://PAY-SERVICE
+          predicates:
+            - Path=/pay-service/**
+            - Method=GET, POST, PATCH, DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/pay-service/(?<segment>.*), /$\{segment}
         - id: ticket-service
           uri: lb://TICKET-SERVICE
           predicates:

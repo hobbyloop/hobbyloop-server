@@ -25,14 +25,14 @@ public class CenterController {
     @PostMapping("/centers")
     public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
                                                                                  @RequestBody CenterCreateRequestDto requestDto) {
-        long companyId = Utils.parseAuthorizedUserId(request);
+        long companyId = Utils.parseAuthorizedCompanyId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto)));
     }
 
     @GetMapping("/centers")
     public ResponseEntity<BaseResponseDto<CenterResponseListDto>> getCenterList(HttpServletRequest request) {
-        long companyId = Utils.parseAuthorizedUserId(request);
+        long companyId = Utils.parseAuthorizedCompanyId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterList(companyId)));
     }
@@ -75,5 +75,13 @@ public class CenterController {
     public ResponseEntity<BaseResponseDto<CenterInfoResponseDto>> getCenterInfo(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterInfo(centerId)));
+    }
+
+    @GetMapping("/centers/info/detail/{centerId}")
+    public ResponseEntity<BaseResponseDto<CenterInfoDetailResponseDto>> getCenterInfoDetail(HttpServletRequest request,
+                                                                                            @PathVariable long centerId) {
+        long memberId = Utils.parseAuthorizedMemberId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getCenterInfoDetail(centerId, memberId)));
     }
 }

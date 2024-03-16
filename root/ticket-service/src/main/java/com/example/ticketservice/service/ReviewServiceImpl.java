@@ -42,6 +42,12 @@ public class ReviewServiceImpl implements ReviewService {
         return AdminReviewResponseDto.of(centerInfo.getData(), ticket, reviewCommentResponseDtoList);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getReviewCountByCenterId(long centerId) {
+        return reviewRepository.countByCenterId(centerId);
+    }
+
     private List<ReviewCommentResponseDto> getReviewCommentResponseDtoList(long ticketId) {
         List<ReviewCommentResponseDto> reviewCommentResponseDtoList = new ArrayList<>();
         List<Review> reviewList = reviewRepository.findAllByTicketId(ticketId);
