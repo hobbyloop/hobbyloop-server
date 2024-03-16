@@ -13,4 +13,7 @@ public interface TicketServiceClient {
 
     @GetMapping("/api/v1/tickets/{centerId}")
     BaseResponseDto<List<TicketResponseDto>> getTicketList(@PathVariable long centerId);
+
+    @GetMapping("/api/v1/reviews/count/{centerId}")
+    BaseResponseDto<Integer> getReviewCountByCenterId(@PathVariable long centerId);
 }

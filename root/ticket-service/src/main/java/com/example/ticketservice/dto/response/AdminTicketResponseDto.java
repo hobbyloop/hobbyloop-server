@@ -27,6 +27,8 @@ public class AdminTicketResponseDto {
 
     private int issueCount;
 
+    private boolean isUpload;
+
     public static AdminTicketResponseDto of(CenterInfoResponseDto centerInfo, Ticket ticket) {
         return AdminTicketResponseDto.builder()
                 .centerInfo(centerInfo)
@@ -35,6 +37,7 @@ public class AdminTicketResponseDto {
                 .expirationEndDate(ticket.getExpirationEndDate())
                 .totalCount(ticket.getTotalCount())
                 .issueCount(ticket.getIssueCount())
+                .isUpload(ticket.isUpload())
                 .build();
     }
 }

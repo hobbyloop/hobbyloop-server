@@ -25,4 +25,6 @@ public interface CenterService {
     Long updateBusinessInfo(long centerId, BusinessRequestDto requestDto);
 
     CenterInfoResponseDto getCenterInfo(long centerId);
+
+    CenterInfoDetailResponseDto getCenterInfoDetail(long centerId, long memberId);
 }

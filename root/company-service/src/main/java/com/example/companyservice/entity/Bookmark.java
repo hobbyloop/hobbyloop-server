@@ -1,4 +1,4 @@
-package com.example.memberservice.entity;
+package com.example.companyservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,11 +15,9 @@ public class Bookmark extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private boolean isDelete;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "center_id")
+    private Center center;
 
-    private Long centerId;
+    private Long memberId;
 }

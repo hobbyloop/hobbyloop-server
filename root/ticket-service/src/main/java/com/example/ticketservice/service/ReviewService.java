@@ -4,4 +4,6 @@ import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 
 public interface ReviewService {
     AdminReviewResponseDto getAdminReviewList(long ticketId);
+
+    Integer getReviewCountByCenterId(long centerId);
 }

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +35,8 @@ public class CenterServiceImpl implements CenterService {
     private final QuickButtonRepository quickButtonRepository;
 
     private final TicketServiceClient ticketServiceClient;
+
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
     @Transactional
@@ -131,6 +134,21 @@ public class CenterServiceImpl implements CenterService {
                 .map(b -> HourResponseDto.of(b.getDay(), b.getOpenAt(), b.getCloseAt()))
                 .toList();
         return CenterInfoResponseDto.of(center, operatingHourResponseDtoList, breakHourResponseDtoList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CenterInfoDetailResponseDto getCenterInfoDetail(long centerId, long memberId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        Optional<Bookmark> isBookmark = bookmarkRepository.findByCenterIdAndMemberId(centerId, memberId);
+        Integer reviewCount = ticketServiceClient.getReviewCountByCenterId(centerId).getData();
+        List<CenterOperatingHour> operatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> hourResponseDtoList = operatingHourList
+                .stream()
+                .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
+                .toList();
+        return CenterInfoDetailResponseDto.of(center, isBookmark.isPresent(), hourResponseDtoList, reviewCount);
     }
 
     private List<Integer> getQuickButtonList(long centerId) {

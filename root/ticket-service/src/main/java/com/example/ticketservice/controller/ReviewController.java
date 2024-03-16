@@ -23,4 +23,10 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(reviewService.getAdminReviewList(ticketId)));
     }
+
+    @GetMapping("/reviews/count/{centerId}")
+    public ResponseEntity<BaseResponseDto<Integer>> getReviewCountByCenterId(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(reviewService.getReviewCountByCenterId(centerId)));
+    }
 }
