@@ -58,7 +58,7 @@ public class Center extends TimeStamped {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    public static Center of(CenterCreateRequestDto requestDto, Company company) {
+    public static Center of(CenterCreateRequestDto requestDto, Company company, String logoImageKey, String logoImageUrl) {
         return Center.builder()
                 .centerName(requestDto.getCenterName())
                 .address(requestDto.getAddress())
@@ -70,6 +70,8 @@ public class Center extends TimeStamped {
                 .openingDate(requestDto.getOpeningDate())
                 .businessNumber(requestDto.getBusinessNumber())
                 .onlineReportNumber(requestDto.getOnlineReportNumber())
+                .logoImageKey(logoImageKey)
+                .logoImageUrl(logoImageUrl)
                 .isDelete(false)
                 .company(company)
                 .build();

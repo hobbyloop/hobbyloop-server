@@ -14,7 +14,9 @@ import com.example.companyservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,12 +39,21 @@ public class CenterServiceImpl implements CenterService {
 
     private final BookmarkRepository bookmarkRepository;
 
+    private final AmazonS3Service amazonS3Service;
+
     @Override
     @Transactional
-    public CenterCreateResponseDto createCenter(long companyId, CenterCreateRequestDto requestDto) {
+    public CenterCreateResponseDto createCenter(long companyId,
+                                                CenterCreateRequestDto requestDto,
+                                                MultipartFile logoImage,
+                                                List<MultipartFile> centerImageList) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
-        Center center = Center.of(requestDto, company);
+
+        String logoImageKey = saveS3Img(logoImage);
+        String logoImageUrl = amazonS3Service.getFileUrl(logoImageKey);
+
+        Center center = Center.of(requestDto, company, logoImageKey, logoImageUrl);
         Center saveCenter = centerRepository.save(center);
 
         List<HourResponseDto> operatingHourResponseDtoList = saveOperatingHour(requestDto.getOperatingHourList(), saveCenter);
@@ -148,6 +159,14 @@ public class CenterServiceImpl implements CenterService {
                 .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
                 .toList();
         return CenterInfoDetailResponseDto.of(center, isBookmark.isPresent(), hourResponseDtoList, reviewCount);
+    }
+
+    private String saveS3Img(MultipartFile profileImg) {
+        try {
+            return amazonS3Service.upload(profileImg, "CenterImage");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private List<Integer> getQuickButtonList(long centerId) {

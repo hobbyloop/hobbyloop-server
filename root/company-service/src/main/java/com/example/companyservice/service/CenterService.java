@@ -4,12 +4,13 @@ import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.response.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface CenterService {
 
-    CenterCreateResponseDto createCenter(long companyId, CenterCreateRequestDto requestDto);
+    CenterCreateResponseDto createCenter(long companyId, CenterCreateRequestDto requestDto, MultipartFile logoImage, List<MultipartFile> centerImageList);
 
     CenterResponseListDto getCenterList(long companyId);
 
