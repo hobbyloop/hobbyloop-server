@@ -1,12 +1,11 @@
 package com.example.companyservice.dto.response;
 
-import com.example.companyservice.entity.Center;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -14,20 +13,23 @@ import java.time.LocalDate;
 @Builder
 public class CenterBusinessResponseDto {
 
-    private String representativeName;
+    private CenterCreateResponseDto centerInfo;
 
-    private LocalDate openingDate;
+    private String logoImageUrl;
 
-    private String businessNumber;
+    private List<String> centerImageUrlList;
 
-    private String onlineReportNumber;
+    private BusinessResponseDto businessmanInfo;
 
-    public static CenterBusinessResponseDto from(Center center) {
+    public static CenterBusinessResponseDto of(CenterCreateResponseDto centerInfo,
+                                               String logoImageUrl,
+                                               List<String> centerImageUrlList,
+                                               BusinessResponseDto businessmanInfo) {
         return CenterBusinessResponseDto.builder()
-                .representativeName(center.getRepresentativeName())
-                .openingDate(center.getOpeningDate())
-                .businessNumber(center.getBusinessNumber())
-                .onlineReportNumber(center.getOnlineReportNumber())
+                .centerInfo(centerInfo)
+                .logoImageUrl(logoImageUrl)
+                .centerImageUrlList(centerImageUrlList)
+                .businessmanInfo(businessmanInfo)
                 .build();
     }
 }

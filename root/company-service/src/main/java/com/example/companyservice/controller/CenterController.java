@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,10 +25,12 @@ public class CenterController {
 
     @PostMapping("/centers")
     public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
-                                                                                 @RequestBody CenterCreateRequestDto requestDto) {
+                                                                                 @RequestPart CenterCreateRequestDto requestDto,
+                                                                                 @RequestPart(required = false) MultipartFile logoImage,
+                                                                                 @RequestPart(required = false) List<MultipartFile> centerImageList) {
         long companyId = Utils.parseAuthorizedCompanyId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto)));
+                .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logoImage, centerImageList)));
     }
 
     @GetMapping("/centers")
@@ -44,7 +47,7 @@ public class CenterController {
     }
 
     @GetMapping("/centers/admin-ticket/{centerId}")
-    public ResponseEntity<BaseResponseDto<CenterCompanyResponseDto>> getCenterCompany(@PathVariable long centerId) {
+    public ResponseEntity<BaseResponseDto<CenterBusinessResponseDto>> getCenterCompany(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterBusiness(centerId)));
     }

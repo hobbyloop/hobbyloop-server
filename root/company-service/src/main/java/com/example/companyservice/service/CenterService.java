@@ -10,13 +10,13 @@ import java.util.List;
 
 public interface CenterService {
 
-    CenterCreateResponseDto createCenter(long companyId, CenterCreateRequestDto requestDto);
+    CenterCreateResponseDto createCenter(long companyId, CenterCreateRequestDto requestDto, MultipartFile logoImage, List<MultipartFile> centerImageList);
 
     CenterResponseListDto getCenterList(long companyId);
 
     CenterHomeResponseDto getCenterHome(long centerId);
 
-    CenterCompanyResponseDto getCenterBusiness(long centerId);
+    CenterBusinessResponseDto getCenterBusiness(long centerId);
 
     Long updateCenter(long centerId, CenterUpdateRequestDto requestDto);
 
