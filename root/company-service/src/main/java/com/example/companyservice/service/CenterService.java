@@ -4,7 +4,6 @@ import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.response.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,7 +15,7 @@ public interface CenterService {
 
     CenterHomeResponseDto getCenterHome(long centerId);
 
-    CenterCompanyResponseDto getCenterBusiness(long centerId);
+    CenterBusinessResponseDto getCenterBusiness(long centerId);
 
     Long updateCenter(long centerId, CenterUpdateRequestDto requestDto);
 

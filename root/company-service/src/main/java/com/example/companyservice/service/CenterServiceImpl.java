@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,13 +74,13 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public CenterCompanyResponseDto getCenterBusiness(long centerId) {
+    public CenterBusinessResponseDto getCenterBusiness(long centerId) {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
         List<String> centerImageUrlList = new ArrayList<>();
-        CenterBusinessResponseDto centerBusinessResponseDto = CenterBusinessResponseDto.from(center);
-        return CenterCompanyResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, centerBusinessResponseDto);
+        BusinessResponseDto businessResponseDto = BusinessResponseDto.from(center);
+        return CenterBusinessResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, businessResponseDto);
     }
 
     @Override

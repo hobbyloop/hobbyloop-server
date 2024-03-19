@@ -44,7 +44,7 @@ public class CenterController {
     }
 
     @GetMapping("/centers/admin-ticket/{centerId}")
-    public ResponseEntity<BaseResponseDto<CenterCompanyResponseDto>> getCenterCompany(@PathVariable long centerId) {
+    public ResponseEntity<BaseResponseDto<CenterBusinessResponseDto>> getCenterCompany(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterBusiness(centerId)));
     }
