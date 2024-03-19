@@ -1,5 +1,6 @@
 package com.example.ticketservice.entity;
 
+import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +32,7 @@ public class Ticket extends TimeStamped {
 
     private int useCount;
 
-    private int isTotalCount;
+    private boolean isTotalCount;
 
     private int totalCount;
 
@@ -47,17 +48,38 @@ public class Ticket extends TimeStamped {
 
     private int refundPercentage;
 
-    private int periodAfterPurchase;
+    private int periodAfterPurchase; // 확인필요
 
-    private int issueCount;
+    private int issueCount; // 확인필요
 
-    private int purchaseCount;
+    private int purchaseCount; // 확인필요
 
     private float score;
 
-    private boolean isAvailable;
+    private boolean isAvailable; // 확인필요
 
     private boolean isUpload;
 
     private Long centerId;
+
+    public static Ticket of(long centerId, TicketCreateRequestDto requestDto) {
+        return Ticket.builder()
+                .category(CategoryEnum.findByName(requestDto.getCategory()).getCategoryType())
+                .name(requestDto.getName())
+                .introduce(requestDto.getIntroduce())
+                .expirationStartDate(requestDto.getExpirationStartDate())
+                .expirationEndDate(requestDto.getExpirationEndDate())
+                .duration(requestDto.getDuration())
+                .useCount(requestDto.getUseCount())
+                .isTotalCount(requestDto.isTotalCount())
+                .totalCount(requestDto.getTotalCount())
+                .price(requestDto.getPrice())
+                .vat(requestDto.getVat())
+                .discountRate(requestDto.getDiscountRate())
+                .calculatedPrice(requestDto.getCalculatedPrice())
+                .refundRegulation(requestDto.getRefundRegulation())
+                .refundPercentage(requestDto.getRefundPercentage())
+                .centerId(centerId)
+                .build();
+    }
 }
