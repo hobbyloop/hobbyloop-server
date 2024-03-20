@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface CenterImageRepository extends JpaRepository<CenterImage, Long> {
 
+    List<CenterImage> findAllByCenterId(long centerId);
+
     @Query("select ci.centerImageUrl from CenterImage ci where ci.center.id = :centerId")
     List<String> findAllCenterImage(long centerId);
 }

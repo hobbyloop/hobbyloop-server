@@ -18,7 +18,7 @@ public interface CenterService {
 
     CenterBusinessResponseDto getCenterBusiness(long centerId);
 
-    Long updateCenter(long centerId, CenterUpdateRequestDto requestDto);
+    Long updateCenter(long centerId, CenterUpdateRequestDto requestDto, MultipartFile logoImage, List<MultipartFile> centerImageList);
 
     void updateQuickButton(long centerId, List<Integer> requestDto);
 

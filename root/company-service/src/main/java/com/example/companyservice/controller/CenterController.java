@@ -54,9 +54,11 @@ public class CenterController {
 
     @PatchMapping("/centers/{centerId}")
     public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable long centerId,
-                                                              @RequestBody CenterUpdateRequestDto requestDto) {
+                                                              @RequestPart CenterUpdateRequestDto requestDto,
+                                                              @RequestPart(required = false) MultipartFile logoImage,
+                                                              @RequestPart(required = false) List<MultipartFile> centerImageList) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto)));
+                .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto, logoImage, centerImageList)));
     }
 
     @PostMapping("/centers/quick-button/{centerId}")

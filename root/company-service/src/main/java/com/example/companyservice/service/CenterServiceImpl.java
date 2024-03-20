@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -98,10 +97,20 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional
-    public Long updateCenter(long centerId, CenterUpdateRequestDto requestDto) {
+    public Long updateCenter(long centerId,
+                             CenterUpdateRequestDto requestDto,
+                             MultipartFile logoImage,
+                             List<MultipartFile> centerImageList) {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
-        center.centerUpdate(requestDto);
+
+        amazonS3Service.delete(center.getLogoImageKey());
+        String logoImageKey = saveS3Img(logoImage);
+        String logoImageUrl = amazonS3Service.getFileUrl(logoImageKey);
+        center.centerUpdate(requestDto, logoImageKey, logoImageUrl);
+
+        deleteAllCenterImage(centerId);
+        saveCenterImage(center, centerImageList);
 
         centerOperatingHourRepository.deleteAllByCenterId(centerId);
         centerBreakHourRepository.deleteAllByCenterId(centerId);
@@ -136,15 +145,9 @@ public class CenterServiceImpl implements CenterService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         List<CenterOperatingHour> centerOperatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
-        List<HourResponseDto> operatingHourResponseDtoList = centerOperatingHourList
-                .stream()
-                .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
-                .toList();
+        List<HourResponseDto> operatingHourResponseDtoList = getOperationHourDtoList(centerOperatingHourList);
         List<CenterBreakHour> centerBreakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
-        List<HourResponseDto> breakHourResponseDtoList = centerBreakHourList
-                .stream()
-                .map(b -> HourResponseDto.of(b.getDay(), b.getOpenAt(), b.getCloseAt()))
-                .toList();
+        List<HourResponseDto> breakHourResponseDtoList = getBreakHourDtoList(centerBreakHourList);
         return CenterInfoResponseDto.of(center, operatingHourResponseDtoList, breakHourResponseDtoList);
     }
 
@@ -153,14 +156,12 @@ public class CenterServiceImpl implements CenterService {
     public CenterInfoDetailResponseDto getCenterInfoDetail(long centerId, long memberId) {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        List<String> centerImageUrlList = centerImageRepository.findAllCenterImage(centerId);
         Optional<Bookmark> isBookmark = bookmarkRepository.findByCenterIdAndMemberId(centerId, memberId);
         Integer reviewCount = ticketServiceClient.getReviewCountByCenterId(centerId).getData();
         List<CenterOperatingHour> operatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
-        List<HourResponseDto> hourResponseDtoList = operatingHourList
-                .stream()
-                .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
-                .toList();
-        return CenterInfoDetailResponseDto.of(center, isBookmark.isPresent(), hourResponseDtoList, reviewCount);
+        List<HourResponseDto> hourResponseDtoList = getOperationHourDtoList(operatingHourList);
+        return CenterInfoDetailResponseDto.of(center, centerImageUrlList, isBookmark.isPresent(), hourResponseDtoList, reviewCount);
     }
 
     private void saveCenterImage(Center center, List<MultipartFile> centerImageList) {
@@ -180,55 +181,52 @@ public class CenterServiceImpl implements CenterService {
         }
     }
 
+    private void deleteAllCenterImage(long centerId) {
+        List<CenterImage> OldCenterImageList = centerImageRepository.findAllByCenterId(centerId);
+        OldCenterImageList.forEach(i -> {
+            amazonS3Service.delete(i.getCenterImageKey());
+            centerImageRepository.delete(i);
+        });
+    }
+
     private List<Integer> getQuickButtonList(long centerId) {
         List<QuickButton> quickButtonList = quickButtonRepository.findAllByCenterId(centerId);
-        return quickButtonList
-                .stream()
-                .map(QuickButton::getButtonId)
-                .toList();
+        return quickButtonList.stream().map(QuickButton::getButtonId).toList();
     }
 
     private CenterCreateResponseDto createCenterResponseDto(long centerId, Center center) {
         List<CenterOperatingHour> centerOpeningHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
         List<CenterBreakHour> centerBreakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
 
-        List<HourResponseDto> operationHourDtoList = centerOpeningHourList
-                .stream()
-                .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
-                .toList();
-        List<HourResponseDto> breakHourDtoList = centerBreakHourList
-                .stream()
-                .map(b -> HourResponseDto.of(b.getDay(), b.getOpenAt(), b.getCloseAt()))
-                .toList();
+        List<HourResponseDto> operationHourDtoList = getOperationHourDtoList(centerOpeningHourList);
+        List<HourResponseDto> breakHourDtoList = getBreakHourDtoList(centerBreakHourList);
 
         return CenterCreateResponseDto.of(center, center.getLogoImageUrl(), operationHourDtoList, breakHourDtoList);
     }
 
     private List<HourResponseDto> saveBreakHour(List<HourRequestDto> requestDto, Center center) {
-        List<HourResponseDto> breakHourDtoList = new ArrayList<>();
-        requestDto.forEach(b -> {
-            CenterBreakHour centerBreakHour = CenterBreakHour.of(b, center);
-            centerBreakHourRepository.save(centerBreakHour);
-            breakHourDtoList.add(HourResponseDto.of(
-                    centerBreakHour.getDay(),
-                    centerBreakHour.getOpenAt(),
-                    centerBreakHour.getCloseAt())
-            );
-        });
-        return breakHourDtoList;
+        List<CenterBreakHour> centerBreakHourList = requestDto.stream().map(b -> CenterBreakHour.of(b, center)).toList();
+        centerBreakHourRepository.saveAll(centerBreakHourList);
+        return getBreakHourDtoList(centerBreakHourList);
     }
 
     private List<HourResponseDto> saveOperatingHour(List<HourRequestDto> requestDto, Center center) {
-        List<HourResponseDto> operatingHourDtoList = new ArrayList<>();
-        requestDto.forEach(o -> {
-            CenterOperatingHour centerOpeningHour = CenterOperatingHour.of(o, center);
-            centerOperatingHourRepository.save(centerOpeningHour);
-            operatingHourDtoList.add(HourResponseDto.of(
-                    centerOpeningHour.getDay(),
-                    centerOpeningHour.getOpenAt(),
-                    centerOpeningHour.getCloseAt())
-            );
-        });
-        return operatingHourDtoList;
+        List<CenterOperatingHour> centerOperatingHourList = requestDto.stream().map(o -> CenterOperatingHour.of(o, center)).toList();
+        centerOperatingHourRepository.saveAll(centerOperatingHourList);
+        return getOperationHourDtoList(centerOperatingHourList);
+    }
+
+    private static List<HourResponseDto> getOperationHourDtoList(List<CenterOperatingHour> centerOpeningHourList) {
+        return centerOpeningHourList
+                .stream()
+                .map(o -> HourResponseDto.of(o.getDay(), o.getOpenAt(), o.getCloseAt()))
+                .toList();
+    }
+
+    private static List<HourResponseDto> getBreakHourDtoList(List<CenterBreakHour> centerBreakHourList) {
+        return centerBreakHourList
+                .stream()
+                .map(b -> HourResponseDto.of(b.getDay(), b.getOpenAt(), b.getCloseAt()))
+                .toList();
     }
 }
