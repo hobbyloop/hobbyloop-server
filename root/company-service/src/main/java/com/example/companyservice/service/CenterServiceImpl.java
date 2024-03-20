@@ -41,6 +41,8 @@ public class CenterServiceImpl implements CenterService {
 
     private final AmazonS3Service amazonS3Service;
 
+    private final CenterImageRepository centerImageRepository;
+
     @Override
     @Transactional
     public CenterCreateResponseDto createCenter(long companyId,
@@ -52,14 +54,14 @@ public class CenterServiceImpl implements CenterService {
 
         String logoImageKey = saveS3Img(logoImage);
         String logoImageUrl = amazonS3Service.getFileUrl(logoImageKey);
-
         Center center = Center.of(requestDto, company, logoImageKey, logoImageUrl);
         Center saveCenter = centerRepository.save(center);
+        saveCenterImage(saveCenter, centerImageList);
 
         List<HourResponseDto> operatingHourResponseDtoList = saveOperatingHour(requestDto.getOperatingHourList(), saveCenter);
         List<HourResponseDto> breakHourResponseDtoList = saveBreakHour(requestDto.getBreakHourList(), saveCenter);
 
-        return CenterCreateResponseDto.of(saveCenter, operatingHourResponseDtoList, breakHourResponseDtoList);
+        return CenterCreateResponseDto.of(saveCenter, logoImageUrl, operatingHourResponseDtoList, breakHourResponseDtoList);
     }
 
     @Override
@@ -89,9 +91,9 @@ public class CenterServiceImpl implements CenterService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
-        List<String> centerImageUrlList = new ArrayList<>();
+        List<String> centerImageUrlList = centerImageRepository.findAllCenterImage(centerId);
         BusinessResponseDto businessResponseDto = BusinessResponseDto.from(center);
-        return CenterBusinessResponseDto.of(centerResponseDto, center.getLogoImageUrl(), centerImageUrlList, businessResponseDto);
+        return CenterBusinessResponseDto.of(centerResponseDto, centerImageUrlList, businessResponseDto);
     }
 
     @Override
@@ -161,6 +163,15 @@ public class CenterServiceImpl implements CenterService {
         return CenterInfoDetailResponseDto.of(center, isBookmark.isPresent(), hourResponseDtoList, reviewCount);
     }
 
+    private void saveCenterImage(Center center, List<MultipartFile> centerImageList) {
+        centerImageList.forEach(i -> {
+            String centerImageKey = saveS3Img(i);
+            String centerImageUrl = amazonS3Service.getFileUrl(centerImageKey);
+            CenterImage centerImage = CenterImage.of(centerImageKey, centerImageUrl, center);
+            centerImageRepository.save(centerImage);
+        });
+    }
+
     private String saveS3Img(MultipartFile profileImg) {
         try {
             return amazonS3Service.upload(profileImg, "CenterImage");
@@ -190,7 +201,7 @@ public class CenterServiceImpl implements CenterService {
                 .map(b -> HourResponseDto.of(b.getDay(), b.getOpenAt(), b.getCloseAt()))
                 .toList();
 
-        return CenterCreateResponseDto.of(center, operationHourDtoList, breakHourDtoList);
+        return CenterCreateResponseDto.of(center, center.getLogoImageUrl(), operationHourDtoList, breakHourDtoList);
     }
 
     private List<HourResponseDto> saveBreakHour(List<HourRequestDto> requestDto, Center center) {

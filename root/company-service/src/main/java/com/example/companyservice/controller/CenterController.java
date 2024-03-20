@@ -28,14 +28,14 @@ public class CenterController {
                                                                                  @RequestPart CenterCreateRequestDto requestDto,
                                                                                  @RequestPart(required = false) MultipartFile logoImage,
                                                                                  @RequestPart(required = false) List<MultipartFile> centerImageList) {
-        long companyId = Utils.parseAuthorizedCompanyId(request);
+        long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logoImage, centerImageList)));
     }
 
     @GetMapping("/centers")
     public ResponseEntity<BaseResponseDto<CenterResponseListDto>> getCenterList(HttpServletRequest request) {
-        long companyId = Utils.parseAuthorizedCompanyId(request);
+        long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterList(companyId)));
     }
@@ -83,7 +83,7 @@ public class CenterController {
     @GetMapping("/centers/info/detail/{centerId}")
     public ResponseEntity<BaseResponseDto<CenterInfoDetailResponseDto>> getCenterInfoDetail(HttpServletRequest request,
                                                                                             @PathVariable long centerId) {
-        long memberId = Utils.parseAuthorizedMemberId(request);
+        long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterInfoDetail(centerId, memberId)));
     }

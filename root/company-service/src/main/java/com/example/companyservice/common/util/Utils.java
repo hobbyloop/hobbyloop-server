@@ -10,26 +10,13 @@ import lombok.NoArgsConstructor;
 public class Utils {
 
     /**
-     * HttpServletRequest로부터 header에서 companyId를 조회합니다. 없을 경우, 권한이 없음으로 간주합니다.
+     * HttpServletRequest로부터 header에서 Id를 조회합니다. 없을 경우, 권한이 없음으로 간주합니다.
      * @param request
      * @return
      */
-    public static long parseAuthorizedCompanyId(HttpServletRequest request) {
+    public static long parseAuthorizedId(HttpServletRequest request) {
         try {
-            return Long.parseLong(request.getHeader("companyId"));
-        } catch (NumberFormatException ex) {
-            throw new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
-        }
-    }
-
-    /**
-     * HttpServletRequest로부터 header에서 UserId를 조회합니다. 없을 경우, 권한이 없음으로 간주합니다.
-     * @param request
-     * @return
-     */
-    public static long parseAuthorizedMemberId(HttpServletRequest request) {
-        try {
-            return Long.parseLong(request.getHeader("memberId"));
+            return Long.parseLong(request.getHeader("id"));
         } catch (NumberFormatException ex) {
             throw new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
         }

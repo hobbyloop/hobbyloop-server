@@ -20,14 +20,14 @@ public class CompanyController {
     @PatchMapping("/companies")
     public ResponseEntity<BaseResponseDto<Long>> updateCompanyInfo(HttpServletRequest request,
                                                                    @RequestBody CompanyUpdateRequestDto requestDto) {
-        long companyId = Utils.parseAuthorizedCompanyId(request);
+        long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(companyService.updateCompanyInfo(companyId, requestDto)));
     }
 
     @GetMapping("/companies/check/tax-free")
     public ResponseEntity<BaseResponseDto<Boolean>> checkTaxFree(HttpServletRequest request) {
-        long companyId = Utils.parseAuthorizedCompanyId(request);
+        long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(companyService.checkTaxFree(companyId)));
     }
