@@ -16,7 +16,7 @@ spring:
       hibernate:
         default_batch_fetch_size: 500
   profiles:
-    include: db
+    include: s3, db
 
 eureka:
   instance:

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,8 +35,9 @@ public class TicketController {
 
     @PostMapping("/tickets/{centerId}")
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(@PathVariable long centerId,
-                                                                                 @RequestBody TicketCreateRequestDto requestDto) {
+                                                                                 @RequestPart TicketCreateRequestDto requestDto,
+                                                                                 @RequestPart(required = false) MultipartFile ticketImage) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponseDto<>(ticketService.createTicket(centerId, requestDto)));
+                .body(new BaseResponseDto<>(ticketService.createTicket(centerId, requestDto, ticketImage)));
     }
 }

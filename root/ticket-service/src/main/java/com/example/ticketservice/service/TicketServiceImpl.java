@@ -12,7 +12,9 @@ import com.example.ticketservice.repository.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,8 @@ public class TicketServiceImpl implements TicketService{
     private final TicketRepository ticketRepository;
 
     private final CompanyServiceClient companyServiceClient;
+
+    private final AmazonS3Service amazonS3Service;
 
     @Override
     @Transactional(readOnly = true)
@@ -41,10 +45,20 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     @Transactional
-    public TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto) {
-        Ticket ticket = Ticket.of(centerId, requestDto);
+    public TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto, MultipartFile ticketImage) {
+        String ticketImageKey = saveS3Img(ticketImage);
+        String ticketImageUrl = amazonS3Service.getFileUrl(ticketImageKey);
+        Ticket ticket = Ticket.of(centerId, ticketImageKey, ticketImageUrl, requestDto);
         Ticket saveTicket = ticketRepository.save(ticket);
         CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
         return TicketCreateResponseDto.of(centerInfo, saveTicket);
+    }
+
+    private String saveS3Img(MultipartFile profileImg) {
+        try {
+            return amazonS3Service.upload(profileImg, "CenterImage");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
