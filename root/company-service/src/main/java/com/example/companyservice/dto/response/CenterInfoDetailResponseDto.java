@@ -17,6 +17,10 @@ public class CenterInfoDetailResponseDto {
 
     private String centerName;
 
+    private String logoImageUrl;
+
+    private List<String> centerImageUrlList;
+
     private boolean isBookmark;
 
     private String contact;
@@ -42,11 +46,14 @@ public class CenterInfoDetailResponseDto {
     private String onlineReportNumber;
 
     public static CenterInfoDetailResponseDto of(Center center,
+                                                 List<String> centerImageUrlList,
                                                  boolean isBookmark,
                                                  List<HourResponseDto> operatingHourList,
                                                  int reviewCount) {
         return CenterInfoDetailResponseDto.builder()
                 .centerName(center.getCenterName())
+                .logoImageUrl(center.getLogoImageUrl())
+                .centerImageUrlList(centerImageUrlList)
                 .isBookmark(isBookmark)
                 .contact(center.getContact())
                 .kakaoLink(center.getKakaoLink())

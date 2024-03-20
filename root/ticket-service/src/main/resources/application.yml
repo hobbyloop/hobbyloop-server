@@ -5,21 +5,18 @@ server:
 spring:
   application:
     name: ticket-service
-  datasource:
-    url: jdbc:mysql://localhost:3306/ticketdb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: kp23156385@
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     generate-ddl: true
     properties:
       hibernate:
         default_batch_fetch_size: 500
+  profiles:
+    include: db
 
 eureka:
   instance:

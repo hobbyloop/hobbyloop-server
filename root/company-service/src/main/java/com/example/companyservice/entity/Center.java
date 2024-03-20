@@ -77,13 +77,15 @@ public class Center extends TimeStamped {
                 .build();
     }
 
-    public void centerUpdate(CenterUpdateRequestDto requestDto) {
+    public void centerUpdate(CenterUpdateRequestDto requestDto, String logoImageKey, String logoImageUrl) {
         this.centerName = requestDto.getCenterName();
         this.address = requestDto.getAddress();
         this.announcement = requestDto.getAnnouncement();
         this.introduce = requestDto.getIntroduce();
         this.contact = requestDto.getContact();
         this.kakaoLink = requestDto.getKakaoLink();
+        this.logoImageKey = logoImageKey;
+        this.logoImageUrl = logoImageUrl;
     }
 
     public void businessInfoUpdate(BusinessRequestDto requestDto) {
