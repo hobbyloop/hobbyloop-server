@@ -22,6 +22,10 @@ public class Ticket extends TimeStamped {
 
     private String name;
 
+    private String ticketImageKey;
+
+    private String ticketImageUrl;
+
     private String introduce;
 
     private LocalDate expirationStartDate;
@@ -62,10 +66,15 @@ public class Ticket extends TimeStamped {
 
     private Long centerId;
 
-    public static Ticket of(long centerId, TicketCreateRequestDto requestDto) {
+    public static Ticket of(long centerId,
+                            String ticketImageKey,
+                            String ticketImageUrl,
+                            TicketCreateRequestDto requestDto) {
         return Ticket.builder()
                 .category(CategoryEnum.findByName(requestDto.getCategory()).getCategoryType())
                 .name(requestDto.getName())
+                .ticketImageKey(ticketImageKey)
+                .ticketImageUrl(ticketImageUrl)
                 .introduce(requestDto.getIntroduce())
                 .expirationStartDate(requestDto.getExpirationStartDate())
                 .expirationEndDate(requestDto.getExpirationEndDate())

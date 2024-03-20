@@ -19,6 +19,8 @@ public class AdminTicketResponseDto {
 
     private String name;
 
+    private String ticketImageUrl;
+
     private LocalDate expirationStartDate;
 
     private LocalDate expirationEndDate;
@@ -33,6 +35,7 @@ public class AdminTicketResponseDto {
         return AdminTicketResponseDto.builder()
                 .centerInfo(centerInfo)
                 .name(ticket.getName())
+                .ticketImageUrl(ticket.getTicketImageUrl())
                 .expirationStartDate(ticket.getExpirationStartDate())
                 .expirationEndDate(ticket.getExpirationEndDate())
                 .totalCount(ticket.getTotalCount())

@@ -33,6 +33,7 @@ public class TicketCreateResponseDto {
 
     public static TicketCreateResponseDto of(CenterInfoResponseDto centerInfo, Ticket ticket) {
         return TicketCreateResponseDto.builder()
+                .ticketImageUrl(ticket.getTicketImageUrl())
                 .centerName(centerInfo.getCenterName())
                 .address(centerInfo.getAddress())
                 .ticketName(ticket.getName())
