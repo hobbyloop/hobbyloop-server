@@ -20,4 +20,11 @@ public class Bookmark extends TimeStamped {
     private Center center;
 
     private Long memberId;
+
+    public static Bookmark of(Center center, Long memberId) {
+        return Bookmark.builder()
+                .center(center)
+                .memberId(memberId)
+                .build();
+    }
 }
