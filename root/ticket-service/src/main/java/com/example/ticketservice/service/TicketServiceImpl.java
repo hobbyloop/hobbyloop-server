@@ -5,6 +5,7 @@ import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.response.AdminTicketResponseDto;
+import com.example.ticketservice.dto.response.BookmarkTicketResponseDto;
 import com.example.ticketservice.dto.response.TicketCreateResponseDto;
 import com.example.ticketservice.dto.response.TicketResponseDto;
 import com.example.ticketservice.entity.Ticket;
@@ -15,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +55,18 @@ public class TicketServiceImpl implements TicketService{
         Ticket saveTicket = ticketRepository.save(ticket);
         CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
         return TicketCreateResponseDto.of(centerInfo, saveTicket);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, List<BookmarkTicketResponseDto>> getBookmarkTicketList(List<Long> centerIdList) {
+        Map<Long, List<BookmarkTicketResponseDto>> bookmarkTicketResponseDtoMap = new HashMap<>();
+        centerIdList.forEach((i) -> {
+            List<Ticket> ticketList = ticketRepository.findAllByCenterId(i);
+            List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList = ticketList.stream().map(BookmarkTicketResponseDto::from).toList();
+            bookmarkTicketResponseDtoMap.put(i, bookmarkTicketResponseDtoList);
+        });
+        return bookmarkTicketResponseDtoMap;
     }
 
     private String saveS3Img(MultipartFile profileImg) {

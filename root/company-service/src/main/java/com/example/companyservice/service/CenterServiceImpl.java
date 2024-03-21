@@ -1,9 +1,11 @@
 package com.example.companyservice.service;
 
 import com.example.companyservice.client.TicketServiceClient;
+import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
 import com.example.companyservice.client.dto.response.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
@@ -17,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -79,7 +83,7 @@ public class CenterServiceImpl implements CenterService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
-        List<Integer> quickButtonList = getQuickButtonList(centerId);
+        List<Integer> quickButtonList = quickButtonRepository.findAllButtonIdByCenterId(centerId);
         List<TicketResponseDto> ticketResponseDtoList = ticketServiceClient.getTicketList(centerId).getData();
         return new CenterHomeResponseDto(centerResponseDto, quickButtonList, ticketResponseDtoList);
     }
@@ -164,6 +168,23 @@ public class CenterServiceImpl implements CenterService {
         return CenterInfoDetailResponseDto.of(center, centerImageUrlList, isBookmark.isPresent(), hourResponseDtoList, reviewCount);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId) {
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByMemberId(memberId);
+        List<Long> centerIdList = bookmarkList.stream().map(b -> b.getCenter().getId()).toList();
+        Map<Long, List<BookmarkTicketResponseDto>> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();
+        List<BookmarkCenterResponseDto> result = new ArrayList<>();
+        centerIdList.forEach((i) -> {
+            Center center = centerRepository.findById(i)
+                    .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+            BookmarkCenterResponseDto bookmarkCenterResponseDto =
+                    BookmarkCenterResponseDto.of(center, bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null));
+            result.add(bookmarkCenterResponseDto);
+        });
+        return result;
+    }
+
     private void saveCenterImage(Center center, List<MultipartFile> centerImageList) {
         centerImageList.forEach(i -> {
             String centerImageKey = saveS3Img(i);
@@ -187,11 +208,6 @@ public class CenterServiceImpl implements CenterService {
             amazonS3Service.delete(i.getCenterImageKey());
             centerImageRepository.delete(i);
         });
-    }
-
-    private List<Integer> getQuickButtonList(long centerId) {
-        List<QuickButton> quickButtonList = quickButtonRepository.findAllByCenterId(centerId);
-        return quickButtonList.stream().map(QuickButton::getButtonId).toList();
     }
 
     private CenterCreateResponseDto createCenterResponseDto(long centerId, Center center) {
