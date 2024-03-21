@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +21,16 @@ public class Company extends TimeStamped {
     private Long id;
 
     private String email;
+
+    private String password;
+
+    private String provider;
+
+    private String providerId;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Role> roleSet = new HashSet<>();
 
     private Boolean isDutyFree;
 
@@ -90,5 +102,9 @@ public class Company extends TimeStamped {
 
     public void deleteCompany() {
         this.isDelete = true;
+    }
+
+    public void addRole(Role role) {
+        roleSet.add(role);
     }
 }
