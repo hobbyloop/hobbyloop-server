@@ -14,7 +14,8 @@ public enum ExceptionEnum {
     API_PARAMETER_EXCEPTION(HttpStatus.BAD_REQUEST, "E005", "파라미터 타입과 값을 확인하세요."),
     ACCESS_NOW_ALLOW_EXCEPTION(HttpStatus.FORBIDDEN, "C001", "접근 권한이 없습니다."),
     COMPANY_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "C002", "존재하지 않는 업체입니다."),
-    CENTER_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "CT002", "존재하지 않는 시설입니다.");
+    CENTER_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "CT002", "존재하지 않는 시설입니다."),
+    NOT_SUPPORT_PROVIDER_TYPE(HttpStatus.BAD_REQUEST, "E006", "지원하지 않는 소셜로그인입니다.");
 
     private final HttpStatus status;
     private final String code;

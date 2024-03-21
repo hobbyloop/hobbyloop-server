@@ -20,11 +20,35 @@ spring:
         - id: company-service
           uri: lb://COMPANY-SERVICE
           predicates:
+            - Path=/company-service/user/login
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: company-service
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/company-service/oauth2/authorization/**
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: company-service
+          uri: lb://COMPANY-SERVICE
+          predicates:
+            - Path=/company-service/login/oauth2/code/**
+            - Method=GET, POST
+          filters:
+            - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: company-service
+          uri: lb://COMPANY-SERVICE
+          predicates:
             - Path=/company-service/**
             - Method=GET, POST, PATCH, DELETE
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+            - JwtAuthenticationFilter
         - id: instructor-service
           uri: lb://INSTRUCTOR-SERVICE
           predicates:
@@ -57,3 +81,5 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/ticket-service/(?<segment>.*), /$\{segment}
+  profiles:
+    include: secret
