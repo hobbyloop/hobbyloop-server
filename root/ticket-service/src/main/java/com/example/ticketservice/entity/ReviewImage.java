@@ -26,4 +26,13 @@ public class ReviewImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
+
+    public static ReviewImage of(String reviewImageKey, String reviewImageUrl, Review review, Ticket ticket) {
+        return ReviewImage.builder()
+                .reviewImageKey(reviewImageKey)
+                .reviewImageUrl(reviewImageUrl)
+                .review(review)
+                .ticket(ticket)
+                .build();
+    }
 }

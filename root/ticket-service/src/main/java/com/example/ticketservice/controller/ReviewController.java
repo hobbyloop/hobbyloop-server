@@ -1,6 +1,7 @@
 package com.example.ticketservice.controller;
 
 import com.example.ticketservice.common.util.Utils;
+import com.example.ticketservice.dto.request.ReviewRequestDto;
 import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.response.ReviewListResponseDto;
@@ -9,10 +10,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,6 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReviewController {
 
     private final ReviewService reviewService;
+
+    @PostMapping("/reviews/{ticketId}")
+    public ResponseEntity<BaseResponseDto<Long>> createReview(HttpServletRequest request,
+                                                              @PathVariable long ticketId,
+                                                              @RequestPart ReviewRequestDto requestDto,
+                                                              @RequestPart List<MultipartFile> reviewImageList) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponseDto<>(reviewService.createReview(memberId, ticketId, requestDto, reviewImageList)));
+    }
 
     @GetMapping("/reviews/admin-page/{ticketId}")
     public ResponseEntity<BaseResponseDto<AdminReviewResponseDto>> getAdminReviewList(@PathVariable long ticketId) {

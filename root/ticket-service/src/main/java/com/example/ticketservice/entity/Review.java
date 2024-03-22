@@ -1,5 +1,6 @@
 package com.example.ticketservice.entity;
 
+import com.example.ticketservice.dto.request.ReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +22,6 @@ public class Review extends TimeStamped {
 
     private boolean isBlind;
 
-    private String blindReqReason;
-
     private boolean isDelete;
 
     private int commentCount;
@@ -38,4 +37,19 @@ public class Review extends TimeStamped {
     private String nickname;
 
     private Long centerId;
+
+    public static Review of(ReviewRequestDto requestDto,
+                            Ticket ticket,
+                            Long memberId,
+                            String nickname,
+                            Long centerId) {
+        return Review.builder()
+                .score(requestDto.getScore())
+                .content(requestDto.getContent())
+                .ticket(ticket)
+                .memberId(memberId)
+                .nickname(nickname)
+                .centerId(centerId)
+                .build();
+    }
 }
