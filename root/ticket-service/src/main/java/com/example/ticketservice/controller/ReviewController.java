@@ -1,8 +1,11 @@
 package com.example.ticketservice.controller;
 
+import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.dto.response.ReviewListResponseDto;
 import com.example.ticketservice.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,5 +31,13 @@ public class ReviewController {
     public ResponseEntity<BaseResponseDto<Integer>> getReviewCountByCenterId(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(reviewService.getReviewCountByCenterId(centerId)));
+    }
+
+    @GetMapping("/reviews/{ticketId}")
+    public ResponseEntity<BaseResponseDto<ReviewListResponseDto>> getReviewList(HttpServletRequest request,
+                                                                                @PathVariable long ticketId) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(reviewService.getReviewList(memberId, ticketId)));
     }
 }

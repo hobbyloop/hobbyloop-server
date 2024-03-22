@@ -7,12 +7,12 @@ import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 import com.example.ticketservice.dto.response.ReviewCommentResponseDto;
+import com.example.ticketservice.dto.response.ReviewListResponseDto;
+import com.example.ticketservice.dto.response.ReviewResponseDto;
 import com.example.ticketservice.entity.Comment;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
-import com.example.ticketservice.repository.CommentRepository;
-import com.example.ticketservice.repository.ReviewRepository;
-import com.example.ticketservice.repository.TicketRepository;
+import com.example.ticketservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +32,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final CommentRepository commentRepository;
 
+    private final ReviewLikeRepository reviewLikeRepository;
+
+    private final ReviewImageRepository reviewImageRepository;
+
     @Override
     @Transactional(readOnly = true)
     public AdminReviewResponseDto getAdminReviewList(long ticketId) {
@@ -46,6 +50,23 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional(readOnly = true)
     public Integer getReviewCountByCenterId(long centerId) {
         return reviewRepository.countByCenterId(centerId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReviewListResponseDto getReviewList(long memberId, long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        List<String> totalImageUrlList = reviewImageRepository.findAllUrlByTicketId(ticketId);
+        List<Review> reviewList = reviewRepository.findAllByTicketId(ticketId);
+        List<ReviewResponseDto> reviewResponseDtoList = reviewList
+                .stream()
+                .map(r -> ReviewResponseDto.of(r,
+                        ticket.getName(),
+                        reviewImageRepository.findAllUrlByReviewId(r.getId()),
+                        reviewLikeRepository.existsByReviewIdAndMemberId(r.getId(), memberId)))
+                .toList();
+        return ReviewListResponseDto.of(ticket.getScore(), totalImageUrlList, reviewResponseDtoList);
     }
 
     private List<ReviewCommentResponseDto> getReviewCommentResponseDtoList(long ticketId) {
