@@ -1,4 +1,4 @@
-package com.example.memberservice.entity;
+package com.example.ticketservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,8 +16,8 @@ public class ReviewLike extends TimeStamped {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "review_id")
+    private Review review;
 
-    private Long ReviewId;
+    private Long memberId;
 }

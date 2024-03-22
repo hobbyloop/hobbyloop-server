@@ -8,34 +8,22 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class Review extends TimeStamped {
+public class ReviewImage {
 
     @Id
-    @Column(name = "review_id")
+    @Column(name = "review_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private float score;
+    private String reviewImageKey;
 
-    private String content;
+    private String reviewImageUrl;
 
-    private boolean isBlind;
-
-    private String blindReqReason;
-
-    private boolean isDelete;
-
-    private int commentCount;
-
-    private int likeCount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
-
-    private Long memberId;
-
-    private String nickname;
-
-    private Long centerId;
 }
