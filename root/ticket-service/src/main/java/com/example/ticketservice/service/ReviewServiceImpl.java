@@ -5,18 +5,22 @@ import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.dto.request.ReviewRequestDto;
 import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 import com.example.ticketservice.dto.response.ReviewCommentResponseDto;
 import com.example.ticketservice.dto.response.ReviewListResponseDto;
 import com.example.ticketservice.dto.response.ReviewResponseDto;
 import com.example.ticketservice.entity.Comment;
 import com.example.ticketservice.entity.Review;
+import com.example.ticketservice.entity.ReviewImage;
 import com.example.ticketservice.entity.Ticket;
 import com.example.ticketservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +39,19 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewLikeRepository reviewLikeRepository;
 
     private final ReviewImageRepository reviewImageRepository;
+
+    private final AmazonS3Service amazonS3Service;
+
+    @Override
+    @Transactional
+    public Long createReview(long memberId, long ticketId, ReviewRequestDto requestDto, List<MultipartFile> reviewImageList) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        Review review = Review.of(requestDto, ticket, memberId, "", ticket.getCenterId());
+        saveReviewImage(review, ticket, reviewImageList);
+        Review saveReview = reviewRepository.save(review);
+        return saveReview.getId();
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -79,5 +96,22 @@ public class ReviewServiceImpl implements ReviewService {
             reviewCommentResponseDtoList.add(reviewCommentResponseDto);
         });
         return reviewCommentResponseDtoList;
+    }
+
+    private void saveReviewImage(Review review, Ticket ticket, List<MultipartFile> centerImageList) {
+        centerImageList.forEach(i -> {
+            String reviewImageKey = saveS3Img(i);
+            String reviewImageUrl = amazonS3Service.getFileUrl(reviewImageKey);
+            ReviewImage reviewImage = ReviewImage.of(reviewImageKey, reviewImageUrl, review, ticket);
+            reviewImageRepository.save(reviewImage);
+        });
+    }
+
+    private String saveS3Img(MultipartFile profileImg) {
+        try {
+            return amazonS3Service.upload(profileImg, "ReviewImage");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
