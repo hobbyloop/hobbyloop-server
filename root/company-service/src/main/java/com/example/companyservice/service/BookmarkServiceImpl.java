@@ -4,7 +4,7 @@ import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.entity.Bookmark;
 import com.example.companyservice.entity.Center;
-import com.example.companyservice.repository.BookmarkRepository;
+import com.example.companyservice.repository.bookmark.BookmarkRepository;
 import com.example.companyservice.repository.CenterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -90,10 +90,12 @@ public class CenterController {
                 .body(new BaseResponseDto<>(centerService.getCenterInfoDetail(centerId, memberId)));
     }
 
-    @GetMapping("/centers/bookmark")
-    public ResponseEntity<BaseResponseDto<List<BookmarkCenterResponseDto>>> getBookmarkCenterList(HttpServletRequest request) {
+    @GetMapping("/centers/bookmark/{bookmarkId}/{sortId}")
+    public ResponseEntity<BaseResponseDto<List<BookmarkCenterResponseDto>>> getBookmarkCenterList(HttpServletRequest request,
+                                                                                                  @PathVariable long bookmarkId,
+                                                                                                  @PathVariable long sortId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId)));
+                .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId, bookmarkId, sortId)));
     }
 }

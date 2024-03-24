@@ -5,7 +5,6 @@ import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
 import com.example.companyservice.client.dto.response.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
-import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.request.BusinessRequestDto;
 import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.dto.request.CenterUpdateRequestDto;
@@ -13,6 +12,7 @@ import com.example.companyservice.dto.request.HourRequestDto;
 import com.example.companyservice.dto.response.*;
 import com.example.companyservice.entity.*;
 import com.example.companyservice.repository.*;
+import com.example.companyservice.repository.bookmark.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -170,16 +170,15 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId) {
-        List<Bookmark> bookmarkList = bookmarkRepository.findAllByMemberId(memberId);
+    public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId, long bookmarkId, long sortId) {
+        List<Bookmark> bookmarkList = bookmarkRepository.getBookmarkList(memberId, bookmarkId, sortId);
         List<Long> centerIdList = bookmarkList.stream().map(b -> b.getCenter().getId()).toList();
         Map<Long, List<BookmarkTicketResponseDto>> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();
         List<BookmarkCenterResponseDto> result = new ArrayList<>();
-        centerIdList.forEach((i) -> {
-            Center center = centerRepository.findById(i)
-                    .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        bookmarkList.forEach((b) -> {
+            Center center = b.getCenter();
             BookmarkCenterResponseDto bookmarkCenterResponseDto =
-                    BookmarkCenterResponseDto.of(center, bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null));
+                    BookmarkCenterResponseDto.of(b, center, bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null));
             result.add(bookmarkCenterResponseDto);
         });
         return result;

@@ -1,6 +1,7 @@
 package com.example.companyservice.dto.response;
 
 import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
+import com.example.companyservice.entity.Bookmark;
 import com.example.companyservice.entity.Center;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,10 @@ import java.util.List;
 @Builder
 public class BookmarkCenterResponseDto {
 
+    private long bookmarkId;
+
+    private long centerId;
+
     private String centerName;
 
     private String address;
@@ -25,8 +30,10 @@ public class BookmarkCenterResponseDto {
 
     private List<BookmarkTicketResponseDto> ticketList;
 
-    public static BookmarkCenterResponseDto of(Center center, List<BookmarkTicketResponseDto> ticketList) {
+    public static BookmarkCenterResponseDto of(Bookmark bookmark, Center center, List<BookmarkTicketResponseDto> ticketList) {
         return BookmarkCenterResponseDto.builder()
+                .bookmarkId(bookmark.getId())
+                .centerId(center.getId())
                 .centerName(center.getCenterName())
                 .address(center.getAddress())
                 .score(center.getScore())
