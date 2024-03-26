@@ -2,10 +2,14 @@ package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ExceptionEnum;
+import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.repository.ReviewImageRepository;
 import com.example.ticketservice.repository.review.ReviewRepository;
 import com.example.ticketservice.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,10 @@ public class TicketServiceImpl implements TicketService{
 
     private final ReviewRepository reviewRepository;
 
+    private final ReviewService reviewService;
+
+    private final ReviewImageRepository reviewImageRepository;
+
     @Override
     @Transactional(readOnly = true)
     public List<TicketResponseDto> getTicketList(long centerId) {
@@ -43,7 +51,7 @@ public class TicketServiceImpl implements TicketService{
     public List<AdminTicketResponseDto> getAdminTicketList(long centerId, long ticketId) {
         List<Ticket> ticketList = ticketRepository.getTicketList(centerId, ticketId);
         CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
-        return ticketList.stream().map(t -> AdminTicketResponseDto.of(centerInfo, t)).toList();
+        return ticketList.stream().map(t -> AdminTicketResponseDto.of(centerInfo, t, reviewService.getScore(t.getId()))).toList();
     }
 
     @Override
@@ -69,6 +77,26 @@ public class TicketServiceImpl implements TicketService{
             bookmarkTicketResponseDtoMap.put(i, bookmarkScoreTicketResponseDto);
         });
         return bookmarkTicketResponseDtoMap;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdminReviewTicketResponseDto getTicketInfo(long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        BaseResponseDto<CenterInfoResponseDto> centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId());
+        float score = getScore(ticketId);
+        return AdminReviewTicketResponseDto.of(centerInfo.getData(), ticket, score);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ReviewListTicketResponseDto getIOSTicketInfo(long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        List<String> totalImageUrlList = reviewImageRepository.findAllUrlByTicketId(ticket.getId());
+        float score = getScore(ticketId);
+        return ReviewListTicketResponseDto.of(score, totalImageUrlList);
     }
 
     private float getScore(long centerId) {

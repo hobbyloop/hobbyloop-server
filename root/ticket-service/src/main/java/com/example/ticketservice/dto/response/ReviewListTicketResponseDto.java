@@ -11,21 +11,17 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReviewListResponseDto {
+public class ReviewListTicketResponseDto {
 
     private float score;
 
     private List<String> totalImageUrlList;
 
-    private List<ReviewResponseDto> reviewResponseDtoList;
-
-    public static ReviewListResponseDto of(float score,
-                                           List<String> totalImageUrlList,
-                                           List<ReviewResponseDto> reviewResponseDtoList) {
-        return ReviewListResponseDto.builder()
+    public static ReviewListTicketResponseDto of(float score,
+                                                 List<String> totalImageUrlList) {
+        return ReviewListTicketResponseDto.builder()
                 .score(score)
                 .totalImageUrlList(totalImageUrlList)
-                .reviewResponseDtoList(reviewResponseDtoList)
                 .build();
     }
 }

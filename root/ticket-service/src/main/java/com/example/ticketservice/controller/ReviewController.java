@@ -2,9 +2,9 @@ package com.example.ticketservice.controller;
 
 import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.dto.request.ReviewRequestDto;
-import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 import com.example.ticketservice.dto.BaseResponseDto;
-import com.example.ticketservice.dto.response.ReviewListResponseDto;
+import com.example.ticketservice.dto.response.ReviewCommentResponseDto;
+import com.example.ticketservice.dto.response.ReviewResponseDto;
 import com.example.ticketservice.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/admin-page/{ticketId}/{reviewId}")
-    public ResponseEntity<BaseResponseDto<AdminReviewResponseDto>> getAdminReviewList(@PathVariable long ticketId,
-                                                                                      @PathVariable long reviewId) {
+    public ResponseEntity<BaseResponseDto<List<ReviewCommentResponseDto>>> getAdminReviewList(@PathVariable long ticketId,
+                                                                                              @PathVariable long reviewId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(reviewService.getAdminReviewList(ticketId, reviewId)));
     }
@@ -46,10 +46,10 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{ticketId}/{pageNo}/{sortId}")
-    public ResponseEntity<BaseResponseDto<ReviewListResponseDto>> getReviewList(HttpServletRequest request,
-                                                                                @PathVariable long ticketId,
-                                                                                @PathVariable int pageNo,
-                                                                                @PathVariable int sortId) {
+    public ResponseEntity<BaseResponseDto<List<ReviewResponseDto>>> getReviewList(HttpServletRequest request,
+                                                                                  @PathVariable long ticketId,
+                                                                                  @PathVariable int pageNo,
+                                                                                  @PathVariable int sortId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(reviewService.getReviewList(memberId, ticketId, pageNo, sortId)));

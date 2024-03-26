@@ -33,7 +33,9 @@ public class AdminTicketResponseDto {
 
     private boolean isUpload;
 
-    public static AdminTicketResponseDto of(CenterInfoResponseDto centerInfo, Ticket ticket) {
+    private float score;
+
+    public static AdminTicketResponseDto of(CenterInfoResponseDto centerInfo, Ticket ticket, float score) {
         return AdminTicketResponseDto.builder()
                 .ticketId(ticket.getId())
                 .centerInfo(centerInfo)
@@ -44,6 +46,7 @@ public class AdminTicketResponseDto {
                 .totalCount(ticket.getTotalCount())
                 .issueCount(ticket.getIssueCount())
                 .isUpload(ticket.isUpload())
+                .score(score)
                 .build();
     }
 }
