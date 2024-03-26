@@ -7,13 +7,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminReviewResponseDto {
+public class AdminReviewTicketResponseDto {
 
     private String centerName;
 
@@ -23,18 +21,14 @@ public class AdminReviewResponseDto {
 
     private float score;
 
-    private List<ReviewCommentResponseDto> reviewResponseDtoList;
-
-    public static AdminReviewResponseDto of(CenterInfoResponseDto responseDto,
-                                            Ticket ticket,
-                                            float score,
-                                            List<ReviewCommentResponseDto> reviewResponseDtoList) {
-        return AdminReviewResponseDto.builder()
+    public static AdminReviewTicketResponseDto of(CenterInfoResponseDto responseDto,
+                                                  Ticket ticket,
+                                                  float score) {
+        return AdminReviewTicketResponseDto.builder()
                 .centerName(responseDto.getCenterName())
                 .address(responseDto.getAddress())
                 .ticketName(ticket.getName())
                 .score(score)
-                .reviewResponseDtoList(reviewResponseDtoList)
                 .build();
     }
 }

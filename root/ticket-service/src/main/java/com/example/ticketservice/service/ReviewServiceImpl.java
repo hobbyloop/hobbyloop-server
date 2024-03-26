@@ -1,14 +1,10 @@
 package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
-import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
-import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.ReviewRequestDto;
-import com.example.ticketservice.dto.response.AdminReviewResponseDto;
 import com.example.ticketservice.dto.response.ReviewCommentResponseDto;
-import com.example.ticketservice.dto.response.ReviewListResponseDto;
 import com.example.ticketservice.dto.response.ReviewResponseDto;
 import com.example.ticketservice.entity.Comment;
 import com.example.ticketservice.entity.Review;
@@ -34,8 +30,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    private final CompanyServiceClient companyServiceClient;
-
     private final CommentRepository commentRepository;
 
     private final ReviewLikeRepository reviewLikeRepository;
@@ -57,13 +51,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public AdminReviewResponseDto getAdminReviewList(long ticketId, long reviewId) {
+    public List<ReviewCommentResponseDto> getAdminReviewList(long ticketId, long reviewId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
-        BaseResponseDto<CenterInfoResponseDto> centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId());
-        List<ReviewCommentResponseDto> reviewCommentResponseDtoList = getReviewCommentResponseDtoList(ticketId, reviewId);
-        float score = getScore(ticketId);
-        return AdminReviewResponseDto.of(centerInfo.getData(), ticket, score, reviewCommentResponseDtoList);
+        return getReviewCommentResponseDtoList(ticket.getId(), reviewId);
     }
 
     @Override
@@ -74,23 +65,22 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReviewListResponseDto getReviewList(long memberId, long ticketId, int pageNo, int sortId) {
+    public List<ReviewResponseDto> getReviewList(long memberId, long ticketId, int pageNo, int sortId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
-        List<String> totalImageUrlList = reviewImageRepository.findAllUrlByTicketId(ticketId);
         List<Review> reviewList = reviewRepository.getReviewListSorting(ticketId, pageNo, sortId);
-        List<ReviewResponseDto> reviewResponseDtoList = reviewList
+        return reviewList
                 .stream()
                 .map(r -> ReviewResponseDto.of(r,
                         ticket.getName(),
                         reviewImageRepository.findAllUrlByReviewId(r.getId()),
                         reviewLikeRepository.existsByReviewIdAndMemberId(r.getId(), memberId)))
                 .toList();
-        float score = getScore(ticketId);
-        return ReviewListResponseDto.of(score, totalImageUrlList, reviewResponseDtoList);
     }
 
-    private float getScore(long ticketId) {
+    @Override
+    @Transactional(readOnly = true)
+    public float getScore(long ticketId) {
         List<Review> reviewList = reviewRepository.findAllByTicketId(ticketId);
         if (reviewList.size() == 0) return 0;
         float scoreSum = 0;

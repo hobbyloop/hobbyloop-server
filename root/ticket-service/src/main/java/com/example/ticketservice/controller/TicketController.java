@@ -46,4 +46,16 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getBookmarkTicketList(centerIdList)));
     }
+
+    @GetMapping("/tickets/admin-review-page/info/{ticketId}")
+    public ResponseEntity<BaseResponseDto<AdminReviewTicketResponseDto>> getTicketInfo(@PathVariable long ticketId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getTicketInfo(ticketId)));
+    }
+
+    @GetMapping("/tickets/iOS-review-page/info/{ticketId}")
+    public ResponseEntity<BaseResponseDto<ReviewListTicketResponseDto>> getIOSTicketInfo(@PathVariable long ticketId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getIOSTicketInfo(ticketId)));
+    }
 }
