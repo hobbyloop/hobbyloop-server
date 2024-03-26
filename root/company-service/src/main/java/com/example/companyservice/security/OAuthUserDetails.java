@@ -36,7 +36,6 @@ public class OAuthUserDetails extends User implements OAuth2User {
     public OAuthUserDetails(String username,
                             String password,
                             Collection<? extends GrantedAuthority> authorities) {
-
         super(username, password, authorities);
         this.email = username;
         this.password = password;

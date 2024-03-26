@@ -57,6 +57,9 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
             HashMap<String, String> map = oAuth2User.getAttribute("response");
             providerId = map.get("id");
             email = map.get("email");
+        } else if (provider.equals("Google")) {
+            providerId = oAuth2User.getAttribute("sub");
+            email = oAuth2User.getAttribute("email");
         } else {
             throw new ApiException(ExceptionEnum.NOT_SUPPORT_PROVIDER_TYPE);
         }
