@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> {
 
-    @Query("select ri.reviewImageUrl from ReviewImage ri where ri.ticket.id = :ticketId")
+    @Query("select ri.reviewImageUrl from ReviewImage ri where ri.ticket.id = :ticketId order by ri.id desc limit 4")
     List<String> findAllUrlByTicketId(long ticketId);
 
     @Query("select ri.reviewImageUrl from ReviewImage ri where ri.review.id = :reviewId")

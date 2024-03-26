@@ -2,14 +2,13 @@ package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
-import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.response.AdminTicketResponseDto;
 import com.example.ticketservice.dto.response.BookmarkTicketResponseDto;
 import com.example.ticketservice.dto.response.TicketCreateResponseDto;
 import com.example.ticketservice.dto.response.TicketResponseDto;
 import com.example.ticketservice.entity.Ticket;
-import com.example.ticketservice.repository.TicketRepository;
+import com.example.ticketservice.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +39,8 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<AdminTicketResponseDto> getAdminTicketList(long centerId) {
-        List<Ticket> ticketList = ticketRepository.findAllByCenterId(centerId);
+    public List<AdminTicketResponseDto> getAdminTicketList(long centerId, long ticketId) {
+        List<Ticket> ticketList = ticketRepository.getTicketList(centerId, ticketId);
         CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
         return ticketList.stream().map(t -> AdminTicketResponseDto.of(centerInfo, t)).toList();
     }

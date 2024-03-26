@@ -18,10 +18,10 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Bookmark> getBookmarkList(long memberId, long bookmarkId, long sortId) {
+    public List<Bookmark> getBookmarkList(long memberId, long bookmarkId, int sortId) {
         return queryFactory
                 .selectFrom(bookmark)
-                .where(ltBookmarkId(bookmarkId, sortId))
+                .where(bookmark.memberId.eq(memberId).and(ltBookmarkId(bookmarkId, sortId)))
                 .limit(20)
                 .orderBy(createOrderSpecifier(sortId))
                 .fetch();
@@ -31,11 +31,11 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
         return bookmarkId != -1 ? sortId == 0 ? bookmark.id.lt(bookmarkId) : bookmark.id.gt(bookmarkId) : null;
     }
 
-    private OrderSpecifier[] createOrderSpecifier(long sortId) {
+    private OrderSpecifier[] createOrderSpecifier(int sortId) {
 
         List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
 
-        if(sortId == 0) {
+        if (sortId == 0) {
             orderSpecifiers.add(new OrderSpecifier(Order.DESC, bookmark.id));
         } else {
             orderSpecifiers.add(new OrderSpecifier(Order.ASC, bookmark.id));

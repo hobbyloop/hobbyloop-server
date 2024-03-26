@@ -93,7 +93,7 @@ public class CenterController {
     @GetMapping("/centers/bookmark/{bookmarkId}/{sortId}")
     public ResponseEntity<BaseResponseDto<List<BookmarkCenterResponseDto>>> getBookmarkCenterList(HttpServletRequest request,
                                                                                                   @PathVariable long bookmarkId,
-                                                                                                  @PathVariable long sortId) {
+                                                                                                  @PathVariable int sortId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId, bookmarkId, sortId)));

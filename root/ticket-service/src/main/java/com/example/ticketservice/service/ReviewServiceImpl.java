@@ -15,6 +15,8 @@ import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.ReviewImage;
 import com.example.ticketservice.entity.Ticket;
 import com.example.ticketservice.repository.*;
+import com.example.ticketservice.repository.review.ReviewRepository;
+import com.example.ticketservice.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,11 +57,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public AdminReviewResponseDto getAdminReviewList(long ticketId) {
+    public AdminReviewResponseDto getAdminReviewList(long ticketId, long reviewId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         BaseResponseDto<CenterInfoResponseDto> centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId());
-        List<ReviewCommentResponseDto> reviewCommentResponseDtoList = getReviewCommentResponseDtoList(ticketId);
+        List<ReviewCommentResponseDto> reviewCommentResponseDtoList = getReviewCommentResponseDtoList(ticketId, reviewId);
         return AdminReviewResponseDto.of(centerInfo.getData(), ticket, reviewCommentResponseDtoList);
     }
 
@@ -71,11 +73,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReviewListResponseDto getReviewList(long memberId, long ticketId) {
+    public ReviewListResponseDto getReviewList(long memberId, long ticketId, int pageNo, int sortId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         List<String> totalImageUrlList = reviewImageRepository.findAllUrlByTicketId(ticketId);
-        List<Review> reviewList = reviewRepository.findAllByTicketId(ticketId);
+        List<Review> reviewList = reviewRepository.getReviewListSorting(ticketId, pageNo, sortId);
         List<ReviewResponseDto> reviewResponseDtoList = reviewList
                 .stream()
                 .map(r -> ReviewResponseDto.of(r,
@@ -86,9 +88,9 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewListResponseDto.of(ticket.getScore(), totalImageUrlList, reviewResponseDtoList);
     }
 
-    private List<ReviewCommentResponseDto> getReviewCommentResponseDtoList(long ticketId) {
+    private List<ReviewCommentResponseDto> getReviewCommentResponseDtoList(long ticketId, long reviewId) {
         List<ReviewCommentResponseDto> reviewCommentResponseDtoList = new ArrayList<>();
-        List<Review> reviewList = reviewRepository.findAllByTicketId(ticketId);
+        List<Review> reviewList = reviewRepository.getReviewList(ticketId, reviewId);
         reviewList.forEach(r -> {
             List<Comment> commentList = commentRepository.findAllByReviewId(r.getId());
             List<String> commentString = commentList.stream().map(Comment::getContent).toList();
