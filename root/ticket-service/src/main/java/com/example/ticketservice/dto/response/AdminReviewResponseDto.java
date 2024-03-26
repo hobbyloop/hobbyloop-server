@@ -27,12 +27,13 @@ public class AdminReviewResponseDto {
 
     public static AdminReviewResponseDto of(CenterInfoResponseDto responseDto,
                                             Ticket ticket,
+                                            float score,
                                             List<ReviewCommentResponseDto> reviewResponseDtoList) {
         return AdminReviewResponseDto.builder()
                 .centerName(responseDto.getCenterName())
                 .address(responseDto.getAddress())
                 .ticketName(ticket.getName())
-                .score(ticket.getScore())
+                .score(score)
                 .reviewResponseDtoList(reviewResponseDtoList)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.example.companyservice.client;
 
+import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.client.dto.response.TicketResponseDto;
@@ -16,7 +17,7 @@ public interface TicketServiceClient {
     BaseResponseDto<List<TicketResponseDto>> getTicketList(@PathVariable long centerId);
 
     @PostMapping("/api/v1/tickets/bookmark-center")
-    BaseResponseDto<Map<Long, List<BookmarkTicketResponseDto>>> getBookmarkTicketList(@RequestBody List<Long> centerIdList);
+    BaseResponseDto<Map<Long, BookmarkScoreTicketResponseDto>> getBookmarkTicketList(@RequestBody List<Long> centerIdList);
 
     @GetMapping("/api/v1/reviews/count/{centerId}")
     BaseResponseDto<Integer> getReviewCountByCenterId(@PathVariable long centerId);

@@ -1,10 +1,7 @@
 package com.example.ticketservice.service;
 
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
-import com.example.ticketservice.dto.response.AdminTicketResponseDto;
-import com.example.ticketservice.dto.response.BookmarkTicketResponseDto;
-import com.example.ticketservice.dto.response.TicketCreateResponseDto;
-import com.example.ticketservice.dto.response.TicketResponseDto;
+import com.example.ticketservice.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -17,5 +14,5 @@ public interface TicketService {
 
     TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto, MultipartFile ticketImage);
 
-    Map<Long, List<BookmarkTicketResponseDto>> getBookmarkTicketList(List<Long> centerIdList);
+    Map<Long, BookmarkScoreTicketResponseDto> getBookmarkTicketList(List<Long> centerIdList);
 }
