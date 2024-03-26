@@ -170,7 +170,7 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId, long bookmarkId, long sortId) {
+    public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId, long bookmarkId, int sortId) {
         List<Bookmark> bookmarkList = bookmarkRepository.getBookmarkList(memberId, bookmarkId, sortId);
         List<Long> centerIdList = bookmarkList.stream().map(b -> b.getCenter().getId()).toList();
         Map<Long, List<BookmarkTicketResponseDto>> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();

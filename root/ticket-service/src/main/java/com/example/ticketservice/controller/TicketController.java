@@ -29,10 +29,11 @@ public class TicketController {
                 .body(new BaseResponseDto<>(ticketService.getTicketList(centerId)));
     }
 
-    @GetMapping("/tickets/admin-page/{centerId}")
-    public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(@PathVariable long centerId) {
+    @GetMapping("/tickets/admin-page/{centerId}/{ticketId}")
+    public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(@PathVariable long centerId,
+                                                                                            @PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(ticketService.getAdminTicketList(centerId)));
+                .body(new BaseResponseDto<>(ticketService.getAdminTicketList(centerId, ticketId)));
     }
 
     @PostMapping("/tickets/{centerId}")

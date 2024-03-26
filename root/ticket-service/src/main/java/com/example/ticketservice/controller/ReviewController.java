@@ -32,10 +32,11 @@ public class ReviewController {
                 .body(new BaseResponseDto<>(reviewService.createReview(memberId, ticketId, requestDto, reviewImageList)));
     }
 
-    @GetMapping("/reviews/admin-page/{ticketId}")
-    public ResponseEntity<BaseResponseDto<AdminReviewResponseDto>> getAdminReviewList(@PathVariable long ticketId) {
+    @GetMapping("/reviews/admin-page/{ticketId}/{reviewId}")
+    public ResponseEntity<BaseResponseDto<AdminReviewResponseDto>> getAdminReviewList(@PathVariable long ticketId,
+                                                                                      @PathVariable long reviewId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(reviewService.getAdminReviewList(ticketId)));
+                .body(new BaseResponseDto<>(reviewService.getAdminReviewList(ticketId, reviewId)));
     }
 
     @GetMapping("/reviews/count/{centerId}")
@@ -44,11 +45,13 @@ public class ReviewController {
                 .body(new BaseResponseDto<>(reviewService.getReviewCountByCenterId(centerId)));
     }
 
-    @GetMapping("/reviews/{ticketId}")
+    @GetMapping("/reviews/{ticketId}/{pageNo}/{sortId}")
     public ResponseEntity<BaseResponseDto<ReviewListResponseDto>> getReviewList(HttpServletRequest request,
-                                                                                @PathVariable long ticketId) {
+                                                                                @PathVariable long ticketId,
+                                                                                @PathVariable int pageNo,
+                                                                                @PathVariable int sortId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(reviewService.getReviewList(memberId, ticketId)));
+                .body(new BaseResponseDto<>(reviewService.getReviewList(memberId, ticketId, pageNo, sortId)));
     }
 }

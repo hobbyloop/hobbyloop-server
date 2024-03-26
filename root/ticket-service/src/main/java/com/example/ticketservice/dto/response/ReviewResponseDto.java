@@ -16,6 +16,8 @@ import java.util.List;
 @Builder
 public class ReviewResponseDto {
 
+    private Long reviewId;
+
     private String nickname;
 
     private LocalDateTime createdAt;
@@ -39,6 +41,7 @@ public class ReviewResponseDto {
                                        List<String> reviewImageList,
                                        boolean isLike) {
         return ReviewResponseDto.builder()
+                .reviewId(review.getId())
                 .nickname(review.getNickname())
                 .createdAt(review.getCreatedAt())
                 .score(review.getScore())

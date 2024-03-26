@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Builder
 public class AdminTicketResponseDto {
 
+    private Long ticketId;
+
     private CenterInfoResponseDto centerInfo;
 
     private String name;
@@ -33,6 +35,7 @@ public class AdminTicketResponseDto {
 
     public static AdminTicketResponseDto of(CenterInfoResponseDto centerInfo, Ticket ticket) {
         return AdminTicketResponseDto.builder()
+                .ticketId(ticket.getId())
                 .centerInfo(centerInfo)
                 .name(ticket.getName())
                 .ticketImageUrl(ticket.getTicketImageUrl())

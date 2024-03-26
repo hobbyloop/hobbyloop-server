@@ -13,7 +13,7 @@ import java.util.Map;
 public interface TicketService {
     List<TicketResponseDto> getTicketList(long centerId);
 
-    List<AdminTicketResponseDto> getAdminTicketList(long centerId);
+    List<AdminTicketResponseDto> getAdminTicketList(long centerId, long ticketId);
 
     TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto, MultipartFile ticketImage);
 

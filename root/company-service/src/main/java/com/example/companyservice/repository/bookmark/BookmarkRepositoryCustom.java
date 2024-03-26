@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface BookmarkRepositoryCustom {
 
-    List<Bookmark> getBookmarkList(long memberId, long bookmarkId, long sortId);
+    List<Bookmark> getBookmarkList(long memberId, long bookmarkId, int sortId);
 }
