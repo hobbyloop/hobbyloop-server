@@ -62,7 +62,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         BaseResponseDto<CenterInfoResponseDto> centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId());
         List<ReviewCommentResponseDto> reviewCommentResponseDtoList = getReviewCommentResponseDtoList(ticketId, reviewId);
-        return AdminReviewResponseDto.of(centerInfo.getData(), ticket, reviewCommentResponseDtoList);
+        float score = getScore(ticketId);
+        return AdminReviewResponseDto.of(centerInfo.getData(), ticket, score, reviewCommentResponseDtoList);
     }
 
     @Override
@@ -85,7 +86,16 @@ public class ReviewServiceImpl implements ReviewService {
                         reviewImageRepository.findAllUrlByReviewId(r.getId()),
                         reviewLikeRepository.existsByReviewIdAndMemberId(r.getId(), memberId)))
                 .toList();
-        return ReviewListResponseDto.of(ticket.getScore(), totalImageUrlList, reviewResponseDtoList);
+        float score = getScore(ticketId);
+        return ReviewListResponseDto.of(score, totalImageUrlList, reviewResponseDtoList);
+    }
+
+    private float getScore(long ticketId) {
+        List<Review> reviewList = reviewRepository.findAllByTicketId(ticketId);
+        if (reviewList.size() == 0) return 0;
+        float scoreSum = 0;
+        for (Review review : reviewList) scoreSum += review.getScore();
+        return scoreSum / reviewList.size();
     }
 
     private List<ReviewCommentResponseDto> getReviewCommentResponseDtoList(long ticketId, long reviewId) {

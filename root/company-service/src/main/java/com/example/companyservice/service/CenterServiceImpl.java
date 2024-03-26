@@ -1,6 +1,7 @@
 package com.example.companyservice.service;
 
 import com.example.companyservice.client.TicketServiceClient;
+import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
 import com.example.companyservice.client.dto.response.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
@@ -173,12 +174,22 @@ public class CenterServiceImpl implements CenterService {
     public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId, long bookmarkId, int sortId) {
         List<Bookmark> bookmarkList = bookmarkRepository.getBookmarkList(memberId, bookmarkId, sortId);
         List<Long> centerIdList = bookmarkList.stream().map(b -> b.getCenter().getId()).toList();
-        Map<Long, List<BookmarkTicketResponseDto>> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();
+        Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();
+        return getBookmarkCenterResponseDtoList(bookmarkList, bookmarkTicketResponseDtoMap);
+    }
+
+    private static List<BookmarkCenterResponseDto> getBookmarkCenterResponseDtoList(List<Bookmark> bookmarkList, Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap) {
         List<BookmarkCenterResponseDto> result = new ArrayList<>();
         bookmarkList.forEach((b) -> {
             Center center = b.getCenter();
             BookmarkCenterResponseDto bookmarkCenterResponseDto =
-                    BookmarkCenterResponseDto.of(b, center, bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null));
+                    BookmarkCenterResponseDto.of(
+                            b,
+                            center,
+                            bookmarkTicketResponseDtoMap.get(center.getId()).getScore(),
+                            bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null)
+                                    .getBookmarkTicketResponseDtoList()
+                    );
             result.add(bookmarkCenterResponseDto);
         });
         return result;

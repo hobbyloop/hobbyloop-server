@@ -46,8 +46,6 @@ public class Center extends TimeStamped {
 
     private int adBalance;
 
-    private float score;
-
     private String logoImageKey;
 
     private String logoImageUrl;

@@ -30,13 +30,16 @@ public class BookmarkCenterResponseDto {
 
     private List<BookmarkTicketResponseDto> ticketList;
 
-    public static BookmarkCenterResponseDto of(Bookmark bookmark, Center center, List<BookmarkTicketResponseDto> ticketList) {
+    public static BookmarkCenterResponseDto of(Bookmark bookmark,
+                                               Center center,
+                                               float score,
+                                               List<BookmarkTicketResponseDto> ticketList) {
         return BookmarkCenterResponseDto.builder()
                 .bookmarkId(bookmark.getId())
                 .centerId(center.getId())
                 .centerName(center.getCenterName())
                 .address(center.getAddress())
-                .score(center.getScore())
+                .score(score)
                 .logoImageUrl(center.getLogoImageUrl())
                 .ticketList(ticketList)
                 .build();

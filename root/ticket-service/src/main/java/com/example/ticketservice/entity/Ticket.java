@@ -58,8 +58,6 @@ public class Ticket extends TimeStamped {
 
     private int purchaseCount; // 확인필요
 
-    private float score;
-
     private boolean isAvailable; // 확인필요
 
     private boolean isUpload;

@@ -3,11 +3,10 @@ package com.example.ticketservice.service;
 import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
-import com.example.ticketservice.dto.response.AdminTicketResponseDto;
-import com.example.ticketservice.dto.response.BookmarkTicketResponseDto;
-import com.example.ticketservice.dto.response.TicketCreateResponseDto;
-import com.example.ticketservice.dto.response.TicketResponseDto;
+import com.example.ticketservice.dto.response.*;
+import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.repository.review.ReviewRepository;
 import com.example.ticketservice.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,8 @@ public class TicketServiceImpl implements TicketService{
     private final CompanyServiceClient companyServiceClient;
 
     private final AmazonS3Service amazonS3Service;
+
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -58,14 +59,24 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     @Transactional(readOnly = true)
-    public Map<Long, List<BookmarkTicketResponseDto>> getBookmarkTicketList(List<Long> centerIdList) {
-        Map<Long, List<BookmarkTicketResponseDto>> bookmarkTicketResponseDtoMap = new HashMap<>();
+    public Map<Long, BookmarkScoreTicketResponseDto> getBookmarkTicketList(List<Long> centerIdList) {
+        Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap = new HashMap<>();
         centerIdList.forEach((i) -> {
+            float score = getScore(i);
             List<Ticket> ticketList = ticketRepository.findAllByCenterId(i);
             List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList = ticketList.stream().map(BookmarkTicketResponseDto::from).toList();
-            bookmarkTicketResponseDtoMap.put(i, bookmarkTicketResponseDtoList);
+            BookmarkScoreTicketResponseDto bookmarkScoreTicketResponseDto = BookmarkScoreTicketResponseDto.of(score, bookmarkTicketResponseDtoList);
+            bookmarkTicketResponseDtoMap.put(i, bookmarkScoreTicketResponseDto);
         });
         return bookmarkTicketResponseDtoMap;
+    }
+
+    private float getScore(long centerId) {
+        List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
+        if (reviewList.size() == 0) return 0;
+        float scoreSum = 0;
+        for (Review review : reviewList) scoreSum += review.getScore();
+        return scoreSum / reviewList.size();
     }
 
     private String saveS3Img(MultipartFile profileImg) {
