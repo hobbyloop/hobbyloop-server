@@ -98,4 +98,16 @@ public class CenterController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId, bookmarkId, sortId)));
     }
+
+    @GetMapping("/centers/original/{centerId}")
+    public ResponseEntity<BaseResponseDto<OriginalCenterResponseDto>> getOriginalCenterInfo(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getOriginalCenterInfo(centerId)));
+    }
+
+    @GetMapping("/centers/original/business/{centerId}")
+    public ResponseEntity<BaseResponseDto<OriginalBusinessResponseDto>> getOriginalBusinessInfo(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
+    }
 }

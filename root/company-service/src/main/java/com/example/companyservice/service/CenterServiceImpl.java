@@ -2,7 +2,6 @@ package com.example.companyservice.service;
 
 import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
-import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
 import com.example.companyservice.client.dto.response.TicketResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
@@ -176,6 +175,27 @@ public class CenterServiceImpl implements CenterService {
         List<Long> centerIdList = bookmarkList.stream().map(b -> b.getCenter().getId()).toList();
         Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();
         return getBookmarkCenterResponseDtoList(bookmarkList, bookmarkTicketResponseDtoMap);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OriginalCenterResponseDto getOriginalCenterInfo(long centerId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        List<String> centerImageUrlList = centerImageRepository.findAllCenterImage(centerId);
+        List<CenterOperatingHour> centerOperatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> operationHourDtoList = getOperationHourDtoList(centerOperatingHourList);
+        List<CenterBreakHour> centerBreakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> breakHourDtoList = getBreakHourDtoList(centerBreakHourList);
+        return OriginalCenterResponseDto.of(center, centerImageUrlList, operationHourDtoList, breakHourDtoList);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OriginalBusinessResponseDto getOriginalBusinessInfo(long centerId) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        return OriginalBusinessResponseDto.from(center);
     }
 
     private static List<BookmarkCenterResponseDto> getBookmarkCenterResponseDtoList(List<Bookmark> bookmarkList, Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap) {

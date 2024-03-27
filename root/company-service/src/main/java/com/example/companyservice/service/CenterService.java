@@ -29,4 +29,8 @@ public interface CenterService {
     CenterInfoDetailResponseDto getCenterInfoDetail(long centerId, long memberId);
 
     List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId, long bookmarkId, int sortId);
+
+    OriginalCenterResponseDto getOriginalCenterInfo(long centerId);
+
+    OriginalBusinessResponseDto getOriginalBusinessInfo(long centerId);
 }
