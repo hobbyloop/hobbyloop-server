@@ -24,4 +24,12 @@ public class Comment extends TimeStamped {
     private Review review;
 
     private Long companyId;
+
+    public static Comment of(String content, Review review, Long companyId) {
+        return Comment.builder()
+                .content(content)
+                .review(review)
+                .companyId(companyId)
+                .build();
+    }
 }
