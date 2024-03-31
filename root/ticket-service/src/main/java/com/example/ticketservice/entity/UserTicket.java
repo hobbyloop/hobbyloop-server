@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,4 +29,10 @@ public class UserTicket extends TimeStamped {
     private Ticket ticket;
 
     private Long memberId;
+
+    private boolean isApprove;
+
+    private LocalDateTime approveTime;
+
+    private boolean isDelete;
 }

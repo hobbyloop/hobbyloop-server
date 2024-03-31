@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/root" />
+        <option name="gradleJvm" value="corretto-17" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/root" />
+            <option value="$PROJECT_DIR$/root/api-gateway-server" />
+            <option value="$PROJECT_DIR$/root/company-service" />
+            <option value="$PROJECT_DIR$/root/discovery-server" />
+            <option value="$PROJECT_DIR$/root/instructor-service" />
+            <option value="$PROJECT_DIR$/root/member-service" />
+            <option value="$PROJECT_DIR$/root/pay-service" />
+            <option value="$PROJECT_DIR$/root/ticket-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

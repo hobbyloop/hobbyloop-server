@@ -1,4 +1,4 @@
-package com.example.ticketservice.entity;
+package com.example.instructorservice.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
