@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class PurchaseHistory extends TimeStamped {
 
     @Id
-    @Column(name = "postpaid_history_id")
+    @Column(name = "purchase_history_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
