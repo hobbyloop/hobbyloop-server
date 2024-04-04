@@ -58,4 +58,10 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getIOSTicketInfo(ticketId)));
     }
+
+    @GetMapping("/tickets/detail/{ticketId}")
+    public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> getTicketDetail(@PathVariable long ticketId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getTicketDetail(ticketId)));
+    }
 }

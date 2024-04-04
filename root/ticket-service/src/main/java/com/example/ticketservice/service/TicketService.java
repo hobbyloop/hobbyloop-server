@@ -19,4 +19,6 @@ public interface TicketService {
     AdminReviewTicketResponseDto getTicketInfo(long ticketId);
 
     ReviewListTicketResponseDto getIOSTicketInfo(long ticketId);
+
+    TicketDetailResponseDto getTicketDetail(long ticketId);
 }
