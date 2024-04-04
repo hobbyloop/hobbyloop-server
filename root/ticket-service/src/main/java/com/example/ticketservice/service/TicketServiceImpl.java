@@ -2,6 +2,8 @@ package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
+import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
+import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.BaseResponseDto;
@@ -98,6 +100,18 @@ public class TicketServiceImpl implements TicketService{
         float score = getScore(ticketId);
         return ReviewListTicketResponseDto.of(score, totalImageUrlList);
     }
+
+    @Override
+    @Transactional
+    public TicketDetailResponseDto getTicketDetail(long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        OriginalCenterResponseDto centerInfo = companyServiceClient.getOriginalCenterInfo(ticket.getCenterId()).getData();
+        OriginalBusinessResponseDto businessInfo = companyServiceClient.getOriginalBusinessInfo(ticket.getCenterId()).getData();
+        // lectureInfo도 필요함
+        return TicketDetailResponseDto.of(ticket, centerInfo, businessInfo);
+    }
+
 
     private float getScore(long centerId) {
         List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
