@@ -1,4 +1,4 @@
-package com.example.instructorservice.entity;
+package com.example.ticketservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,14 +8,14 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Builder
-public class LectureWaitingList extends TimeStamped {
+public class LectureWaiting extends TimeStamped {
 
     @Id
-    @Column(name = "lecture_waiting_list_id")
+    @Column(name = "lecture_waiting_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int number;
+    private Long memberId;
 
     private int status;
 

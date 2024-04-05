@@ -1,4 +1,4 @@
-package com.example.instructorservice.entity;
+package com.example.ticketservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,11 +17,11 @@ public class LectureReservation extends TimeStamped {
 
     private int status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_id")
-    private Lecture lecture;
+    private Long lectureScheduleId;
 
-    private Long lectureTicketId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_ticket_id")
+    private UserTicket userTicket;
 
     private Long lecturePassId;
 
