@@ -1,6 +1,7 @@
 package com.example.ticketservice.entity;
 
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -88,5 +89,28 @@ public class Ticket extends TimeStamped {
                 .refundPercentage(requestDto.getRefundPercentage())
                 .centerId(centerId)
                 .build();
+    }
+
+    public void updateTicketImage(String ticketImageKey, String ticketImageUrl) {
+        this.ticketImageKey = ticketImageKey;
+        this.ticketImageUrl = ticketImageUrl;
+    }
+
+    public void update(TicketUpdateRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.category = CategoryEnum.findByName(requestDto.getCategory()).getCategoryType();
+        this.introduce = requestDto.getIntroduce();
+        this.expirationStartDate = requestDto.getExpirationStartDate();
+        this.expirationEndDate = requestDto.getExpirationEndDate();
+        this.duration = requestDto.getDuration();
+        this.useCount = requestDto.getUseCount();
+        this.isTotalCount = requestDto.isTotalCount();
+        this.totalCount = requestDto.getTotalCount();
+        this.price = requestDto.getPrice();
+        this.vat = requestDto.getVat();
+        this.discountRate = requestDto.getDiscountRate();
+        this.calculatedPrice = requestDto.getCalculatedPrice();
+        this.refundRegulation = requestDto.getRefundRegulation();
+        this.refundPercentage = requestDto.getRefundPercentage();
     }
 }

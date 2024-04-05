@@ -8,6 +8,7 @@ import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
@@ -110,6 +111,22 @@ public class TicketServiceImpl implements TicketService{
         OriginalBusinessResponseDto businessInfo = companyServiceClient.getOriginalBusinessInfo(ticket.getCenterId()).getData();
         // lectureInfo도 필요함
         return TicketDetailResponseDto.of(ticket, centerInfo, businessInfo);
+    }
+
+    @Override
+    @Transactional
+    public TicketDetailResponseDto updateTicket(long ticketId, TicketUpdateRequestDto requestDto, MultipartFile ticketImage) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+
+        if (ticketImage != null) {
+            String ticketImageKey = saveS3Img(ticketImage);
+            String ticketImageUrl = amazonS3Service.getFileUrl(ticketImageKey);
+            ticket.updateTicketImage(ticketImageKey, ticketImageUrl);
+        }
+
+        ticket.update(requestDto);
+        return getTicketDetail(ticketId);
     }
 
 
