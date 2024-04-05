@@ -1,6 +1,7 @@
 package com.example.ticketservice.service;
 
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,4 +22,6 @@ public interface TicketService {
     ReviewListTicketResponseDto getIOSTicketInfo(long ticketId);
 
     TicketDetailResponseDto getTicketDetail(long ticketId);
+
+    TicketDetailResponseDto updateTicket(long ticketId, TicketUpdateRequestDto requestDto, MultipartFile ticketImage);
 }

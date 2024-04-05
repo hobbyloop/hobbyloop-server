@@ -2,6 +2,7 @@ package com.example.ticketservice.controller;
 
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.service.TicketService;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +64,13 @@ public class TicketController {
     public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> getTicketDetail(@PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketDetail(ticketId)));
+    }
+
+    @PatchMapping("/tickets/{ticketId}")
+    public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> updateTicket(@PathVariable long ticketId,
+                                                                                @RequestPart TicketUpdateRequestDto requestDto,
+                                                                                @RequestPart(required = false) MultipartFile ticketImage) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.updateTicket(ticketId, requestDto, ticketImage)));
     }
 }
