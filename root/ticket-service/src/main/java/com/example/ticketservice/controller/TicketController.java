@@ -74,4 +74,18 @@ public class TicketController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.updateTicket(ticketId, requestDto, ticketImage)));
     }
+
+    @PatchMapping("/admin/tickets/management/{ticketId}/upload")
+    public ResponseEntity<BaseResponseDto<Void>> uploadTicket(@PathVariable long ticketId) {
+        ticketService.uploadTicket(ticketId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>());
+    }
+
+    @PatchMapping("/admin/tickets/management/{ticketId}/cancel-upload")
+    public ResponseEntity<BaseResponseDto<Void>> cancelUploadTicket(@PathVariable long ticketId) {
+        ticketService.cancelUploadTicket(ticketId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>());
+    }
 }

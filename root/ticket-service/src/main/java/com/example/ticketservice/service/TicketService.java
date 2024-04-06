@@ -24,4 +24,8 @@ public interface TicketService {
     TicketDetailResponseDto getTicketDetail(long ticketId);
 
     TicketDetailResponseDto updateTicket(long ticketId, TicketUpdateRequestDto requestDto, MultipartFile ticketImage);
+
+    void uploadTicket(long ticketId);
+
+    void cancelUploadTicket(long ticketId);
 }
