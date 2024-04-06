@@ -21,10 +21,11 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @GetMapping("/tickets/{centerId}")
-    public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable long centerId) {
+    @GetMapping("/tickets/{centerId}/{ticketId}")
+    public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable long centerId,
+                                                                                  @PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(ticketService.getTicketList(centerId)));
+                .body(new BaseResponseDto<>(ticketService.getTicketList(centerId, ticketId)));
     }
 
     @GetMapping("/tickets/admin-page/{centerId}/{ticketId}")
