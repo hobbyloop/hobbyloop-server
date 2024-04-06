@@ -44,9 +44,10 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<TicketResponseDto> getTicketList(long centerId) {
-        List<Ticket> ticketList = ticketRepository.findAllByCenterId(centerId);
-        return ticketList.stream().map(TicketResponseDto::from).collect(Collectors.toList());
+    public List<TicketResponseDto> getTicketList(long centerId, long ticketId) {
+        List<Ticket> ticketList = ticketRepository.getTicketList(centerId, ticketId);
+        CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
+        return ticketList.stream().map(t -> TicketResponseDto.from(t, centerInfo)).collect(Collectors.toList());
     }
 
     @Override

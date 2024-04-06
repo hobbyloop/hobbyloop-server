@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface TicketService {
-    List<TicketResponseDto> getTicketList(long centerId);
+    List<TicketResponseDto> getTicketList(long centerId, long ticketId);
 
     List<AdminTicketResponseDto> getAdminTicketList(long centerId, long ticketId);
 
