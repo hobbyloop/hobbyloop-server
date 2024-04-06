@@ -113,4 +113,12 @@ public class Ticket extends TimeStamped {
         this.refundRegulation = requestDto.getRefundRegulation();
         this.refundPercentage = requestDto.getRefundPercentage();
     }
+
+    public void upload() {
+        this.isUpload = true;
+    }
+
+    public void cancelUpload() {
+        this.isUpload = false;
+    }
 }

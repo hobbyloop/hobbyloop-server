@@ -130,6 +130,21 @@ public class TicketServiceImpl implements TicketService{
         return getTicketDetail(ticketId);
     }
 
+    @Override
+    @Transactional
+    public void uploadTicket(long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        ticket.upload();
+    }
+
+    @Override
+    @Transactional
+    public void cancelUploadTicket(long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        ticket.cancelUpload();
+    }
 
     private float getScore(long centerId) {
         List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
