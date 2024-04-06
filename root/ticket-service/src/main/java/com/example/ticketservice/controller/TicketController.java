@@ -21,21 +21,21 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @GetMapping("/tickets/{centerId}/{ticketId}")
+    @GetMapping("/admin/tickets/management/{centerId}/{ticketId}")
     public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable long centerId,
                                                                                   @PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketList(centerId, ticketId)));
     }
 
-    @GetMapping("/tickets/admin-page/{centerId}/{ticketId}")
+    @GetMapping("/admin/tickets/review/{centerId}/{ticketId}")
     public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(@PathVariable long centerId,
                                                                                             @PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getAdminTicketList(centerId, ticketId)));
     }
 
-    @PostMapping("/tickets/{centerId}")
+    @PostMapping("/admin/tickets/management/{centerId}")
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(@PathVariable long centerId,
                                                                                  @RequestPart TicketCreateRequestDto requestDto,
                                                                                  @RequestPart(required = false) MultipartFile ticketImage) {
@@ -43,31 +43,31 @@ public class TicketController {
                 .body(new BaseResponseDto<>(ticketService.createTicket(centerId, requestDto, ticketImage)));
     }
 
-    @PostMapping("/tickets/bookmark-center")
+    @PostMapping("/tickets/bookmarks")
     public ResponseEntity<BaseResponseDto<Map<Long, BookmarkScoreTicketResponseDto>>> getBookmarkTicketList(@RequestBody List<Long> centerIdList) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getBookmarkTicketList(centerIdList)));
     }
 
-    @GetMapping("/tickets/admin-review-page/info/{ticketId}")
+    @GetMapping("/admin/tickets/review/{ticketId}")
     public ResponseEntity<BaseResponseDto<AdminReviewTicketResponseDto>> getTicketInfo(@PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketInfo(ticketId)));
     }
 
-    @GetMapping("/tickets/iOS-review-page/info/{ticketId}")
+    @GetMapping("/tickets/ios-review/{ticketId}")
     public ResponseEntity<BaseResponseDto<ReviewListTicketResponseDto>> getIOSTicketInfo(@PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getIOSTicketInfo(ticketId)));
     }
 
-    @GetMapping("/tickets/detail/{ticketId}")
+    @GetMapping("/admin/tickets/management/{ticketId}")
     public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> getTicketDetail(@PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketDetail(ticketId)));
     }
 
-    @PatchMapping("/tickets/{ticketId}")
+    @PatchMapping("/admin/tickets/management/{ticketId}")
     public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> updateTicket(@PathVariable long ticketId,
                                                                                 @RequestPart TicketUpdateRequestDto requestDto,
                                                                                 @RequestPart(required = false) MultipartFile ticketImage) {
