@@ -121,4 +121,8 @@ public class Ticket extends TimeStamped {
     public void cancelUpload() {
         this.isUpload = false;
     }
+
+    public void issue() {
+        this.issueCount++;
+    }
 }

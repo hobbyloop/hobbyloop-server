@@ -35,4 +35,30 @@ public class UserTicket extends TimeStamped {
     private LocalDateTime approveTime;
 
     private boolean isDelete;
+
+    public static UserTicket of(Ticket ticket, Long memberId) {
+        return UserTicket.builder()
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusDays(ticket.getDuration()))
+                .remainingCount(ticket.getUseCount())
+                .ticket(ticket)
+                .memberId(memberId)
+                .build();
+    }
+
+    public void approve() {
+        this.isApprove = true;
+        this.approveTime = LocalDateTime.now();
+    }
+
+    public void use() {
+        if (this.remainingCount <= 0) {
+            throw new IllegalArgumentException("No remaining ticket");
+        }
+        if (this.endDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Expired ticket");
+        }
+
+        this.remainingCount--;
+    }
 }

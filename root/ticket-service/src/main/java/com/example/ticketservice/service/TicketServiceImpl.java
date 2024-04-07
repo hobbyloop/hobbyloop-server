@@ -12,9 +12,11 @@ import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.entity.UserTicket;
 import com.example.ticketservice.repository.ReviewImageRepository;
 import com.example.ticketservice.repository.review.ReviewRepository;
 import com.example.ticketservice.repository.ticket.TicketRepository;
+import com.example.ticketservice.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 public class TicketServiceImpl implements TicketService{
 
     private final TicketRepository ticketRepository;
+
+    private final UserTicketRepository userTicketRepository;
 
     private final CompanyServiceClient companyServiceClient;
 
@@ -144,6 +148,21 @@ public class TicketServiceImpl implements TicketService{
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         ticket.cancelUpload();
+    }
+
+    @Override
+    @Transactional
+    public Long purchaseTicket(long memberId, long ticketId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+
+        // TODO: 쿠폰, 포인트 적용
+        // TODO: 결제 -> PayClient.pay(ticket.getPrice());
+        UserTicket userTicket = UserTicket.of(ticket, memberId);
+        userTicketRepository.save(userTicket);
+
+        ticket.issue();
+        return userTicket.getId();
     }
 
     private float getScore(long centerId) {

@@ -1,10 +1,12 @@
 package com.example.ticketservice.controller;
 
+import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.service.TicketService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,6 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -42,7 +43,6 @@ public class TicketController {
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(@PathVariable long centerId,
                                                                                  @RequestPart TicketCreateRequestDto requestDto,
                                                                                  @RequestPart(required = false) MultipartFile ticketImage) {
-        log.info(requestDto.getCategory());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(ticketService.createTicket(centerId, requestDto, ticketImage)));
@@ -92,5 +92,14 @@ public class TicketController {
         ticketService.cancelUploadTicket(ticketId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
+    }
+
+    @PostMapping("/tickets/{ticketId}/purchase")
+    public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(@PathVariable long ticketId,
+                                                                HttpServletRequest request) {
+
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.purchaseTicket(ticketId, memberId)));
     }
 }
