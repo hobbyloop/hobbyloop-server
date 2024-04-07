@@ -6,14 +6,17 @@ import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.service.TicketService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -39,6 +42,8 @@ public class TicketController {
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(@PathVariable long centerId,
                                                                                  @RequestPart TicketCreateRequestDto requestDto,
                                                                                  @RequestPart(required = false) MultipartFile ticketImage) {
+        log.info(requestDto.getCategory());
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(ticketService.createTicket(centerId, requestDto, ticketImage)));
     }
