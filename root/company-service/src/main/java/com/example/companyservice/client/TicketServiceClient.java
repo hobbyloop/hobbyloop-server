@@ -14,11 +14,11 @@ import java.util.Map;
 public interface TicketServiceClient {
 
     @GetMapping("/api/v1/tickets/{centerId}")
-    BaseResponseDto<List<TicketResponseDto>> getTicketList(@PathVariable long centerId);
+    BaseResponseDto<List<TicketResponseDto>> getTicketList(@PathVariable(value = "centerId") long centerId);
 
     @PostMapping("/api/v1/tickets/bookmark-center")
     BaseResponseDto<Map<Long, BookmarkScoreTicketResponseDto>> getBookmarkTicketList(@RequestBody List<Long> centerIdList);
 
     @GetMapping("/api/v1/reviews/count/{centerId}")
-    BaseResponseDto<Integer> getReviewCountByCenterId(@PathVariable long centerId);
+    BaseResponseDto<Integer> getReviewCountByCenterId(@PathVariable(value = "centerId") long centerId);
 }

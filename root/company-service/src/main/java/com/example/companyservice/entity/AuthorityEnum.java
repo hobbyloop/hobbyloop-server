@@ -12,7 +12,7 @@ public enum AuthorityEnum {
     관리자(1),
     실장(2),
     전임강사(3),
-    파프타임강사(4);
+    하프타임강사(4);
 
     private final int authorityValue;
 

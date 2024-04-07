@@ -52,8 +52,6 @@ public class Advertisement extends TimeStamped {
 
     private boolean isOpen;
 
-    private boolean isDelete;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
@@ -76,8 +74,11 @@ public class Advertisement extends TimeStamped {
                 .bankName(requestDto.getBankName())
                 .accountNumber(requestDto.getAccountNumber())
                 .isOpen(false)
-                .isDelete(false)
                 .center(center)
                 .build();
+    }
+
+    public void updateIsOpen(boolean isOpen) {
+        this.isOpen = isOpen;
     }
 }

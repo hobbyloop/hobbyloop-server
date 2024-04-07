@@ -66,6 +66,10 @@ public class Company extends TimeStamped {
 
     private Boolean isOption2;
 
+    private double latitude;
+
+    private double longitude;
+
     private boolean isDelete;
 
     private Long companyLatePlanId;
@@ -94,6 +98,8 @@ public class Company extends TimeStamped {
         this.isReservationService = requestDto.isReservationService();
         this.companyLatePlanId = companyLatePlanId;
         this.createStatus = CreateStatusEnum.WAIT.getTypeValue();
+        this.latitude = requestDto.getLatitude();
+        this.longitude = requestDto.getLongitude();
     }
 
     public void updateCreateStatus(int status) {
