@@ -114,7 +114,7 @@ public class TicketServiceImpl implements TicketService{
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         OriginalCenterResponseDto centerInfo = companyServiceClient.getOriginalCenterInfo(ticket.getCenterId()).getData();
         OriginalBusinessResponseDto businessInfo = companyServiceClient.getOriginalBusinessInfo(ticket.getCenterId()).getData();
-        // lectureInfo도 필요함
+        // TODO: lectureInfo도 필요함
         return TicketDetailResponseDto.of(ticket, centerInfo, businessInfo);
     }
 

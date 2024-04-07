@@ -21,6 +21,8 @@ public class LectureReservationServiceImpl implements LectureReservationService 
         UserTicket userTicket = userTicketRepository.findById(userTicketId)
                 .orElseThrow(() -> new IllegalArgumentException("UserTicket not found"));
 
+        // TODO: 해당 이용권으로 예약 가능한지 체크
+
         // TODO: LectureSchedule 정원 수 체크 (LectureClient로 확인)
         // TODO: LectureSchedule 예약 수 증가 (LectureClient로 요청)
 

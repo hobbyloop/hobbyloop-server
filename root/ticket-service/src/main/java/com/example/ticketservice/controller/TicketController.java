@@ -99,7 +99,7 @@ public class TicketController {
                                                                 HttpServletRequest request) {
 
         long memberId = Utils.parseAuthorizedId(request);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(ticketService.purchaseTicket(ticketId, memberId)));
     }
 }
