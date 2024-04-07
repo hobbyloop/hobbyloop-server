@@ -1,5 +1,7 @@
 package com.example.ticketservice.entity;
 
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import jakarta.persistence.*;
@@ -120,6 +122,12 @@ public class Ticket extends TimeStamped {
 
     public void cancelUpload() {
         this.isUpload = false;
+    }
+
+    public void checkSoldOut() {
+        if (this.isTotalCount && this.totalCount <= this.purchaseCount) {
+            throw new ApiException(ExceptionEnum.TICKET_SOLD_OUT_EXCEPTION);
+        }
     }
 
     public void issue() {

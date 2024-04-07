@@ -153,9 +153,10 @@ public class TicketServiceImpl implements TicketService{
     @Override
     @Transactional
     public Long purchaseTicket(long memberId, long ticketId) {
-        Ticket ticket = ticketRepository.findById(ticketId)
+        Ticket ticket = ticketRepository.findForUpdate(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
 
+        ticket.checkSoldOut();
         // TODO: 쿠폰, 포인트 적용
         // TODO: 결제 -> PayClient.pay(ticket.getPrice());
         UserTicket userTicket = UserTicket.of(ticket, memberId);
