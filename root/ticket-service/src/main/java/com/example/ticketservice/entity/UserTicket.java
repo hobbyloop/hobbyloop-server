@@ -1,5 +1,7 @@
 package com.example.ticketservice.entity;
 
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,10 +55,10 @@ public class UserTicket extends TimeStamped {
 
     public void use() {
         if (this.remainingCount <= 0) {
-            throw new IllegalArgumentException("No remaining ticket");
+            throw new ApiException(ExceptionEnum.NO_REMAINING_USER_TICKET_EXCEPTION);
         }
         if (this.endDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Expired ticket");
+            throw new ApiException(ExceptionEnum.EXPIRED_USER_TICKET_EXCEPTION);
         }
 
         this.remainingCount--;
