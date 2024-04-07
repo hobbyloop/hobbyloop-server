@@ -3,6 +3,7 @@ package com.example.ticketservice.dto.response;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.HourResponseDto;
 import com.example.ticketservice.entity.Ticket;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,7 +42,10 @@ public class AdminTicketResponseDto {
 
     private int issueCount;
 
+    @JsonProperty("isUpload")
     private boolean isUpload;
+
+    private boolean upload;
 
     private float score;
 
