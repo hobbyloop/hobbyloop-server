@@ -2,6 +2,7 @@ package com.example.ticketservice.ticket;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.dto.response.AdminReviewTicketResponseDto;
+import com.example.ticketservice.dto.response.TicketDetailResponseDto;
 import com.example.ticketservice.dto.response.TicketResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.ReviewFixture;
@@ -30,7 +31,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     private AmazonS3Service amazonS3Service;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
     }
 
@@ -68,7 +69,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    public void createReview() throws Exception {
+    public void createTicketReview() throws Exception {
         // given
         long centerId = 1L;
         long ticketId = 1L;
@@ -78,16 +79,40 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         // when
         Long reviewId = ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
-        AdminReviewTicketResponseDto ticket = AdminTicketSteps.getTicketWithReview(ticketId);
+        AdminReviewTicketResponseDto ticket = AdminTicketSteps.getTicketDetailWithReview(ticketId);
 
         // then
         assertThat(reviewId).isNotNull();
         assertThat(ticket.getScore()).isEqualTo(ReviewFixture.NORMAL_SCORE);
     }
 
+    @Test
+    public void purchaseTicketSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
+
+        // when
+        mockForGetTicketDetail();
+        Long userTicketId = TicketSteps.purchaseTicket(ticketId);
+        TicketDetailResponseDto ticket = AdminTicketSteps.getTicketDetail(ticketId);
+
+        // then
+        assertThat(userTicketId).isNotNull();
+        assertThat(ticket.getIssueCount()).isEqualTo(1);
+    }
+
     private void mockForCreateTicket() throws IOException {
         given(companyServiceClient.getCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultCenterInfoResponseDto()));
         given(amazonS3Service.upload(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
+    }
+
+    private void mockForGetTicketDetail() throws Exception {
+        given(companyServiceClient.getOriginalCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalCenterResponseDto()));
+        given(companyServiceClient.getOriginalBusinessInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalBusinessResponseDto()));
     }
 }

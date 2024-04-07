@@ -1,10 +1,7 @@
 package com.example.ticketservice.ticket;
 
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
-import com.example.ticketservice.dto.response.AdminReviewTicketResponseDto;
-import com.example.ticketservice.dto.response.AdminTicketResponseDto;
-import com.example.ticketservice.dto.response.TicketCreateResponseDto;
-import com.example.ticketservice.dto.response.TicketResponseDto;
+import com.example.ticketservice.dto.response.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
-import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -77,7 +73,24 @@ public class AdminTicketSteps {
         return objectMapper.readValue(dataNode.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, AdminTicketResponseDto.class));
     }
 
-    public static AdminReviewTicketResponseDto getTicketWithReview(long ticketId) throws JsonProcessingException {
+    public static TicketDetailResponseDto getTicketDetail(long ticketId) throws JsonProcessingException {
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .get("/api/v1/admin/tickets/management/{ticketId}", ticketId)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        return objectMapper.treeToValue(dataNode, TicketDetailResponseDto.class);
+    }
+
+    public static AdminReviewTicketResponseDto getTicketDetailWithReview(long ticketId) throws JsonProcessingException {
         objectMapper.registerModule(new JavaTimeModule());
 
         String responseBody = RestAssured
@@ -94,12 +107,23 @@ public class AdminTicketSteps {
         return objectMapper.treeToValue(dataNode, AdminReviewTicketResponseDto.class);
     }
 
+    public static void uploadTicket(long ticketId) {
+        RestAssured
+                .given().log().all()
+                .when()
+                .patch("/api/v1/admin/tickets/management/{ticketId}/upload", ticketId)
+                .then().log().all()
+                .statusCode(200);
+    }
+
     private static File generateMockImageFile() throws IOException {
-        MockMultipartFile mockFile = new MockMultipartFile("ticketImage", "test.jpg", "image/jpeg", "test file content".getBytes());
-        File file = new File("test.jpg");
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(mockFile.getBytes());
-        fos.close();
-        return file;
+        File tempFile = File.createTempFile("test", ".jpg");
+        tempFile.deleteOnExit();
+
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write("test file content".getBytes());
+        }
+
+        return tempFile;
     }
 }

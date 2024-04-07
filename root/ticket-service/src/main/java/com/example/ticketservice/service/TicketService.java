@@ -28,4 +28,6 @@ public interface TicketService {
     void uploadTicket(long ticketId);
 
     void cancelUploadTicket(long ticketId);
+
+    Long purchaseTicket(long memberId, long ticketId);
 }

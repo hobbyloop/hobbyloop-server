@@ -2,7 +2,10 @@ package com.example.ticketservice.fixture;
 
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.HourResponseDto;
+import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
+import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -24,6 +27,30 @@ public class CenterFixture {
                 .address(DEFAULT_ADDRESS)
                 .operatingHourList(defaultOperatingHourList)
                 .breakHourList(defaultBreakingHourList)
+                .build();
+    }
+
+    public static OriginalCenterResponseDto defaultOriginalCenterResponseDto() {
+        return OriginalCenterResponseDto.builder()
+                .centerName(DEFAULT_CENTER_NAME)
+                .address(DEFAULT_ADDRESS)
+                .logoImageUrl("test-logo-image-url")
+                .centerImageUrl(List.of("test-center-image-url"))
+                .announcement("test-announcement")
+                .introduce("test-introduce")
+                .contact("test-contact")
+                .kakaoLink("test-kakao-link")
+                .operatingHourList(defaultOperatingHourList)
+                .breakHourList(defaultBreakingHourList)
+                .build();
+    }
+
+    public static OriginalBusinessResponseDto defaultOriginalBusinessResponseDto() {
+        return OriginalBusinessResponseDto.builder()
+                .representativeName("홍길동")
+                .businessNumber("123-45-67890")
+                .openingDate(LocalDate.of(2021, 1, 1))
+                .onlineReportNumber("1234567890")
                 .build();
     }
 

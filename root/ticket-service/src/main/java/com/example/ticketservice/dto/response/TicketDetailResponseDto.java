@@ -4,13 +4,17 @@ import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto
 import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.entity.CategoryEnum;
 import com.example.ticketservice.entity.Ticket;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TicketDetailResponseDto {
     private String ticketName;
     private String ticketImageUrl;
@@ -22,6 +26,7 @@ public class TicketDetailResponseDto {
     private int useCount;
     private boolean isTotalCount;
     private int totalCount;
+    private int issueCount;
     private int price;
     private int vat;
     private int discountRate;
@@ -43,6 +48,7 @@ public class TicketDetailResponseDto {
                 .useCount(ticket.getUseCount())
                 .isTotalCount(ticket.isTotalCount())
                 .totalCount(ticket.getTotalCount())
+                .issueCount(ticket.getIssueCount())
                 .price(ticket.getPrice())
                 .vat(ticket.getVat())
                 .discountRate(ticket.getDiscountRate())
