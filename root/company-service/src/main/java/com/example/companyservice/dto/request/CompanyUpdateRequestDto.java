@@ -54,4 +54,8 @@ public class CompanyUpdateRequestDto {
     private int vat;
 
     private int totalPrice;
+
+    private double latitude;
+
+    private double longitude;
 }

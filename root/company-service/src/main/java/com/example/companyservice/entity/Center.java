@@ -50,6 +50,10 @@ public class Center extends TimeStamped {
 
     private String logoImageUrl;
 
+    private double latitude;
+
+    private double longitude;
+
     private boolean isDelete;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -70,6 +74,8 @@ public class Center extends TimeStamped {
                 .onlineReportNumber(requestDto.getOnlineReportNumber())
                 .logoImageKey(logoImageKey)
                 .logoImageUrl(logoImageUrl)
+                .latitude(requestDto.getLatitude())
+                .longitude(requestDto.getLongitude())
                 .isDelete(false)
                 .company(company)
                 .build();
