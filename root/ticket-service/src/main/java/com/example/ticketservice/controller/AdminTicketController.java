@@ -75,4 +75,10 @@ public class AdminTicketController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketInfo(ticketId)));
     }
+
+    @GetMapping("/member/{centerId}/unapproved")
+    public ResponseEntity<BaseResponseDto<List<UnapprovedUserTicketListResponseDto>>> getUnapprovedUserTicketList(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getUnapprovedUserTicketList(centerId)));
+    }
 }

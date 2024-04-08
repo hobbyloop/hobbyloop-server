@@ -1,7 +1,9 @@
 package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
+import com.example.ticketservice.client.MemberServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
+import com.example.ticketservice.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
@@ -37,6 +39,8 @@ public class TicketServiceImpl implements TicketService{
     private final UserTicketRepository userTicketRepository;
 
     private final CompanyServiceClient companyServiceClient;
+
+    private final MemberServiceClient memberServiceClient;
 
     private final AmazonS3Service amazonS3Service;
 
@@ -164,6 +168,21 @@ public class TicketServiceImpl implements TicketService{
 
         //ticket.issue();
         return userTicket.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId) {
+        List<Long> ticketIds = ticketRepository.findAllByCenterId(centerId).stream().map(Ticket::getId).toList();
+        List<UserTicket> userTicketList = ticketIds.stream()
+                .flatMap(ticketId -> userTicketRepository.findAllByTicketIdAndApproveFalse(ticketId).stream())
+                        .collect(Collectors.toList());
+        return userTicketList.stream()
+                .map(userTicket -> {
+                    MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(userTicket.getMemberId()).getData();
+                    return UnapprovedUserTicketListResponseDto.of(userTicket, memberInfo);
+                })
+                .toList();
     }
 
     private float getScore(long centerId) {
