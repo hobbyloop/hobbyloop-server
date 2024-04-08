@@ -162,7 +162,7 @@ public class TicketServiceImpl implements TicketService{
         UserTicket userTicket = UserTicket.of(ticket, memberId);
         userTicketRepository.save(userTicket);
 
-        ticket.issue();
+        //ticket.issue();
         return userTicket.getId();
     }
 
