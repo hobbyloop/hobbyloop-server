@@ -12,7 +12,7 @@ public class TicketFixture {
     public static final LocalDate EXPIRATION_END_DATE = LocalDate.of(2024, 12, 31);
 
     public static final int USE_COUNT = 10;
-    public static final int TOTAL_COUNT = 100;
+    public static final int TOTAL_COUNT = 15;
 
     public static TicketCreateRequestDto defaultTicketCreateRequest() throws UnsupportedEncodingException {
         return TicketCreateRequestDto.builder()

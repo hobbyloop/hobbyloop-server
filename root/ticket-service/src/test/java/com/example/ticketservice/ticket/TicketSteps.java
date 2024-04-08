@@ -8,7 +8,6 @@ public class TicketSteps {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static Long purchaseTicket(Long ticketId) throws Exception {
-        //objectMapper.registerModule(new JavaTimeModule());
 
         String responseBody = RestAssured
             .given().log().all()
