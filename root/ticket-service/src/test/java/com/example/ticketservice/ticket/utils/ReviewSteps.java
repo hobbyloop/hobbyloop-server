@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket;
+package com.example.ticketservice.ticket.utils;
 
 import com.example.ticketservice.dto.request.ReviewRequestDto;
 import com.fasterxml.jackson.databind.JsonNode;

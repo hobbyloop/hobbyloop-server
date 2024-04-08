@@ -6,10 +6,9 @@ import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.service.AmazonS3Service;
-import com.example.ticketservice.ticket.AdminTicketSteps;
-import com.example.ticketservice.ticket.TicketSteps;
+import com.example.ticketservice.ticket.utils.AdminTicketSteps;
+import com.example.ticketservice.ticket.utils.TicketSteps;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -30,4 +30,8 @@ public interface TicketService {
     void cancelUploadTicket(long ticketId);
 
     Long purchaseTicket(long memberId, long ticketId);
+
+    List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId);
+
+    void approveUserTicket(long userTicketId);
 }

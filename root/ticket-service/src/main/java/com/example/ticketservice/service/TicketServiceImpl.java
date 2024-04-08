@@ -1,7 +1,9 @@
 package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
+import com.example.ticketservice.client.MemberServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
+import com.example.ticketservice.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,8 @@ public class TicketServiceImpl implements TicketService{
     private final UserTicketRepository userTicketRepository;
 
     private final CompanyServiceClient companyServiceClient;
+
+    private final MemberServiceClient memberServiceClient;
 
     private final AmazonS3Service amazonS3Service;
 
@@ -162,8 +167,35 @@ public class TicketServiceImpl implements TicketService{
         UserTicket userTicket = UserTicket.of(ticket, memberId);
         userTicketRepository.save(userTicket);
 
-        ticket.issue();
+        //ticket.issue();
         return userTicket.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId) {
+        List<Long> ticketIds = ticketRepository.findAllByCenterId(centerId).stream().map(Ticket::getId).toList();
+        List<UserTicket> userTicketList = ticketIds.stream()
+                .flatMap(ticketId -> userTicketRepository.findAllByTicketIdAndIsApproveFalse(ticketId).stream())
+                        .collect(Collectors.toList());
+        return userTicketList.stream()
+                .map(userTicket -> {
+                    MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(userTicket.getMemberId()).getData();
+                    return UnapprovedUserTicketListResponseDto.of(userTicket, memberInfo);
+                })
+                .sorted(Comparator.comparing(UnapprovedUserTicketListResponseDto::getCreatedAt).reversed())
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void approveUserTicket(long userTicketId) {
+        UserTicket userTicket = userTicketRepository.findById(userTicketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.USER_TICKET_NOT_EXIST_EXCEPTION));
+        Ticket ticket = userTicket.getTicket();
+
+        userTicket.approve();
+        ticket.issue();
     }
 
     private float getScore(long centerId) {
