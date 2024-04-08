@@ -156,7 +156,7 @@ public class TicketServiceImpl implements TicketService{
         Ticket ticket = ticketRepository.findForUpdate(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
 
-        ticket.checkSoldOut();
+        ticket.checkCanPurchase();
         // TODO: 쿠폰, 포인트 적용
         // TODO: 결제 -> PayClient.pay(ticket.getPrice());
         UserTicket userTicket = UserTicket.of(ticket, memberId);

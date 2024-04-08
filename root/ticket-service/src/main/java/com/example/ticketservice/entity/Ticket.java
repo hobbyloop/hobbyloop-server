@@ -124,8 +124,12 @@ public class Ticket extends TimeStamped {
         this.isUpload = false;
     }
 
-    public void checkSoldOut() {
-        if (this.isTotalCount && this.totalCount <= this.purchaseCount) {
+    public void checkCanPurchase() {
+        if (!this.isUpload) {
+            throw new ApiException(ExceptionEnum.TICKET_NOT_UPLOAD_EXCEPTION);
+        }
+
+        if (this.isTotalCount && this.totalCount <= this.issueCount) {
             throw new ApiException(ExceptionEnum.TICKET_SOLD_OUT_EXCEPTION);
         }
     }

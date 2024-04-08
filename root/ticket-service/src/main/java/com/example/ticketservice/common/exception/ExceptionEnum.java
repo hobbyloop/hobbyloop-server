@@ -14,6 +14,7 @@ public enum ExceptionEnum {
     API_PARAMETER_EXCEPTION(HttpStatus.BAD_REQUEST, "E005", "파라미터 타입과 값을 확인하세요."),
     ACCESS_NOW_ALLOW_EXCEPTION(HttpStatus.FORBIDDEN, "E006", "접근 권한이 없습니다."),
     TICKET_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "존재하지 않는 이용권입니다."),
+    TICKET_NOT_UPLOAD_EXCEPTION(HttpStatus.BAD_REQUEST, "T002", "판매 중인 이용권이 아닙니다."),
     TICKET_SOLD_OUT_EXCEPTION(HttpStatus.BAD_REQUEST, "T002", "이용권이 모두 판매되었습니다."),
     REVIEW_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다."),
     USER_TICKET_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "UT001", "존재하지 않는 이용권입니다."),
