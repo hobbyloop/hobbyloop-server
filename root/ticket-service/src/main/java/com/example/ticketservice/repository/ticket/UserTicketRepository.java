@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface UserTicketRepository extends JpaRepository<UserTicket, Long> {
 
-    List<UserTicket> findAllByTicketIdAndApproveFalse(long ticketId);
+    List<UserTicket> findAllByTicketIdAndIsApproveFalse(long ticketId);
 }

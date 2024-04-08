@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,13 +176,14 @@ public class TicketServiceImpl implements TicketService{
     public List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId) {
         List<Long> ticketIds = ticketRepository.findAllByCenterId(centerId).stream().map(Ticket::getId).toList();
         List<UserTicket> userTicketList = ticketIds.stream()
-                .flatMap(ticketId -> userTicketRepository.findAllByTicketIdAndApproveFalse(ticketId).stream())
+                .flatMap(ticketId -> userTicketRepository.findAllByTicketIdAndIsApproveFalse(ticketId).stream())
                         .collect(Collectors.toList());
         return userTicketList.stream()
                 .map(userTicket -> {
                     MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(userTicket.getMemberId()).getData();
                     return UnapprovedUserTicketListResponseDto.of(userTicket, memberInfo);
                 })
+                .sorted(Comparator.comparing(UnapprovedUserTicketListResponseDto::getCreatedAt).reversed())
                 .toList();
     }
 
