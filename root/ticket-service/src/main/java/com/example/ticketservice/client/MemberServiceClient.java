@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "member-service")
 public interface MemberServiceClient {
 
+    // TODO: 추후 구현 필요
     @GetMapping("/api/v1/members/{memberId}")
     BaseResponseDto<MemberInfoResponseDto> getMemberInfo(@PathVariable long memberId);
 }

@@ -133,6 +133,15 @@ public class AdminTicketSteps {
         return objectMapper.readValue(dataNode.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, UnapprovedUserTicketListResponseDto.class));
     }
 
+    public static void approveUserTicket(long userTicketId) {
+        RestAssured
+                .given().log().all()
+                .when()
+                .patch("/api/v1/admin/tickets/members/{userTicketId}/approve", userTicketId)
+                .then().log().all()
+                .statusCode(200);
+    }
+
     private static File generateMockImageFile() throws IOException {
         File tempFile = File.createTempFile("test", ".jpg");
         tempFile.deleteOnExit();

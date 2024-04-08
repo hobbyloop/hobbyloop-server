@@ -81,4 +81,11 @@ public class AdminTicketController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getUnapprovedUserTicketList(centerId)));
     }
+
+    @PatchMapping("/members/{userTicketId}/approve")
+    public ResponseEntity<BaseResponseDto<Void>> approveUserTicket(@PathVariable long userTicketId) {
+        ticketService.approveUserTicket(userTicketId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>());
+    }
 }

@@ -187,6 +187,17 @@ public class TicketServiceImpl implements TicketService{
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public void approveUserTicket(long userTicketId) {
+        UserTicket userTicket = userTicketRepository.findById(userTicketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.USER_TICKET_NOT_EXIST_EXCEPTION));
+        Ticket ticket = userTicket.getTicket();
+
+        userTicket.approve();
+        ticket.issue();
+    }
+
     private float getScore(long centerId) {
         List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
         if (reviewList.size() == 0) return 0;

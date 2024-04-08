@@ -127,13 +127,35 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         assertThat(response.get(0).getUserTicketId()).isEqualTo(userTicketId);
     }
 
+    @Test
+    public void approveUserTicketSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
+        TicketSteps.purchaseTicket(ticketId);
+
+        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        Long userTicketId = AdminTicketSteps.getUnapprovedUserTicketList(centerId).get(0).getUserTicketId();
+
+        // when
+        AdminTicketSteps.approveUserTicket(userTicketId);
+
+        // then
+        mockForGetTicketDetail();
+        TicketDetailResponseDto ticket = AdminTicketSteps.getTicketDetail(ticketId);
+        assertThat(ticket.getIssueCount()).isEqualTo(1);
+    }
+
     private void mockForCreateTicket() throws IOException {
         given(companyServiceClient.getCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultCenterInfoResponseDto()));
         given(amazonS3Service.upload(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
     }
 
-    private void mockForGetTicketDetail() throws Exception {
+    private void mockForGetTicketDetail() {
         given(companyServiceClient.getOriginalCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalCenterResponseDto()));
         given(companyServiceClient.getOriginalBusinessInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalBusinessResponseDto()));
     }
