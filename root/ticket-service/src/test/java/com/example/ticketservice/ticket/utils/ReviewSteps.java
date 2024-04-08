@@ -1,6 +1,8 @@
 package com.example.ticketservice.ticket.utils;
 
 import com.example.ticketservice.dto.request.ReviewRequestDto;
+import com.example.ticketservice.dto.response.ReviewResponseDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -36,6 +38,37 @@ public class ReviewSteps {
             .extract().asString();
 
         return objectMapper.readTree(responseBody).get("data").asLong();
+    }
+
+    public static void createComment(Long reviewId) {
+        RestAssured
+            .given().log().all()
+            .contentType(ContentType.JSON)
+            .header("id", 1L)   // TODO: Replace with actual member ID
+            .body("{\"content\": \"test content\"}")
+            .when()
+            .post("/api/v1/comments/{reviewId}", reviewId)
+            .then().log().all()
+            .statusCode(201);
+    }
+
+    public static List<ReviewResponseDto> getReviewList(Long ticketId, int pageNo, int sortId) throws JsonProcessingException {
+        String responseBody = RestAssured
+            .given().log().all()
+            .header("id", 1L)   // TODO: Replace with actual member ID
+            .when()
+            .get("/api/v1/reviews/{ticketId}/{pageNo}/{sortId}", ticketId, pageNo, sortId)
+            .then().log().all()
+            .statusCode(200)
+            .extract().asString();
+
+        JsonNode data = objectMapper.readTree(responseBody).get("data");
+        List<ReviewResponseDto> reviewList = new ArrayList<>();
+        for (JsonNode review : data) {
+            reviewList.add(objectMapper.convertValue(review, ReviewResponseDto.class));
+        }
+
+        return reviewList;
     }
 
     private static File generateMockImageFile() throws IOException {

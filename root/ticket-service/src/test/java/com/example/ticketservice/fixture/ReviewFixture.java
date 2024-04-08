@@ -7,6 +7,10 @@ public class ReviewFixture {
     public static final float BAD_SCORE = 1.0f;
     public static final float GOOD_SCORE = 5.0f;
     public static final float NORMAL_SCORE = 3.0f;
+    public static final int SORT_BY_SCORE_DESC = 0;
+    public static final int SORT_BY_SCORE_ASC = 1;
+    public static final int SORT_BY_REVIEW_ID_DESC = 2;
+    public static final int SORT_BY_REVIEW_ID_ASC = 3;
 
     public static ReviewRequestDto badReviewCreateRequest() {
         return new ReviewRequestDto(BAD_SCORE, "별로에요.");

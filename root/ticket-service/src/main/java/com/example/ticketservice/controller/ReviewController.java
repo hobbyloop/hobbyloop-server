@@ -32,7 +32,7 @@ public class ReviewController {
                 .body(new BaseResponseDto<>(reviewService.createReview(memberId, ticketId, requestDto, reviewImageList)));
     }
 
-    @GetMapping("/reviews/admin-page/{ticketId}/{reviewId}")
+    @GetMapping("/admin/reviews/{ticketId}/{reviewId}")
     public ResponseEntity<BaseResponseDto<List<ReviewCommentResponseDto>>> getAdminReviewList(@PathVariable long ticketId,
                                                                                               @PathVariable long reviewId) {
         return ResponseEntity.status(HttpStatus.OK)
