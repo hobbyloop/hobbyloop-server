@@ -74,7 +74,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    public void createTicketReview() throws Exception {
+    public void createTicketReviewSuccess() throws Exception {
         // given
         long centerId = 1L;
         long ticketId = 1L;
@@ -89,6 +89,50 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(reviewId).isNotNull();
         assertThat(ticket.getScore()).isEqualTo(ReviewFixture.NORMAL_SCORE);
+    }
+
+    @Test
+    public void getSortedTicketReviewListByScoreSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+
+        ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
+        ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
+        ReviewSteps.createReview(ticketId, ReviewFixture.badReviewCreateRequest());
+
+        // when
+        List<ReviewResponseDto> responses = ReviewSteps.getReviewList(ticketId, 0, ReviewFixture.SORT_BY_SCORE_DESC);
+
+        // then
+        assertThat(responses.size()).isEqualTo(3);
+        assertThat(responses.get(0).getScore()).isEqualTo(ReviewFixture.GOOD_SCORE);
+        assertThat(responses.get(1).getScore()).isEqualTo(ReviewFixture.NORMAL_SCORE);
+        assertThat(responses.get(2).getScore()).isEqualTo(ReviewFixture.BAD_SCORE);
+    }
+
+    @Test
+    public void getSortedTicketReviewListByCreatedAtSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+
+        ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
+        ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
+        ReviewSteps.createReview(ticketId, ReviewFixture.badReviewCreateRequest());
+
+        // when
+        List<ReviewResponseDto> responses = ReviewSteps.getReviewList(ticketId, 0, ReviewFixture.SORT_BY_REVIEW_ID_DESC);
+
+        // then
+        assertThat(responses.size()).isEqualTo(3);
+        assertThat(responses.get(0).getScore()).isEqualTo(ReviewFixture.BAD_SCORE);
+        assertThat(responses.get(1).getScore()).isEqualTo(ReviewFixture.GOOD_SCORE);
+        assertThat(responses.get(2).getScore()).isEqualTo(ReviewFixture.NORMAL_SCORE);
     }
 
     @Test

@@ -36,6 +36,8 @@ public class ReviewResponseDto {
 
     private boolean isLike;
 
+    private boolean like;
+
     public static ReviewResponseDto of(Review review,
                                        String ticketName,
                                        List<String> reviewImageList,
