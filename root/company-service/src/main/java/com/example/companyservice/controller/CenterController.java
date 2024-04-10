@@ -110,4 +110,22 @@ public class CenterController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
     }
+
+    @GetMapping("/centers/hot-tickets/{latitude}/{longitude}")
+    public ResponseEntity<BaseResponseDto<List<HotCenterTicketResponseDto>>> getHotCenterTicketList(HttpServletRequest request,
+                                                                                                    @PathVariable double latitude,
+                                                                                                    @PathVariable double longitude) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getHotCenterTicketList(memberId, latitude, longitude)));
+    }
+
+    @GetMapping("/centers/related-centers/{latitude}/{longitude}")
+    public ResponseEntity<BaseResponseDto<List<RelatedCenterResponseDto>>> getRelatedCenterList(HttpServletRequest request,
+                                                                                                @PathVariable double latitude,
+                                                                                                @PathVariable double longitude) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getRelatedCenterList(memberId, latitude, longitude)));
+    }
 }

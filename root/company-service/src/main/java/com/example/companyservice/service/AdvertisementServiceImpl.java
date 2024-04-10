@@ -3,9 +3,9 @@ package com.example.companyservice.service;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.dto.request.AdvertisementRequestDto;
-import com.example.companyservice.dto.request.LocationRequestDto;
 import com.example.companyservice.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.entity.Advertisement;
+import com.example.companyservice.entity.AdvertisementTypeEnum;
 import com.example.companyservice.entity.Center;
 import com.example.companyservice.repository.advertisement.AdvertisementRepository;
 import com.example.companyservice.repository.CenterRepository;
@@ -38,17 +38,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AdvertisementResponseDto> getAdvertisementList(LocationRequestDto requestDto) {
-        List<AdvertisementResponseDto> responseDtoList = new ArrayList<>();
-        List<Advertisement> advertisementList = advertisementRepository.findAllAdvertisementAroundLocation();
-        for (Advertisement ad : advertisementList) {
-            Double distance = commonService.getDistance(requestDto.getLatitude(), requestDto.getLongitude(), ad.getCenter().getLatitude(), ad.getCenter().getLongitude());
-            if (distance <= 3) {
-                AdvertisementResponseDto advertisementResponseDto = AdvertisementResponseDto.from(ad);
-                responseDtoList.add(advertisementResponseDto);
-                if (responseDtoList.size() >= 20) break;
-            }
-        };
-        return responseDtoList;
+    public List<AdvertisementResponseDto> getAdvertisementList() {
+        List<Advertisement> advertisementList = advertisementRepository.findAllBannerAdvertisement();
+        return advertisementList.stream().map(AdvertisementResponseDto::from).toList();
     }
 }

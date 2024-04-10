@@ -1,6 +1,5 @@
 package com.example.companyservice.repository.advertisement;
 
-import com.example.companyservice.dto.request.LocationRequestDto;
 import com.example.companyservice.entity.Advertisement;
 import com.example.companyservice.entity.AdvertisementTypeEnum;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,14 +18,25 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Advertisement> findAllAdvertisementAroundLocation() {
+    public List<Advertisement> findAllBannerAdvertisement() {
         return queryFactory
                 .selectFrom(advertisement)
                 .join(advertisement.center, center)
                 .where(advertisement.isOpen.eq(true)
                         .and(advertisement.adType.eq(AdvertisementTypeEnum.BANNER.getTypeValue()))
                         .and(betweenDate()))
-                .orderBy(advertisement.adRank.desc())
+                .orderBy(advertisement.adRank.asc())
+                .fetch();
+    }
+
+    @Override
+    public List<Advertisement> findAllCPCAdvertisement() {
+        return queryFactory
+                .selectFrom(advertisement)
+                .join(advertisement.center, center)
+                .where(advertisement.isOpen.eq(true)
+                        .and(advertisement.adType.eq(AdvertisementTypeEnum.CPC.getTypeValue()))
+                        .and(betweenDate()))
                 .fetch();
     }
 

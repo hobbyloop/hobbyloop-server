@@ -2,6 +2,7 @@ package com.example.companyservice.client;
 
 import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.client.dto.response.BookmarkTicketResponseDto;
+import com.example.companyservice.client.dto.response.HotTicketResponseDto;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.client.dto.response.TicketResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -21,4 +22,7 @@ public interface TicketServiceClient {
 
     @GetMapping("/api/v1/reviews/count/{centerId}")
     BaseResponseDto<Integer> getReviewCountByCenterId(@PathVariable(value = "centerId") long centerId);
+
+    @PostMapping("/api/v1/hot-ticket-list")
+    BaseResponseDto<Map<Long, HotTicketResponseDto>> getHotTicketList(@RequestBody List<Long> centerIdList);
 }
