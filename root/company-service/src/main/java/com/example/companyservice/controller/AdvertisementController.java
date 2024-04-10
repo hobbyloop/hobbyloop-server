@@ -2,7 +2,6 @@ package com.example.companyservice.controller;
 
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.request.AdvertisementRequestDto;
-import com.example.companyservice.dto.request.LocationRequestDto;
 import com.example.companyservice.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.service.AdvertisementService;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,8 @@ public class AdvertisementController {
     }
 
     @GetMapping("/advertisement")
-    public ResponseEntity<BaseResponseDto<List<AdvertisementResponseDto>>> getAdvertisementList(@RequestBody LocationRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<List<AdvertisementResponseDto>>> getAdvertisementList() {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(advertisementService.getAdvertisementList(requestDto)));
+                .body(new BaseResponseDto<>(advertisementService.getAdvertisementList()));
     }
 }
