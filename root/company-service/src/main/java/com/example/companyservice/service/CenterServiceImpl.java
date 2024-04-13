@@ -1,9 +1,11 @@
 package com.example.companyservice.service;
 
+import com.example.companyservice.client.PayServiceClient;
 import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.client.dto.response.HotTicketResponseDto;
-import com.example.companyservice.client.dto.response.TicketResponseDto;
+import com.example.companyservice.client.dto.response.TicketClientResponseDto;
+import com.example.companyservice.client.dto.response.TicketDetailClientResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.dto.request.BusinessRequestDto;
@@ -41,6 +43,8 @@ public class CenterServiceImpl implements CenterService {
 
     private final TicketServiceClient ticketServiceClient;
 
+    private final PayServiceClient payServiceClient;
+
     private final BookmarkRepository bookmarkRepository;
 
     private final AmazonS3Service amazonS3Service;
@@ -49,7 +53,7 @@ public class CenterServiceImpl implements CenterService {
 
     private final AdvertisementRepository advertisementRepository;
 
-    private final CommonService commonService;
+    private final LocationService commonService;
 
     @Override
     @Transactional
@@ -89,7 +93,7 @@ public class CenterServiceImpl implements CenterService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
         List<Integer> quickButtonList = quickButtonRepository.findAllButtonIdByCenterId(centerId);
-        List<TicketResponseDto> ticketResponseDtoList = ticketServiceClient.getTicketList(centerId).getData();
+        List<TicketClientResponseDto> ticketResponseDtoList = ticketServiceClient.getTicketList(centerId).getData();
         return new CenterHomeResponseDto(centerResponseDto, quickButtonList, ticketResponseDtoList);
     }
 
@@ -167,10 +171,12 @@ public class CenterServiceImpl implements CenterService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         List<String> centerImageUrlList = centerImageRepository.findAllCenterImage(centerId);
         boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(centerId, memberId);
-        Integer reviewCount = ticketServiceClient.getReviewCountByCenterId(centerId).getData();
+        TicketDetailClientResponseDto ticketInfo = ticketServiceClient.getTicketDetailInfo(centerId).getData();
         List<CenterOperatingHour> operatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
+        List<CenterBreakHour> breakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
         List<HourResponseDto> hourResponseDtoList = getOperationHourDtoList(operatingHourList);
-        return CenterInfoDetailResponseDto.of(center, centerImageUrlList, isBookmark, hourResponseDtoList, reviewCount);
+        List<HourResponseDto> breakHourDtoList = getBreakHourDtoList(breakHourList);
+        return CenterInfoDetailResponseDto.of(center, centerImageUrlList, isBookmark, hourResponseDtoList, breakHourDtoList, ticketInfo);
     }
 
     @Override
@@ -217,28 +223,36 @@ public class CenterServiceImpl implements CenterService {
     @Override
     @Transactional(readOnly = true)
     public List<HotCenterTicketResponseDto> getHotCenterTicketList(long memberId, double latitude, double longitude) {
-        List<HotCenterResponseDto> responseDtoList = new ArrayList<>();
+        List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Long> centerIdList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCAdvertisement();
-        advertisementList.forEach(ad -> {
-            Center center = ad.getCenter();
-            Double distance = commonService.getDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
-            if (distance <= 3) {
-                centerIdList.add(center.getId());
-                boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(center.getId(), memberId);
-                HotCenterResponseDto responseDto = HotCenterResponseDto.of(center, isBookmark);
-                responseDtoList.add(responseDto);
-            }
-        });
+        toMainHomeCenterResponseDto(memberId, latitude, longitude, responseDtoList, advertisementList, centerIdList);
         Map<Long, HotTicketResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
         return responseDtoList.stream().map(c -> HotCenterTicketResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<RelatedCenterResponseDto> getRelatedCenterList(long memberId, double latitude, double longitude) {
-        // TODO 가장 최근에 구매한 이용권 카테고리 조회
-        return null;
+    public List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, double latitude, double longitude) {
+        List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
+        List<Advertisement> advertisementList = advertisementRepository.findAllCPCCPMAdvertisement();
+        List<Long> centerIdList = new ArrayList<>();
+        toMainHomeCenterResponseDto(memberId, latitude, longitude, responseDtoList, advertisementList, centerIdList);
+        Map<Long, HotTicketResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
+        return responseDtoList.stream().map(c -> RecommendedCenterResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
+    }
+
+    private void toMainHomeCenterResponseDto(long memberId, double latitude, double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
+        advertisementList.forEach(ad -> {
+            Center center = ad.getCenter();
+            Double distance = commonService.getDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
+            if (distance <= 3) {
+                centerIdList.add(center.getId());
+                boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(center.getId(), memberId);
+                MainHomeCenterResponseDto responseDto = MainHomeCenterResponseDto.of(center, isBookmark);
+                responseDtoList.add(responseDto);
+            }
+        });
     }
 
     private void saveCenterImage(Center center, List<MultipartFile> centerImageList) {

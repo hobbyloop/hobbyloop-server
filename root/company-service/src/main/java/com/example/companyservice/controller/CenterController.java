@@ -2,130 +2,61 @@ package com.example.companyservice.controller;
 
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.dto.BaseResponseDto;
-import com.example.companyservice.dto.request.BusinessRequestDto;
-import com.example.companyservice.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.dto.response.*;
-import com.example.companyservice.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.service.CenterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/centers")
 public class CenterController {
 
     private final CenterService centerService;
 
-    @PostMapping("/centers")
-    public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
-                                                                                 @RequestPart CenterCreateRequestDto requestDto,
-                                                                                 @RequestPart(required = false) MultipartFile logoImage,
-                                                                                 @RequestPart(required = false) List<MultipartFile> centerImageList) {
-        long companyId = Utils.parseAuthorizedId(request);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logoImage, centerImageList)));
-    }
-
-    @GetMapping("/centers")
-    public ResponseEntity<BaseResponseDto<CenterResponseListDto>> getCenterList(HttpServletRequest request) {
-        long companyId = Utils.parseAuthorizedId(request);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getCenterList(companyId)));
-    }
-
-    @GetMapping("/centers/admin-home/{centerId}")
-    public ResponseEntity<BaseResponseDto<CenterHomeResponseDto>> getCenterHome(@PathVariable long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getCenterHome(centerId)));
-    }
-
-    @GetMapping("/centers/admin-ticket/{centerId}")
-    public ResponseEntity<BaseResponseDto<CenterBusinessResponseDto>> getCenterCompany(@PathVariable long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getCenterBusiness(centerId)));
-    }
-
-    @PatchMapping("/centers/{centerId}")
-    public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable long centerId,
-                                                              @RequestPart CenterUpdateRequestDto requestDto,
-                                                              @RequestPart(required = false) MultipartFile logoImage,
-                                                              @RequestPart(required = false) List<MultipartFile> centerImageList) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto, logoImage, centerImageList)));
-    }
-
-    @PostMapping("/centers/quick-button/{centerId}")
-    public ResponseEntity<BaseResponseDto<Void>> updateQuickButton(@PathVariable long centerId,
-                                                                   @RequestBody List<Integer> requestDto) {
-        centerService.updateQuickButton(centerId, requestDto);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>());
-    }
-
-    @PatchMapping("/centers/business-info/{centerId}")
-    public ResponseEntity<BaseResponseDto<Long>> updateBusinessInfo(@PathVariable long centerId,
-                                                                    @RequestBody BusinessRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
-    }
-
-    @GetMapping("/centers/info/{centerId}")
-    public ResponseEntity<BaseResponseDto<CenterInfoResponseDto>> getCenterInfo(@PathVariable long centerId) {
+    @GetMapping("/info/{centerId}")
+    public ResponseEntity<BaseResponseDto<CenterInfoResponseDto>> getCenterInfo(@PathVariable(value = "centerId") long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterInfo(centerId)));
     }
 
-    @GetMapping("/centers/info/detail/{centerId}")
+    @GetMapping("/info/detail/{centerId}")
     public ResponseEntity<BaseResponseDto<CenterInfoDetailResponseDto>> getCenterInfoDetail(HttpServletRequest request,
-                                                                                            @PathVariable long centerId) {
+                                                                                            @PathVariable(value = "centerId") long centerId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterInfoDetail(centerId, memberId)));
     }
 
-    @GetMapping("/centers/bookmark/{bookmarkId}/{sortId}")
+    @GetMapping("/bookmark/{bookmarkId}/{sortId}")
     public ResponseEntity<BaseResponseDto<List<BookmarkCenterResponseDto>>> getBookmarkCenterList(HttpServletRequest request,
-                                                                                                  @PathVariable long bookmarkId,
-                                                                                                  @PathVariable int sortId) {
+                                                                                                  @PathVariable(value = "bookmarkId") long bookmarkId,
+                                                                                                  @PathVariable(value = "sortId") int sortId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId, bookmarkId, sortId)));
     }
 
-    @GetMapping("/centers/original/{centerId}")
-    public ResponseEntity<BaseResponseDto<OriginalCenterResponseDto>> getOriginalCenterInfo(@PathVariable long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getOriginalCenterInfo(centerId)));
-    }
-
-    @GetMapping("/centers/original/business/{centerId}")
-    public ResponseEntity<BaseResponseDto<OriginalBusinessResponseDto>> getOriginalBusinessInfo(@PathVariable long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
-    }
-
-    @GetMapping("/centers/hot-tickets/{latitude}/{longitude}")
+    @GetMapping("/hot-tickets/{latitude}/{longitude}")
     public ResponseEntity<BaseResponseDto<List<HotCenterTicketResponseDto>>> getHotCenterTicketList(HttpServletRequest request,
-                                                                                                    @PathVariable double latitude,
-                                                                                                    @PathVariable double longitude) {
+                                                                                                    @PathVariable(value = "latitude") double latitude,
+                                                                                                    @PathVariable(value = "longitude") double longitude) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getHotCenterTicketList(memberId, latitude, longitude)));
     }
 
-    @GetMapping("/centers/related-centers/{latitude}/{longitude}")
-    public ResponseEntity<BaseResponseDto<List<RelatedCenterResponseDto>>> getRelatedCenterList(HttpServletRequest request,
-                                                                                                @PathVariable double latitude,
-                                                                                                @PathVariable double longitude) {
+    @GetMapping("/related-centers/{latitude}/{longitude}")
+    public ResponseEntity<BaseResponseDto<List<RecommendedCenterResponseDto>>> getRecommendedCenterList(HttpServletRequest request,
+                                                                                                        @PathVariable(value = "latitude") double latitude,
+                                                                                                        @PathVariable(value = "longitude") double longitude) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getRelatedCenterList(memberId, latitude, longitude)));
+                .body(new BaseResponseDto<>(centerService.getRecommendedCenterList(memberId, latitude, longitude)));
     }
 }

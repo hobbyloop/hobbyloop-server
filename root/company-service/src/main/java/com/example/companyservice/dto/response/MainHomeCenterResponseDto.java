@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HotCenterResponseDto {
+public class MainHomeCenterResponseDto {
 
     private Long centerId;
 
@@ -22,8 +22,8 @@ public class HotCenterResponseDto {
 
     private boolean isBookmark;
 
-    public static HotCenterResponseDto of(Center center, boolean isBookmark) {
-        return HotCenterResponseDto.builder()
+    public static MainHomeCenterResponseDto of(Center center, boolean isBookmark) {
+        return MainHomeCenterResponseDto.builder()
                 .centerId(center.getId())
                 .centerName(center.getCenterName())
                 .logoImageUrl(center.getLogoImageUrl())

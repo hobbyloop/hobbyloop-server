@@ -5,7 +5,6 @@ import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.dto.request.AdvertisementRequestDto;
 import com.example.companyservice.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.entity.Advertisement;
-import com.example.companyservice.entity.AdvertisementTypeEnum;
 import com.example.companyservice.entity.Center;
 import com.example.companyservice.repository.advertisement.AdvertisementRepository;
 import com.example.companyservice.repository.CenterRepository;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,8 +21,6 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private final CenterRepository centerRepository;
 
     private final AdvertisementRepository advertisementRepository;
-
-    private final CommonService commonService;
 
     @Override
     @Transactional

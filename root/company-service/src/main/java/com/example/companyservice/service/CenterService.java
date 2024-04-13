@@ -36,5 +36,5 @@ public interface CenterService {
 
     List<HotCenterTicketResponseDto> getHotCenterTicketList(long memberId, double latitude, double longitude);
 
-    List<RelatedCenterResponseDto> getRelatedCenterList(long memberId, double latitude, double longitude);
+    List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, double latitude, double longitude);
 }

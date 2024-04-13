@@ -2,6 +2,7 @@ package com.example.companyservice.repository.advertisement;
 
 import com.example.companyservice.entity.Advertisement;
 import com.example.companyservice.entity.AdvertisementTypeEnum;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,20 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
                 .where(advertisement.isOpen.eq(true)
                         .and(advertisement.adType.eq(AdvertisementTypeEnum.CPC.getTypeValue()))
                         .and(betweenDate()))
+                .fetch();
+    }
+
+    @Override
+    public List<Advertisement> findAllCPCCPMAdvertisement() {
+        return queryFactory
+                .selectFrom(advertisement)
+                .join(advertisement.center, center)
+                .where(advertisement.isOpen.eq(true)
+                        .and(advertisement.adType.eq(AdvertisementTypeEnum.CPC.getTypeValue()))
+                        .or(advertisement.adType.eq(AdvertisementTypeEnum.CPM.getTypeValue()))
+                        .and(betweenDate()))
+                .orderBy(advertisement.price.desc())
+                .limit(20)
                 .fetch();
     }
 

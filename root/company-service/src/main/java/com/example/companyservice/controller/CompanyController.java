@@ -17,7 +17,7 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PatchMapping("/companies")
+    @PatchMapping("/admin/companies")
     public ResponseEntity<BaseResponseDto<Long>> updateCompanyInfo(HttpServletRequest request,
                                                                    @RequestBody CompanyUpdateRequestDto requestDto) {
         long companyId = Utils.parseAuthorizedId(request);
@@ -25,7 +25,7 @@ public class CompanyController {
                 .body(new BaseResponseDto<>(companyService.updateCompanyInfo(companyId, requestDto)));
     }
 
-    @GetMapping("/companies/check/tax-free")
+    @GetMapping("/admin/companies/check/tax-free")
     public ResponseEntity<BaseResponseDto<Boolean>> checkTaxFree(HttpServletRequest request) {
         long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)

@@ -9,4 +9,6 @@ public interface AdvertisementRepositoryCustom {
     List<Advertisement> findAllBannerAdvertisement();
 
     List<Advertisement> findAllCPCAdvertisement();
+
+    List<Advertisement> findAllCPCCPMAdvertisement();
 }

@@ -31,6 +31,8 @@ public class PurchaseHistory extends TimeStamped {
 
     private String ticketName;
 
+    private String category;
+
     private String centerLogo;
 
     private Long memberId;

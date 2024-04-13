@@ -90,6 +90,8 @@ public class Center extends TimeStamped {
         this.kakaoLink = requestDto.getKakaoLink();
         this.logoImageKey = logoImageKey;
         this.logoImageUrl = logoImageUrl;
+        this.latitude = requestDto.getLatitude();
+        this.longitude = requestDto.getLongitude();
     }
 
     public void businessInfoUpdate(BusinessRequestDto requestDto) {
