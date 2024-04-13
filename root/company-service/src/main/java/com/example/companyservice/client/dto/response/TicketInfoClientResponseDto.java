@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HotTicketResponseDto {
+public class TicketInfoClientResponseDto {
 
     private Long ticketId;
 
@@ -21,5 +21,5 @@ public class HotTicketResponseDto {
 
     private String category;
 
-    private int price;
+    private int calculatedPrice;
 }
