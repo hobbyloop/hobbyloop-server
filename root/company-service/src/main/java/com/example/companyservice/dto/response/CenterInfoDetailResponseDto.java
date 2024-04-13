@@ -1,5 +1,6 @@
 package com.example.companyservice.dto.response;
 
+import com.example.companyservice.client.dto.response.TicketDetailClientResponseDto;
 import com.example.companyservice.entity.Center;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,17 @@ public class CenterInfoDetailResponseDto {
 
     private List<HourResponseDto> operatingHourList;
 
+    private List<HourResponseDto> breakHourList;
+
+    private float score;
+
     private int reviewCount;
+
+    private int price;
+
+    private int discountRate;
+
+    private int calculatedPrice;
 
     private String announcement;
 
@@ -49,7 +60,8 @@ public class CenterInfoDetailResponseDto {
                                                  List<String> centerImageUrlList,
                                                  boolean isBookmark,
                                                  List<HourResponseDto> operatingHourList,
-                                                 int reviewCount) {
+                                                 List<HourResponseDto> breakHourList,
+                                                 TicketDetailClientResponseDto ticketInfo) {
         return CenterInfoDetailResponseDto.builder()
                 .centerName(center.getCenterName())
                 .logoImageUrl(center.getLogoImageUrl())
@@ -59,7 +71,12 @@ public class CenterInfoDetailResponseDto {
                 .kakaoLink(center.getKakaoLink())
                 .address(center.getAddress())
                 .operatingHourList(operatingHourList)
-                .reviewCount(reviewCount)
+                .breakHourList(breakHourList)
+                .score(ticketInfo.getScore())
+                .reviewCount(ticketInfo.getReviewCount())
+                .price(ticketInfo.getPrice())
+                .discountRate(ticketInfo.getDiscountRate())
+                .calculatedPrice(ticketInfo.getCalculatedPrice())
                 .announcement(center.getAnnouncement())
                 .introduce(center.getIntroduce())
                 .representativeName(center.getRepresentativeName())

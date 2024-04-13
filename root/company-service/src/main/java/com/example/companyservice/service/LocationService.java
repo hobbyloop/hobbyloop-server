@@ -3,7 +3,7 @@ package com.example.companyservice.service;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommonService {
+public class LocationService {
 
     // km 기준
     public Double getDistance(Double lat1, Double lnt1, Double lat2, Double lnt2) {

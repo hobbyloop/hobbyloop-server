@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TicketResponseDto {
+public class TicketClientResponseDto {
 
     private Long ticketId;
 
     private String name;
 
-    private int price;
+    private int calculatedPrice;
 
     private int duration;
 }

@@ -18,7 +18,7 @@ public class BookmarkController {
 
     @PostMapping("/bookmark/{centerId}")
     public ResponseEntity<BaseResponseDto<Long>> createBookmark(HttpServletRequest request,
-                                                                @PathVariable long centerId) {
+                                                                @PathVariable(value = "centerId") long centerId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(bookmarkService.createBookmark(memberId, centerId)));
@@ -26,7 +26,7 @@ public class BookmarkController {
 
     @DeleteMapping("/bookmark/{centerId}")
     public ResponseEntity<BaseResponseDto<Void>> deleteBookmark(HttpServletRequest request,
-                                                                @PathVariable long centerId) {
+                                                                @PathVariable(value = "centerId") long centerId) {
         long memberId = Utils.parseAuthorizedId(request);
         bookmarkService.deleteBookmark(memberId, centerId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new BaseResponseDto<>());

@@ -1,6 +1,6 @@
 package com.example.companyservice.dto.response;
 
-import com.example.companyservice.client.dto.response.TicketResponseDto;
+import com.example.companyservice.client.dto.response.TicketClientResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +16,5 @@ public class CenterHomeResponseDto {
 
     private List<Integer> quickButtonIdList;
 
-    private List<TicketResponseDto> ticketResponseDtoList;
+    private List<TicketClientResponseDto> ticketResponseDtoList;
 }

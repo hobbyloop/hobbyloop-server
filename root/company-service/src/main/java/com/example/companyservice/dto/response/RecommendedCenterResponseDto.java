@@ -10,15 +10,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class HotCenterTicketResponseDto {
+public class RecommendedCenterResponseDto {
 
     private MainHomeCenterResponseDto centerResponseDto;
 
     private HotTicketResponseDto ticketResponseDto;
 
-    public static HotCenterTicketResponseDto of(MainHomeCenterResponseDto centerResponseDto,
-                                                HotTicketResponseDto ticketResponseDto) {
-        return HotCenterTicketResponseDto.builder()
+    public static RecommendedCenterResponseDto of(MainHomeCenterResponseDto centerResponseDto,
+                                                  HotTicketResponseDto ticketResponseDto) {
+        return RecommendedCenterResponseDto.builder()
                 .centerResponseDto(centerResponseDto)
                 .ticketResponseDto(ticketResponseDto)
                 .build();

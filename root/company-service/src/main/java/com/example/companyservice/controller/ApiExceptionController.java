@@ -27,7 +27,6 @@ public class ApiExceptionController {
      */
     @ExceptionHandler({ApiException.class})
     public ResponseEntity<ApiExceptionEntity> apiExceptionHandler(final ApiException e) {
-
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
                         e.getError().getCode(),
@@ -58,12 +57,12 @@ public class ApiExceptionController {
      * @return
      */
     @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<ApiExceptionEntity> runTimeExceptionHandler() {
+    public ResponseEntity<ApiExceptionEntity> runTimeExceptionHandler(RuntimeException ex) {
         ApiException e = new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
                         e.getError().getCode(),
-                        e.getError().getMessage()
+                        ex.getMessage()
                 ),
                 e.getError().getStatus()
         );
@@ -75,7 +74,6 @@ public class ApiExceptionController {
      */
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
     public ResponseEntity<ApiExceptionEntity> methodNotSupportExceptionHandler() {
-
         ApiException e = new ApiException(ExceptionEnum.API_METHOD_NOT_ALLOWED_EXCEPTION);
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
@@ -91,13 +89,12 @@ public class ApiExceptionController {
      * @return
      */
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<ApiExceptionEntity> internalServerExceptionHandler() {
-
+    public ResponseEntity<ApiExceptionEntity> internalServerExceptionHandler(Exception ex) {
         ApiException e = new ApiException(ExceptionEnum.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
                         e.getError().getCode(),
-                        e.getError().getMessage()
+                        ex.getMessage()
                 ),
                 e.getError().getStatus()
         );
@@ -112,7 +109,6 @@ public class ApiExceptionController {
             MissingServletRequestParameterException.class
     })
     public ResponseEntity<ApiExceptionEntity> parameterException() {
-
         ApiException e = new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION);
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
@@ -129,7 +125,6 @@ public class ApiExceptionController {
      */
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<ApiExceptionEntity> accessDeniedException() {
-
         ApiException e = new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
         return new ResponseEntity<ApiExceptionEntity>(
                 new ApiExceptionEntity(
@@ -139,5 +134,4 @@ public class ApiExceptionController {
                 e.getError().getStatus()
         );
     }
-
 }

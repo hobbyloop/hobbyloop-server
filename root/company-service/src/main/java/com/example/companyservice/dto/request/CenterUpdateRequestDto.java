@@ -24,4 +24,8 @@ public class CenterUpdateRequestDto {
     private List<HourRequestDto> operatingHourList;
 
     private List<HourRequestDto> breakHourList;
+
+    private double latitude;
+
+    private double longitude;
 }
