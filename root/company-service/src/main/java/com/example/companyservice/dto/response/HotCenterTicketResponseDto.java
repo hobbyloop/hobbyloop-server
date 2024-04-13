@@ -1,6 +1,6 @@
 package com.example.companyservice.dto.response;
 
-import com.example.companyservice.client.dto.response.HotTicketResponseDto;
+import com.example.companyservice.client.dto.response.TicketInfoClientResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,10 +14,10 @@ public class HotCenterTicketResponseDto {
 
     private MainHomeCenterResponseDto centerResponseDto;
 
-    private HotTicketResponseDto ticketResponseDto;
+    private TicketInfoClientResponseDto ticketResponseDto;
 
     public static HotCenterTicketResponseDto of(MainHomeCenterResponseDto centerResponseDto,
-                                                HotTicketResponseDto ticketResponseDto) {
+                                                TicketInfoClientResponseDto ticketResponseDto) {
         return HotCenterTicketResponseDto.builder()
                 .centerResponseDto(centerResponseDto)
                 .ticketResponseDto(ticketResponseDto)

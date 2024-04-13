@@ -51,7 +51,7 @@ public class CenterController {
                 .body(new BaseResponseDto<>(centerService.getHotCenterTicketList(memberId, latitude, longitude)));
     }
 
-    @GetMapping("/related-centers/{latitude}/{longitude}")
+    @GetMapping("/recommend/{latitude}/{longitude}")
     public ResponseEntity<BaseResponseDto<List<RecommendedCenterResponseDto>>> getRecommendedCenterList(HttpServletRequest request,
                                                                                                         @PathVariable(value = "latitude") double latitude,
                                                                                                         @PathVariable(value = "longitude") double longitude) {

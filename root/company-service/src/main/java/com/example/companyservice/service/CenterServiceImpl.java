@@ -3,7 +3,7 @@ package com.example.companyservice.service;
 import com.example.companyservice.client.PayServiceClient;
 import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
-import com.example.companyservice.client.dto.response.HotTicketResponseDto;
+import com.example.companyservice.client.dto.response.TicketInfoClientResponseDto;
 import com.example.companyservice.client.dto.response.TicketClientResponseDto;
 import com.example.companyservice.client.dto.response.TicketDetailClientResponseDto;
 import com.example.companyservice.common.exception.ApiException;
@@ -227,7 +227,7 @@ public class CenterServiceImpl implements CenterService {
         List<Long> centerIdList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCAdvertisement();
         toMainHomeCenterResponseDto(memberId, latitude, longitude, responseDtoList, advertisementList, centerIdList);
-        Map<Long, HotTicketResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
+        Map<Long, TicketInfoClientResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
         return responseDtoList.stream().map(c -> HotCenterTicketResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
     }
 
@@ -238,7 +238,7 @@ public class CenterServiceImpl implements CenterService {
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCCPMAdvertisement();
         List<Long> centerIdList = new ArrayList<>();
         toMainHomeCenterResponseDto(memberId, latitude, longitude, responseDtoList, advertisementList, centerIdList);
-        Map<Long, HotTicketResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
+        Map<Long, TicketInfoClientResponseDto> ticketResponseDtoMap = ticketServiceClient.getRecommendTicketList(centerIdList).getData();
         return responseDtoList.stream().map(c -> RecommendedCenterResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
     }
 
