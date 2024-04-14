@@ -1,0 +1,27 @@
+package com.example.ticketservice.dto.response;
+
+import com.example.ticketservice.entity.UserTicket;
+import lombok.Builder;
+import lombok.Getter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Builder
+public class RecentPurchaseUserTicketListResponseDto {
+    private Long userTicketId;
+    private String ticketImageUrl;
+    private String ticketName;
+    private String centerName;
+    private LocalDateTime createdAt;
+
+    public static RecentPurchaseUserTicketListResponseDto of(UserTicket userTicket, String centerName) {
+        return RecentPurchaseUserTicketListResponseDto.builder()
+                .userTicketId(userTicket.getId())
+                .ticketImageUrl(userTicket.getTicket().getTicketImageUrl())
+                .ticketName(userTicket.getTicket().getName())
+                .centerName(centerName)
+                .createdAt(userTicket.getCreatedAt())
+                .build();
+    }
+}

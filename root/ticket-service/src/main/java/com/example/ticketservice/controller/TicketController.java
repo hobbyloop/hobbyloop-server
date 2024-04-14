@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
@@ -39,5 +40,12 @@ public class TicketController {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(ticketService.purchaseTicket(ticketId, memberId)));
+    }
+
+    @GetMapping("/tickets/my/recent-purchase")
+    public ResponseEntity<BaseResponseDto<Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>>>> getMyRecentPurchaseUserTicketList(HttpServletRequest request) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getRecentPurchaseUserTicketList(memberId)));
     }
 }

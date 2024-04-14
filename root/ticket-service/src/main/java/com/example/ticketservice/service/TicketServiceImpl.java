@@ -25,10 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.YearMonth;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -196,6 +194,30 @@ public class TicketServiceImpl implements TicketService{
 
         userTicket.approve();
         ticket.issue();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId) {
+        List<UserTicket> userTicketList = userTicketRepository.findAllByMemberId(memberId);
+        return userTicketList.stream()
+                .collect(Collectors.groupingBy(
+                        userTicket -> YearMonth.from(userTicket.getCreatedAt()),
+                        TreeMap::new,
+                        Collectors.collectingAndThen(
+                                Collectors.mapping(
+                                        userTicket -> {
+                                           CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(userTicket.getTicket().getCenterId()).getData();
+                                                return RecentPurchaseUserTicketListResponseDto.of(userTicket, centerInfo.getCenterName());
+                                        },
+                                        Collectors.toCollection(ArrayList::new)
+                                ),
+                                list -> {
+                                    list.sort(Comparator.comparing(RecentPurchaseUserTicketListResponseDto::getCreatedAt));
+                                    return list;
+                                }
+                        )
+                ));
     }
 
     private float getScore(long centerId) {
