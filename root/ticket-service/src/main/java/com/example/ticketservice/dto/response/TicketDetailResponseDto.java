@@ -1,5 +1,6 @@
 package com.example.ticketservice.dto.response;
 
+import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.entity.CategoryEnum;
@@ -33,10 +34,10 @@ public class TicketDetailResponseDto {
     private int calculatedPrice;
     private int refundRegulation;
     private int refundPercentage;
-    private OriginalCenterResponseDto centerInfo;
+    private CenterInfoResponseDto centerInfo;
     private OriginalBusinessResponseDto businessInfo;
 
-    public static TicketDetailResponseDto of(Ticket ticket, OriginalCenterResponseDto centerInfo, OriginalBusinessResponseDto businessInfo) {
+    public static TicketDetailResponseDto of(Ticket ticket, CenterInfoResponseDto centerInfo, OriginalBusinessResponseDto businessInfo) {
         return TicketDetailResponseDto.builder()
                 .ticketName(ticket.getName())
                 .ticketImageUrl(ticket.getTicketImageUrl())

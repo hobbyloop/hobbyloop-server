@@ -24,6 +24,10 @@ public class CenterInfoDetailResponseDto {
 
     private boolean isBookmark;
 
+    private boolean isLooppass;
+
+    private boolean isRefundable;
+
     private String contact;
 
     private String kakaoLink;
@@ -67,6 +71,8 @@ public class CenterInfoDetailResponseDto {
                 .logoImageUrl(center.getLogoImageUrl())
                 .centerImageUrlList(centerImageUrlList)
                 .isBookmark(isBookmark)
+                .isLooppass(center.getCompany().getIsLooppass())
+                .isRefundable(center.getCompany().getIsRefundable())
                 .contact(center.getContact())
                 .kakaoLink(center.getKakaoLink())
                 .address(center.getAddress())

@@ -19,12 +19,6 @@ public class CenterController {
 
     private final CenterService centerService;
 
-    @GetMapping("/info/{centerId}")
-    public ResponseEntity<BaseResponseDto<CenterInfoResponseDto>> getCenterInfo(@PathVariable(value = "centerId") long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getCenterInfo(centerId)));
-    }
-
     @GetMapping("/info/detail/{centerId}")
     public ResponseEntity<BaseResponseDto<CenterInfoDetailResponseDto>> getCenterInfoDetail(HttpServletRequest request,
                                                                                             @PathVariable(value = "centerId") long centerId) {

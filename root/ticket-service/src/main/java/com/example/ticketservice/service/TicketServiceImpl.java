@@ -5,7 +5,6 @@ import com.example.ticketservice.client.MemberServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
-import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.BaseResponseDto;
@@ -115,7 +114,7 @@ public class TicketServiceImpl implements TicketService{
     public TicketDetailResponseDto getTicketDetail(long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
-        OriginalCenterResponseDto centerInfo = companyServiceClient.getOriginalCenterInfo(ticket.getCenterId()).getData();
+        CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId()).getData();
         OriginalBusinessResponseDto businessInfo = companyServiceClient.getOriginalBusinessInfo(ticket.getCenterId()).getData();
         // TODO: lectureInfo도 필요함
         return TicketDetailResponseDto.of(ticket, centerInfo, businessInfo);
