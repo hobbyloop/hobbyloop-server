@@ -18,7 +18,7 @@ public interface TicketServiceClient {
     @GetMapping("/api/v1/client/tickets/{centerId}")
     BaseResponseDto<List<TicketClientResponseDto>> getTicketList(@PathVariable(value = "centerId") long centerId);
 
-    @PostMapping("/api/v1/tickets/bookmark-center")
+    @PostMapping("/api/v1/client/tickets/bookmark-ticket-list")
     BaseResponseDto<Map<Long, BookmarkScoreTicketResponseDto>> getBookmarkTicketList(@RequestBody List<Long> centerIdList);
 
     @GetMapping("/api/v1/client/tickets/detail/{centerId}")

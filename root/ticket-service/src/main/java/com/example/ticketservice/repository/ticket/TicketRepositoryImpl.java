@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.ticketservice.entity.QTicket.ticket;
 
@@ -22,6 +23,17 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .limit(20)
                 .orderBy(ticket.id.desc())
                 .fetch();
+    }
+
+    @Override
+    public Optional<Ticket> getMinimumPriceTicket(long centerId) {
+        return Optional.ofNullable(
+                queryFactory
+                    .selectFrom(ticket)
+                    .where(ticket.centerId.eq(centerId))
+                    .orderBy(ticket.calculatedPrice.desc())
+                    .limit(1)
+                    .fetchOne());
     }
 
     private BooleanExpression ltTicketId(long ticketId) {

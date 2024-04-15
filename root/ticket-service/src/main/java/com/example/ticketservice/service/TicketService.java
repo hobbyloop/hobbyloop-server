@@ -16,8 +16,6 @@ public interface TicketService {
 
     TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto, MultipartFile ticketImage);
 
-    Map<Long, BookmarkScoreTicketResponseDto> getBookmarkTicketList(List<Long> centerIdList);
-
     AdminReviewTicketResponseDto getTicketInfo(long ticketId);
 
     ReviewListTicketResponseDto getIOSTicketInfo(long ticketId);

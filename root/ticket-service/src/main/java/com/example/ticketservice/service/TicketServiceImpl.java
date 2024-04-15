@@ -78,20 +78,6 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     @Transactional(readOnly = true)
-    public Map<Long, BookmarkScoreTicketResponseDto> getBookmarkTicketList(List<Long> centerIdList) {
-        Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap = new HashMap<>();
-        centerIdList.forEach((i) -> {
-            float score = getScore(i);
-            List<Ticket> ticketList = ticketRepository.findAllByCenterId(i);
-            List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList = ticketList.stream().map(BookmarkTicketResponseDto::from).toList();
-            BookmarkScoreTicketResponseDto bookmarkScoreTicketResponseDto = BookmarkScoreTicketResponseDto.of(score, bookmarkTicketResponseDtoList);
-            bookmarkTicketResponseDtoMap.put(i, bookmarkScoreTicketResponseDto);
-        });
-        return bookmarkTicketResponseDtoMap;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public AdminReviewTicketResponseDto getTicketInfo(long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
