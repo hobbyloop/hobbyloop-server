@@ -15,12 +15,16 @@ public class BookmarkScoreTicketResponseDto {
 
     private float score;
 
+    private int reviewCount;
+
     private List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList;
 
     public static BookmarkScoreTicketResponseDto of(float score,
+                                                    int reviewCount,
                                                     List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList) {
         return BookmarkScoreTicketResponseDto.builder()
                 .score(score)
+                .reviewCount(reviewCount)
                 .bookmarkTicketResponseDtoList(bookmarkTicketResponseDtoList)
                 .build();
     }

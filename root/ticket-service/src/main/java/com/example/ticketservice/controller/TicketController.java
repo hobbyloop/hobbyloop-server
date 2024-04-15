@@ -21,12 +21,6 @@ public class TicketController {
 
     private final TicketService ticketService;
 
-    @PostMapping("/tickets/bookmarks")
-    public ResponseEntity<BaseResponseDto<Map<Long, BookmarkScoreTicketResponseDto>>> getBookmarkTicketList(@RequestBody List<Long> centerIdList) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(ticketService.getBookmarkTicketList(centerIdList)));
-    }
-
     @GetMapping("/tickets/ios-review/{ticketId}")
     public ResponseEntity<BaseResponseDto<ReviewListTicketResponseDto>> getIOSTicketInfo(@PathVariable long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)

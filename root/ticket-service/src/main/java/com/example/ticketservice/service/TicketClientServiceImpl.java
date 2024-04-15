@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +35,28 @@ public class TicketClientServiceImpl implements TicketClientService {
 
     @Override
     @Transactional(readOnly = true)
+    public Map<Long, BookmarkScoreTicketResponseDto> getBookmarkTicketList(List<Long> centerIdList) {
+        Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap = new HashMap<>();
+        centerIdList.forEach((i) -> {
+            List<Review> reviewList = reviewRepository.findAllByCenterId(i);
+            float score = getScore(reviewList);
+            List<Ticket> ticketList = ticketRepository.findAllByCenterId(i);
+            List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList = ticketList.stream().map(BookmarkTicketResponseDto::from).toList();
+            BookmarkScoreTicketResponseDto bookmarkScoreTicketResponseDto = BookmarkScoreTicketResponseDto.of(score, reviewList.size(), bookmarkTicketResponseDtoList);
+            bookmarkTicketResponseDtoMap.put(i, bookmarkScoreTicketResponseDto);
+        });
+        return bookmarkTicketResponseDtoMap;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public TicketDetailClientResponseDto getTicketDetailInfo(long centerId) {
-        // TODO 상세 페이지 이용권 정보 조회
+        Optional<Ticket> minimumPriceTicket = ticketRepository.getMinimumPriceTicket(centerId);
+        if (minimumPriceTicket.isPresent()) {
+            List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
+            float score = getScore(reviewList);
+            return TicketDetailClientResponseDto.of(score, reviewList.size(), minimumPriceTicket.get());
+        }
         return null;
     }
 
@@ -54,9 +75,13 @@ public class TicketClientServiceImpl implements TicketClientService {
     public Map<Long, TicketInfoClientResponseDto> getRecommendTicketList(List<Long> centerIdList) {
         Map<Long, TicketInfoClientResponseDto> recommendTicketResponseDtoMap = new HashMap<>();
         centerIdList.forEach((i) -> {
-            List<Review> reviewList = reviewRepository.findAllByCenterId(i);
-            float score = getScore(reviewList);
-            // TODO 최저가 이용권 조회
+            Optional<Ticket> minimumPriceTicket = ticketRepository.getMinimumPriceTicket(i);
+            if (minimumPriceTicket.isPresent()) {
+                List<Review> reviewList = reviewRepository.findAllByCenterId(i);
+                float score = getScore(reviewList);
+                TicketInfoClientResponseDto responseDto = TicketInfoClientResponseDto.of(minimumPriceTicket.get(), score, reviewList.size());
+                recommendTicketResponseDtoMap.put(i, responseDto);
+            }
         });
         return recommendTicketResponseDtoMap;
     }

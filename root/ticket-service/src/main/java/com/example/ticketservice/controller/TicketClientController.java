@@ -4,6 +4,7 @@ import com.example.ticketservice.client.dto.response.TicketDetailClientResponseD
 import com.example.ticketservice.client.dto.response.TicketInfoClientResponseDto;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.client.dto.response.TicketClientResponseDto;
+import com.example.ticketservice.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.ticketservice.service.TicketClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,12 @@ public class TicketClientController {
     public ResponseEntity<BaseResponseDto<List<TicketClientResponseDto>>> getTicketClientResponseDto(@PathVariable(value = "centerId") long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketClientService.getTicketClientResponseDto(centerId)));
+    }
+
+    @PostMapping("/bookmark-ticket-list")
+    public ResponseEntity<BaseResponseDto<Map<Long, BookmarkScoreTicketResponseDto>>> getBookmarkTicketList(@RequestBody List<Long> centerIdList) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketClientService.getBookmarkTicketList(centerIdList)));
     }
 
     @GetMapping("/detail/{centerId}")
