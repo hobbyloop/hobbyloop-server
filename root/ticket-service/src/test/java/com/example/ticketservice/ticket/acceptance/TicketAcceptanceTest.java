@@ -15,11 +15,16 @@ import com.example.ticketservice.ticket.utils.ReviewSteps;
 import com.example.ticketservice.ticket.utils.TicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -150,6 +155,33 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(userTicketId).isNotNull();
+    }
+
+    @Test
+    public void getRecentPurchaseUserTicketListSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
+
+        // when
+        mockForGetTicketDetail();
+
+        for (int i = 0; i < 4; i++) {
+            TicketSteps.purchaseTicket(ticketId);
+        }
+
+        Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> response = TicketSteps.getMyRecentPurchaseUserTicketList();
+
+        // then
+        LocalDateTime now = LocalDateTime.now();
+        int thisYear = now.getYear();
+        int thisMonth = now.getMonthValue();
+
+        assertThat(response.size()).isEqualTo(1);
+        assertThat(response.containsKey(YearMonth.of(thisYear, thisMonth))).isTrue();
     }
 
     @Test

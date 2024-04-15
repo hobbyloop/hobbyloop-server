@@ -10,4 +10,6 @@ import java.util.List;
 public interface UserTicketRepository extends JpaRepository<UserTicket, Long> {
 
     List<UserTicket> findAllByTicketIdAndIsApproveFalse(long ticketId);
+
+    List<UserTicket> findAllByMemberId(long memberId);
 }

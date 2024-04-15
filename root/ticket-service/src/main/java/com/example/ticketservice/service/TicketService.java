@@ -5,6 +5,7 @@ import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
@@ -34,4 +35,6 @@ public interface TicketService {
     List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId);
 
     void approveUserTicket(long userTicketId);
+
+    Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId);
 }
