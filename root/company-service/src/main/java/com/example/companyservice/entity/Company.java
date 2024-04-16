@@ -60,6 +60,8 @@ public class Company extends TimeStamped {
 
     private Boolean isReservationService;
 
+    private Boolean isRefundable;
+
     private int createStatus;
 
     private Boolean isOption1;
@@ -96,6 +98,7 @@ public class Company extends TimeStamped {
         this.accountNumber = requestDto.getAccountNumber();
         this.isLooppass = requestDto.isLooppass();
         this.isReservationService = requestDto.isReservationService();
+        this.isRefundable = requestDto.isRefundable();
         this.companyLatePlanId = companyLatePlanId;
         this.createStatus = CreateStatusEnum.WAIT.getTypeValue();
         this.latitude = requestDto.getLatitude();

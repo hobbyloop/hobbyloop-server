@@ -47,6 +47,9 @@ public class CompanyUpdateRequestDto {
     @JsonProperty
     private boolean isLooppass;
 
+    @JsonProperty
+    private boolean isRefundable;
+
     private String paymentType;
 
     private int price;

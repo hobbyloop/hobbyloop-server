@@ -25,6 +25,12 @@ public class CenterFixture {
         return CenterInfoResponseDto.builder()
                 .centerName(DEFAULT_CENTER_NAME)
                 .address(DEFAULT_ADDRESS)
+                .announcement("test-announcement")
+                .introduce("test-introduce")
+                .contact("test-contact")
+                .kakaoLink("test-kakao-link")
+                .looppass(true)
+                .refundable(true)
                 .operatingHourList(defaultOperatingHourList)
                 .breakHourList(defaultBreakingHourList)
                 .build();

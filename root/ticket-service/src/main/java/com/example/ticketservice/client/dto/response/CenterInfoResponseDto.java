@@ -18,6 +18,18 @@ public class CenterInfoResponseDto {
 
     public String address;
 
+    private String announcement;
+
+    private String introduce;
+
+    private String contact;
+
+    private String kakaoLink;
+
+    private boolean looppass;
+
+    private boolean refundable;
+
     private List<HourResponseDto> operatingHourList;
 
     private List<HourResponseDto> breakHourList;
