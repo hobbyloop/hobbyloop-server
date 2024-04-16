@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserTicketRepository extends JpaRepository<UserTicket, Long> {
+public interface UserTicketRepository extends JpaRepository<UserTicket, Long>, UserTicketRepositoryCustom {
 
     List<UserTicket> findAllByTicketIdAndIsApproveFalse(long ticketId);
 

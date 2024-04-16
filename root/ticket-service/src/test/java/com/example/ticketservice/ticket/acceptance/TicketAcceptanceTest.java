@@ -13,6 +13,7 @@ import com.example.ticketservice.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
 import com.example.ticketservice.ticket.utils.ReviewSteps;
 import com.example.ticketservice.ticket.utils.TicketSteps;
+import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -151,10 +152,44 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         // when
         mockForGetTicketDetail();
-        Long userTicketId = TicketSteps.purchaseTicket(ticketId);
+        Long userTicketId = UserTicketSteps.purchaseTicket(ticketId);
 
         // then
         assertThat(userTicketId).isNotNull();
+    }
+
+    @Test
+    public void getAvailableUserTicketListSuccess() throws Exception {
+        // given
+        long defaultCenterId = 1L;
+        long nonRefundableCenterId = 2L;
+
+        mockForCreateTicket();
+        long ticketIdOfDefaultCenter = AdminTicketSteps.createTicket(defaultCenterId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketIdOfDefaultCenter);
+        long ticketIdOfDefaultCenter2 = AdminTicketSteps.createTicket(defaultCenterId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketIdOfDefaultCenter2);
+
+        long ticketIdOfNonRefundableCenter = AdminTicketSteps.createTicket(nonRefundableCenterId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketIdOfNonRefundableCenter);
+
+        long userTicketId1 = UserTicketSteps.purchaseTicket(ticketIdOfDefaultCenter);
+        long userTicketId2 = UserTicketSteps.purchaseTicket(ticketIdOfNonRefundableCenter);
+        long userTicketId3 = UserTicketSteps.purchaseTicket(ticketIdOfDefaultCenter2);
+
+        AdminTicketSteps.approveUserTicket(userTicketId1);
+        AdminTicketSteps.approveUserTicket(userTicketId2);
+        AdminTicketSteps.approveUserTicket(userTicketId3);
+
+        // when
+        Map<String, AvailableUserTicketsWithCenterInfo> response = UserTicketSteps.getMyAvailableUserTicketList();
+
+        // then
+        assertThat(response.size()).isEqualTo(2);
+        assertThat(response.containsKey(CenterFixture.DEFAULT_CENTER_NAME)).isTrue();
+        assertThat(response.containsKey(CenterFixture.NON_REFUNDABLE_CENTER_NAME)).isTrue();
+        assertThat(response.get(CenterFixture.DEFAULT_CENTER_NAME).getAvailableUserTickets().size()).isEqualTo(2);
+
     }
 
     @Test
@@ -170,10 +205,10 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForGetTicketDetail();
 
         for (int i = 0; i < 4; i++) {
-            TicketSteps.purchaseTicket(ticketId);
+            UserTicketSteps.purchaseTicket(ticketId);
         }
 
-        Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> response = TicketSteps.getMyRecentPurchaseUserTicketList();
+        Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> response = UserTicketSteps.getMyRecentPurchaseUserTicketList();
 
         // then
         LocalDateTime now = LocalDateTime.now();
@@ -192,7 +227,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForCreateTicket();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         AdminTicketSteps.uploadTicket(ticketId);
-        Long userTicketId = TicketSteps.purchaseTicket(ticketId);
+        Long userTicketId = UserTicketSteps.purchaseTicket(ticketId);
 
         // when
         given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
@@ -211,7 +246,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForCreateTicket();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         AdminTicketSteps.uploadTicket(ticketId);
-        TicketSteps.purchaseTicket(ticketId);
+        UserTicketSteps.purchaseTicket(ticketId);
 
         given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
         Long userTicketId = AdminTicketSteps.getUnapprovedUserTicketList(centerId).get(0).getUserTicketId();
@@ -226,7 +261,8 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     private void mockForCreateTicket() throws IOException {
-        given(companyServiceClient.getCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultCenterInfoResponseDto()));
+        given(companyServiceClient.getCenterInfo(1L)).willReturn(new BaseResponseDto<>(CenterFixture.defaultCenterInfoResponseDto()));
+        given(companyServiceClient.getCenterInfo(2L)).willReturn(new BaseResponseDto<>(CenterFixture.nonRefundableCenterInfoResponseDto()));
         given(amazonS3Service.upload(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
     }

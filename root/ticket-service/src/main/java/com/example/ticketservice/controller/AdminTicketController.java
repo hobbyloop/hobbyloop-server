@@ -5,6 +5,7 @@ import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.service.TicketService;
+import com.example.ticketservice.service.UserTicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/tickets")
 public class AdminTicketController {
     private final TicketService ticketService;
+    private final UserTicketService userTicketService;
 
     @GetMapping("/management/{centerId}/{ticketId}")
     public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable long centerId,
@@ -79,12 +81,12 @@ public class AdminTicketController {
     @GetMapping("/members/unapproved/{centerId}")
     public ResponseEntity<BaseResponseDto<List<UnapprovedUserTicketListResponseDto>>> getUnapprovedUserTicketList(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(ticketService.getUnapprovedUserTicketList(centerId)));
+                .body(new BaseResponseDto<>(userTicketService.getUnapprovedUserTicketList(centerId)));
     }
 
     @PatchMapping("/members/{userTicketId}/approve")
     public ResponseEntity<BaseResponseDto<Void>> approveUserTicket(@PathVariable long userTicketId) {
-        ticketService.approveUserTicket(userTicketId);
+        userTicketService.approveUserTicket(userTicketId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
     }

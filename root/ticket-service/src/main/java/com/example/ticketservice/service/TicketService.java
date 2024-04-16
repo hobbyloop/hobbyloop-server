@@ -27,12 +27,4 @@ public interface TicketService {
     void uploadTicket(long ticketId);
 
     void cancelUploadTicket(long ticketId);
-
-    Long purchaseTicket(long memberId, long ticketId);
-
-    List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId);
-
-    void approveUserTicket(long userTicketId);
-
-    Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId);
 }
