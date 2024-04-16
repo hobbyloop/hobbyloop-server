@@ -14,6 +14,8 @@ public class CenterFixture {
     public static final String DEFAULT_CENTER_NAME = "필라피티 스튜디오";
     public static final String DEFAULT_ADDRESS = "서울특별시 강남구 테헤란로 427";
 
+    public static final String NON_REFUNDABLE_CENTER_NAME = "모어겐 스튜디오";
+
     private static final LocalTime DEFAULT_OPEN_AT = LocalTime.parse("09:00");
     private static final LocalTime DEFAULT_CLOSE_AT = LocalTime.parse("18:00");
 
@@ -31,6 +33,21 @@ public class CenterFixture {
                 .kakaoLink("test-kakao-link")
                 .looppass(true)
                 .refundable(true)
+                .operatingHourList(defaultOperatingHourList)
+                .breakHourList(defaultBreakingHourList)
+                .build();
+    }
+
+    public static CenterInfoResponseDto nonRefundableCenterInfoResponseDto() {
+        return CenterInfoResponseDto.builder()
+                .centerName(NON_REFUNDABLE_CENTER_NAME)
+                .address(DEFAULT_ADDRESS)
+                .announcement("test-announcement")
+                .introduce("test-introduce")
+                .contact("test-contact")
+                .kakaoLink("test-kakao-link")
+                .looppass(true)
+                .refundable(false)
                 .operatingHourList(defaultOperatingHourList)
                 .breakHourList(defaultBreakingHourList)
                 .build();

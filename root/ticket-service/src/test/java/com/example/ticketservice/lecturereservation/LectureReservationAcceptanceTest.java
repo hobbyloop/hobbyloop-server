@@ -8,6 +8,7 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
 import com.example.ticketservice.ticket.utils.TicketSteps;
+import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,6 @@ public class LectureReservationAcceptanceTest extends AcceptanceTest {
         ticketId = AdminTicketSteps.createTicket(1L, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         AdminTicketSteps.uploadTicket(ticketId);
 
-        userTicketId = TicketSteps.purchaseTicket(ticketId);
+        userTicketId = UserTicketSteps.purchaseTicket(ticketId);
     }
 }
