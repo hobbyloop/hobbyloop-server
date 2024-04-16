@@ -22,9 +22,13 @@ public class BookmarkCenterResponseDto {
 
     private String centerName;
 
+    private boolean isRefundable;
+
     private String address;
 
     private float score;
+
+    private int reviewCount;
 
     private String logoImageUrl;
 
@@ -33,13 +37,16 @@ public class BookmarkCenterResponseDto {
     public static BookmarkCenterResponseDto of(Bookmark bookmark,
                                                Center center,
                                                float score,
+                                               int reviewCount,
                                                List<BookmarkTicketResponseDto> ticketList) {
         return BookmarkCenterResponseDto.builder()
                 .bookmarkId(bookmark.getId())
                 .centerId(center.getId())
                 .centerName(center.getCenterName())
+                .isRefundable(center.getCompany().getIsRefundable())
                 .address(center.getAddress())
                 .score(score)
+                .reviewCount(reviewCount)
                 .logoImageUrl(center.getLogoImageUrl())
                 .ticketList(ticketList)
                 .build();

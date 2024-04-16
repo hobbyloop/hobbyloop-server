@@ -15,5 +15,7 @@ public class BookmarkScoreTicketResponseDto {
 
     private float score;
 
+    private int reviewCount;
+
     private List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList;
 }

@@ -16,11 +16,7 @@ public class BookmarkTicketResponseDto {
 
     private String name;
 
-    private int price;
-
-    private int discountRate;
-
-    private int totalPrice;
+    private int calculatedPrice;
 
     private int duration;
 
@@ -28,9 +24,7 @@ public class BookmarkTicketResponseDto {
         return BookmarkTicketResponseDto.builder()
                 .ticketId(ticket.getId())
                 .name(ticket.getName())
-                .price(ticket.getPrice())
-                .discountRate(ticket.getDiscountRate())
-                .totalPrice(ticket.getCalculatedPrice())
+                .calculatedPrice(ticket.getCalculatedPrice())
                 .duration(ticket.getDuration())
                 .build();
     }

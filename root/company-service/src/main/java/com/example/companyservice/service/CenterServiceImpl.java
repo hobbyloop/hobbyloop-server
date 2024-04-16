@@ -1,6 +1,5 @@
 package com.example.companyservice.service;
 
-import com.example.companyservice.client.PayServiceClient;
 import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.client.dto.response.TicketInfoClientResponseDto;
@@ -43,8 +42,6 @@ public class CenterServiceImpl implements CenterService {
 
     private final TicketServiceClient ticketServiceClient;
 
-    private final PayServiceClient payServiceClient;
-
     private final BookmarkRepository bookmarkRepository;
 
     private final AmazonS3Service amazonS3Service;
@@ -82,8 +79,7 @@ public class CenterServiceImpl implements CenterService {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
         List<Center> centerList = centerRepository.findAllByCompanyId(companyId);
-        List<CenterResponseDto> responseDtoList = centerList.stream().map(CenterResponseDto::from).toList();
-        return CenterResponseListDto.of(company.getStartAt(), company.getEndAt(), responseDtoList);
+        return CenterResponseListDto.of(company.getStartAt(), company.getEndAt(), centerList);
     }
 
     @Override
@@ -191,6 +187,7 @@ public class CenterServiceImpl implements CenterService {
             BookmarkCenterResponseDto bookmarkCenterResponseDto =
                     BookmarkCenterResponseDto.of(b, center,
                             bookmarkTicketResponseDtoMap.get(center.getId()).getScore(),
+                            bookmarkTicketResponseDtoMap.get(center.getId()).getReviewCount(),
                             bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null)
                                     .getBookmarkTicketResponseDtoList()
                     );
@@ -273,8 +270,8 @@ public class CenterServiceImpl implements CenterService {
     }
 
     private void deleteAllCenterImage(long centerId) {
-        List<CenterImage> OldCenterImageList = centerImageRepository.findAllByCenterId(centerId);
-        OldCenterImageList.forEach(i -> {
+        List<CenterImage> oldCenterImageList = centerImageRepository.findAllByCenterId(centerId);
+        oldCenterImageList.forEach(i -> {
             amazonS3Service.delete(i.getCenterImageKey());
             centerImageRepository.delete(i);
         });

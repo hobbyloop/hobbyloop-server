@@ -31,4 +31,6 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(companyService.checkTaxFree(companyId)));
     }
+
+    // TODO 카테고리별 시설 리스트 조회
 }

@@ -15,11 +15,7 @@ public class BookmarkTicketResponseDto {
 
     private String name;
 
-    private int price;
-
-    private int discountRate;
-
-    private int totalPrice;
+    private int calculatedPrice;
 
     private int duration;
 }
