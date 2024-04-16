@@ -18,6 +18,7 @@ public class CenterBreakHour extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "`day`")
     private int day;
 
     private LocalTime openAt;
