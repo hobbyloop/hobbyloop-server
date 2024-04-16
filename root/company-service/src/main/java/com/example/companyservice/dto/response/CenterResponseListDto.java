@@ -1,5 +1,6 @@
 package com.example.companyservice.dto.response;
 
+import com.example.companyservice.entity.Center;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,11 +21,11 @@ public class CenterResponseListDto {
 
     private List<CenterResponseDto> centerResponseDtoList;
 
-    public static CenterResponseListDto of(LocalDate startAt, LocalDate endAt, List<CenterResponseDto> centerResponseDtoList) {
+    public static CenterResponseListDto of(LocalDate startAt, LocalDate endAt, List<Center> centerList) {
         return CenterResponseListDto.builder()
                 .startAt(startAt)
                 .endAt(endAt)
-                .centerResponseDtoList(centerResponseDtoList)
+                .centerResponseDtoList(centerList.stream().map(CenterResponseDto::from).toList())
                 .build();
     }
 }
