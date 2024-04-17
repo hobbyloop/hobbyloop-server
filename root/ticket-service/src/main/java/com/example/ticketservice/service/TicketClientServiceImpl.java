@@ -7,6 +7,8 @@ import com.example.ticketservice.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.ticketservice.dto.response.BookmarkTicketResponseDto;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.pay.dto.request.PurchaseHistoryInOneWeekResponseDto;
+import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
 import com.example.ticketservice.repository.review.ReviewRepository;
 import com.example.ticketservice.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ public class TicketClientServiceImpl implements TicketClientService {
     private final TicketRepository ticketRepository;
 
     private final ReviewRepository reviewRepository;
+
+    private final PurchaseHistoryRepository purchaseHistoryRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -65,7 +69,11 @@ public class TicketClientServiceImpl implements TicketClientService {
     public Map<Long, TicketInfoClientResponseDto> getHotTicketList(List<Long> centerIdList) {
         Map<Long, TicketInfoClientResponseDto> hotTicketResponseDtoMap = new HashMap<>();
         centerIdList.forEach((i) -> {
-            // TODO 가장 많이 팔린 이용권 조회
+            PurchaseHistoryInOneWeekResponseDto hotTicketIdInOneWeek = purchaseHistoryRepository.getHotTicketIdInOneWeek(i);
+            List<Review> reviewList = reviewRepository.findAllByCenterId(i);
+            float score = getScore(reviewList);
+            TicketInfoClientResponseDto ticketInfoClientResponseDto = TicketInfoClientResponseDto.from(hotTicketIdInOneWeek, score, reviewList.size());
+            hotTicketResponseDtoMap.put(i, ticketInfoClientResponseDto);
         });
         return hotTicketResponseDtoMap;
     }

@@ -1,5 +1,6 @@
 package com.example.companyservice.client;
 
+import com.example.companyservice.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.client.dto.response.TicketInfoClientResponseDto;
 import com.example.companyservice.client.dto.response.TicketDetailClientResponseDto;
@@ -29,4 +30,7 @@ public interface TicketServiceClient {
 
     @PostMapping("/api/v1/client/tickets/recommend-ticket-list")
     BaseResponseDto<Map<Long, TicketInfoClientResponseDto>> getRecommendTicketList(@RequestBody List<Long> centerIdList);
+
+    @PostMapping("/api/v1/company-rate-plan")
+    BaseResponseDto<Long> createCompanyRatePlan(@RequestBody CompanyRatePlanRequestDto requestDto);
 }

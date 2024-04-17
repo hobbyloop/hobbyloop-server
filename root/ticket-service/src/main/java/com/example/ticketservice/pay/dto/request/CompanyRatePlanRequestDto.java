@@ -1,4 +1,4 @@
-package com.example.payservice.dto.request;
+package com.example.ticketservice.pay.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
