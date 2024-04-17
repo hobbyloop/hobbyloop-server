@@ -2,6 +2,7 @@ package com.example.ticketservice.client.dto.response;
 
 import com.example.ticketservice.entity.CategoryEnum;
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.pay.dto.request.PurchaseHistoryInOneWeekResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,17 @@ public class TicketInfoClientResponseDto {
                 .ticketName(ticket.getName())
                 .category(CategoryEnum.findByValue(ticket.getCategory()).getName())
                 .calculatedPrice(ticket.getCalculatedPrice())
+                .score(score)
+                .reviewCount(reviewCount)
+                .build();
+    }
+
+    public static TicketInfoClientResponseDto from(PurchaseHistoryInOneWeekResponseDto responseDto, float score, int reviewCount) {
+        return TicketInfoClientResponseDto.builder()
+                .ticketId(responseDto.getId())
+                .ticketName(responseDto.getName())
+                .category(CategoryEnum.findByValue(responseDto.getCategory()).getName())
+                .calculatedPrice(responseDto.getCalculatedPrice())
                 .score(score)
                 .reviewCount(reviewCount)
                 .build();

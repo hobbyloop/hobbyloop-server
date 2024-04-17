@@ -1,8 +1,8 @@
-package com.example.payservice.controller;
+package com.example.ticketservice.pay.controller;
 
-import com.example.payservice.dto.BaseResponseDto;
-import com.example.payservice.dto.request.CompanyRatePlanRequestDto;
-import com.example.payservice.service.CompanyRatePlanService;
+import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.pay.dto.request.CompanyRatePlanRequestDto;
+import com.example.ticketservice.pay.service.CompanyRatePlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

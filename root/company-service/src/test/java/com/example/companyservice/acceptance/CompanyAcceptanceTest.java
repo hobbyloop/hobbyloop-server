@@ -1,8 +1,8 @@
 package com.example.companyservice.acceptance;
 
 import com.example.companyservice.acceptance.steps.CompanySteps;
+import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.fixture.CompanyFixture;
-import com.example.companyservice.client.PayServiceClient;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.repository.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class CompanyAcceptanceTest extends AcceptanceTest {
 
     @MockBean
-    private PayServiceClient payServiceClient;
+    private TicketServiceClient ticketServiceClient;
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -57,6 +57,6 @@ public class CompanyAcceptanceTest extends AcceptanceTest {
     }
 
     private void mockForUpdateCompanyInfo() {
-        given(payServiceClient.createCompanyRatePlan(any())).willReturn(new BaseResponseDto<>(1L));
+        given(ticketServiceClient.createCompanyRatePlan(any())).willReturn(new BaseResponseDto<>(1L));
     }
 }

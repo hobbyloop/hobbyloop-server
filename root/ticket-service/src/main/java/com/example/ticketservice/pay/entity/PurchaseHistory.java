@@ -1,5 +1,7 @@
-package com.example.payservice.entity;
+package com.example.ticketservice.pay.entity;
 
+import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,15 +31,13 @@ public class PurchaseHistory extends TimeStamped {
 
     private String centerName;
 
-    private String ticketName;
-
-    private String category;
-
     private String centerLogo;
 
     private Long memberId;
 
-    private Long ticketId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
 
     private Long memberCouponId;
 

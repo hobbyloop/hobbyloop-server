@@ -1,6 +1,6 @@
-package com.example.payservice.repository;
+package com.example.ticketservice.pay.repository;
 
-import com.example.payservice.entity.CompanyRatePlan;
+import com.example.ticketservice.pay.entity.CompanyRatePlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CompanyRatePlanRepository extends JpaRepository<CompanyRatePlan, Long> {

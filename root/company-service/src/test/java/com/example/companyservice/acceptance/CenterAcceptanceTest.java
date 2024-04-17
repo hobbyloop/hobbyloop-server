@@ -2,7 +2,7 @@ package com.example.companyservice.acceptance;
 
 import com.example.companyservice.acceptance.steps.AdminCenterSteps;
 import com.example.companyservice.acceptance.steps.CompanySteps;
-import com.example.companyservice.client.PayServiceClient;
+import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.dto.BaseResponseDto;
 import com.example.companyservice.dto.response.CenterCreateResponseDto;
 import com.example.companyservice.fixture.CenterFixture;
@@ -25,7 +25,7 @@ public class CenterAcceptanceTest extends AcceptanceTest {
     private AmazonS3Service amazonS3Service;
 
     @MockBean
-    private PayServiceClient payServiceClient;
+    private TicketServiceClient ticketServiceClient;
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -37,7 +37,7 @@ public class CenterAcceptanceTest extends AcceptanceTest {
         super.setUp();
 
         companyRepository.save(CompanyFixture.defaultSocialCompany());
-        given(payServiceClient.createCompanyRatePlan(any())).willReturn(new BaseResponseDto<>(1L));
+        given(ticketServiceClient.createCompanyRatePlan(any())).willReturn(new BaseResponseDto<>(1L));
         CompanySteps.updateCompanyInfo(companyId, CompanyFixture.defaultCompanyUpdateRequest());
     }
     

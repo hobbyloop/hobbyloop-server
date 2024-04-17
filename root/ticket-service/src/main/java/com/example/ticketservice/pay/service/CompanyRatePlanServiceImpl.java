@@ -1,8 +1,8 @@
-package com.example.payservice.service;
+package com.example.ticketservice.pay.service;
 
-import com.example.payservice.dto.request.CompanyRatePlanRequestDto;
-import com.example.payservice.entity.CompanyRatePlan;
-import com.example.payservice.repository.CompanyRatePlanRepository;
+import com.example.ticketservice.pay.dto.request.CompanyRatePlanRequestDto;
+import com.example.ticketservice.pay.entity.CompanyRatePlan;
+import com.example.ticketservice.pay.repository.CompanyRatePlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

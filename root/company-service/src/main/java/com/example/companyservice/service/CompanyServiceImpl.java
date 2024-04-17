@@ -1,6 +1,6 @@
 package com.example.companyservice.service;
 
-import com.example.companyservice.client.PayServiceClient;
+import com.example.companyservice.client.TicketServiceClient;
 import com.example.companyservice.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
@@ -18,7 +18,7 @@ public class CompanyServiceImpl implements CompanyService{
 
     private final CompanyRepository companyRepository;
 
-    private final PayServiceClient payServiceClient;
+    private final TicketServiceClient ticketServiceClient;
 
     @Override
     @Transactional
@@ -26,7 +26,7 @@ public class CompanyServiceImpl implements CompanyService{
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
         CompanyRatePlanRequestDto companyRatePlanRequestDto = CompanyRatePlanRequestDto.from(requestDto);
-        BaseResponseDto<Long> companyRatePlan = payServiceClient.createCompanyRatePlan(companyRatePlanRequestDto);
+        BaseResponseDto<Long> companyRatePlan = ticketServiceClient.createCompanyRatePlan(companyRatePlanRequestDto);
         company.updateCompany(requestDto, companyRatePlan.getData());
         return company.getId();
     }
