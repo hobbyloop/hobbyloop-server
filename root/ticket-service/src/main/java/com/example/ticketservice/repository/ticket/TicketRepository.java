@@ -16,4 +16,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, TicketRep
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select t from Ticket t where t.id = :ticketId")
     Optional<Ticket> findForUpdate(long ticketId);
+
+    List<Ticket> findAllByCenterIdAndIsUploadTrueOrderByCalculatedPriceAsc(long centerId);
 }

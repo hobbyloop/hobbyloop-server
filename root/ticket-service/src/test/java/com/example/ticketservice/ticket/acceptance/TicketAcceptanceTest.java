@@ -239,6 +239,31 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    public void getTicketListByCenterSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long defaultTicketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(defaultTicketId);
+
+        long mediumTicketId = AdminTicketSteps.createTicket(centerId, TicketFixture.mediumPriceTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(mediumTicketId);
+
+        long highTicketId = AdminTicketSteps.createTicket(centerId, TicketFixture.highPriceTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(highTicketId);
+
+        // when
+        List<TicketByCenterResponseDto> responses = TicketSteps.getTicketListByCenter(centerId);
+
+        // then
+        assertThat(responses.size()).isEqualTo(3);
+        assertThat(responses.get(0).getTicketId()).isEqualTo(defaultTicketId);
+        assertThat(responses.get(1).getTicketId()).isEqualTo(mediumTicketId);
+        assertThat(responses.get(2).getTicketId()).isEqualTo(highTicketId);
+    }
+
+    @Test
     public void approveUserTicketSuccess() throws Exception {
         // given
         long centerId = 1L;

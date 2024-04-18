@@ -34,11 +34,7 @@ public class TicketServiceImpl implements TicketService{
 
     private final TicketRepository ticketRepository;
 
-    private final UserTicketRepository userTicketRepository;
-
     private final CompanyServiceClient companyServiceClient;
-
-    private final MemberServiceClient memberServiceClient;
 
     private final AmazonS3Service amazonS3Service;
 
@@ -136,6 +132,15 @@ public class TicketServiceImpl implements TicketService{
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         ticket.cancelUpload();
+    }
+
+    @Override
+    @Transactional
+    public List<TicketByCenterResponseDto> getTicketListByCenter(long centerId) {
+        List<Ticket> ticketList = ticketRepository.findAllByCenterIdAndIsUploadTrueOrderByCalculatedPriceAsc(centerId);
+        return ticketList.stream()
+                .map(TicketByCenterResponseDto::from)
+                .toList();
     }
 
     private float getScore(long centerId) {
