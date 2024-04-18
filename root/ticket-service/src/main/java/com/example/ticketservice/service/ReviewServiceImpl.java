@@ -4,8 +4,10 @@ import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.request.ReviewRequestDto;
+import com.example.ticketservice.dto.response.ReviewByCenterResponseDto;
 import com.example.ticketservice.dto.response.ReviewCommentResponseDto;
 import com.example.ticketservice.dto.response.ReviewResponseDto;
+import com.example.ticketservice.dto.response.TicketReviewListByCenterResponseDto;
 import com.example.ticketservice.entity.Comment;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.ReviewImage;
@@ -76,6 +78,25 @@ public class ReviewServiceImpl implements ReviewService {
                         reviewImageRepository.findAllUrlByReviewId(r.getId()),
                         reviewLikeRepository.existsByReviewIdAndMemberId(r.getId(), memberId)))
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TicketReviewListByCenterResponseDto getReviewListByCenter(long centerId, int pageNo, int sortId) {
+        List<Review> reviewList = reviewRepository.getReviewListByCenterSorting(centerId, pageNo, sortId);
+
+        float averageScore = (float) reviewList.stream()
+                .mapToDouble(Review::getScore)
+                .average()
+                .orElse(0.0);
+
+        return new TicketReviewListByCenterResponseDto(
+                reviewList.size(),
+                averageScore,
+                reviewList.stream()
+                        .map(ReviewByCenterResponseDto::from)
+                        .toList()
+        );
     }
 
     @Override

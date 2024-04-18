@@ -27,7 +27,7 @@ public class TicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .get("/api/v1/tickets/{centerId}", centerId)
+                .get("/api/v1/tickets/center/{centerId}", centerId)
                 .then().log().all()
                 .statusCode(200)
                 .extract().asString();

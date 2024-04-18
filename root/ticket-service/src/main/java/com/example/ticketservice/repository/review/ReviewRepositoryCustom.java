@@ -8,4 +8,6 @@ public interface ReviewRepositoryCustom {
     List<Review> getReviewList(long ticketId, long reviewId);
 
     List<Review> getReviewListSorting(long ticketId, int pageNo, int sortId);
+
+    List<Review> getReviewListByCenterSorting(long centerId, int pageNo, int sortId);
 }

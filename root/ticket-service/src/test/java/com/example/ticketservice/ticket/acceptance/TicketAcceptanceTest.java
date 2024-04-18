@@ -142,6 +142,27 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    public void getReviewListByCenterSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
+        ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
+
+        long ticketId2 = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        ReviewSteps.createReview(ticketId2, ReviewFixture.badReviewCreateRequest());
+
+        // when
+        TicketReviewListByCenterResponseDto response = ReviewSteps.getReviewListByCenter(centerId, 0, ReviewFixture.SORT_BY_SCORE_DESC);
+
+        // then
+        assertThat(response.getReviewList().size()).isEqualTo(3);
+        assertThat(response.getReviewList().get(0).getScore()).isEqualTo(ReviewFixture.GOOD_SCORE);
+    }
+
+    @Test
     public void purchaseTicketSuccess() throws Exception {
         // given
         long centerId = 1L;
