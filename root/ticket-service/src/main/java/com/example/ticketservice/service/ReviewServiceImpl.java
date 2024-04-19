@@ -102,18 +102,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     private void saveReviewImage(Review review, Ticket ticket, List<MultipartFile> centerImageList) {
         centerImageList.forEach(i -> {
-            String reviewImageKey = saveS3Img(i);
+            String reviewImageKey = amazonS3Service.saveS3Img(i, "ReviewImage");
             String reviewImageUrl = amazonS3Service.getFileUrl(reviewImageKey);
             ReviewImage reviewImage = ReviewImage.of(reviewImageKey, reviewImageUrl, review, ticket);
             reviewImageRepository.save(reviewImage);
         });
-    }
-
-    private String saveS3Img(MultipartFile profileImg) {
-        try {
-            return amazonS3Service.upload(profileImg, "ReviewImage");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

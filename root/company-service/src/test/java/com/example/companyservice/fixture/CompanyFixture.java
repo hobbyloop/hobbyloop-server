@@ -1,10 +1,10 @@
 package com.example.companyservice.fixture;
 
-import com.example.companyservice.dto.request.CompanyUpdateRequestDto;
-import com.example.companyservice.entity.Company;
-import com.example.companyservice.entity.CreateStatusEnum;
-import com.example.companyservice.entity.PaymentTypeEnum;
-import com.example.companyservice.entity.Role;
+import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.company.entity.Company;
+import com.example.companyservice.company.entity.CreateStatusEnum;
+import com.example.companyservice.company.entity.PaymentTypeEnum;
+import com.example.companyservice.company.entity.Role;
 
 import java.time.LocalDate;
 
