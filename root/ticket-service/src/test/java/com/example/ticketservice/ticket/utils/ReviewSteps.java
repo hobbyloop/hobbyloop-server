@@ -81,7 +81,7 @@ public class ReviewSteps {
                 .given().log().all()
                 .header("id", 1L)   // TODO: Replace with actual member ID
                 .when()
-                .get("/api/v1/center/{centerId}/reviews/{pageNo}/{sortId}", centerId, pageNo, sortId)
+                .get("/api/v1/centers/{centerId}/reviews/{pageNo}/{sortId}", centerId, pageNo, sortId)
                 .then().log().all()
                 .statusCode(200)
                 .extract().asString();

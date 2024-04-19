@@ -143,6 +143,14 @@ public class TicketServiceImpl implements TicketService{
                 .toList();
     }
 
+    @Override
+    @Transactional
+    public List<AdminMyTicketResponseDto> getMyTicketList(long centerId) {
+        List<Ticket> ticketList = ticketRepository.findAllByCenterIdAndIsUploadTrueOrderByCreatedAtDesc(centerId);
+        CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
+        return ticketList.stream().map(t -> AdminMyTicketResponseDto.from(t, centerInfo)).toList();
+    }
+
     private float getScore(long centerId) {
         List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
         if (reviewList.size() == 0) return 0;

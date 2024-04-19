@@ -23,7 +23,7 @@ public class TicketController {
                 .body(new BaseResponseDto<>(ticketService.getIOSTicketInfo(ticketId)));
     }
 
-    @GetMapping("/center/{centerId}")
+    @GetMapping("/centers/{centerId}")
     public ResponseEntity<BaseResponseDto<List<TicketByCenterResponseDto>>> getTicketListByCenter(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketListByCenter(centerId)));

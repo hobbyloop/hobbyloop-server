@@ -285,6 +285,28 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    public void getMyTicketListSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
+
+        AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest());
+
+        long ticketId3 = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId3);
+
+        // when
+        List<AdminMyTicketResponseDto> responses = AdminTicketSteps.getMyTicketList(centerId);
+
+        // then
+        assertThat(responses.size()).isEqualTo(2);
+        assertThat(responses.get(0).getTicketId()).isEqualTo(ticketId3);
+    }
+
+    @Test
     public void approveUserTicketSuccess() throws Exception {
         // given
         long centerId = 1L;

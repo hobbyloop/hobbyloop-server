@@ -56,7 +56,7 @@ public class ReviewController {
                 .body(new BaseResponseDto<>(reviewService.getReviewList(memberId, ticketId, pageNo, sortId)));
     }
 
-    @GetMapping("/center/{centerId}/reviews/{pageNo}/{sortId}")
+    @GetMapping("/centers/{centerId}/reviews/{pageNo}/{sortId}")
     public ResponseEntity<BaseResponseDto<TicketReviewListByCenterResponseDto>> getTicketReviewListByCenter(@PathVariable long centerId,
                                                                                                             @PathVariable int pageNo,
                                                                                                             @PathVariable int sortId) {

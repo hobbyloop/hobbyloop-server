@@ -27,4 +27,6 @@ public interface TicketService {
     void cancelUploadTicket(long ticketId);
 
     List<TicketByCenterResponseDto> getTicketListByCenter(long centerId);
+
+    List<AdminMyTicketResponseDto> getMyTicketList(long centerId);
 }
