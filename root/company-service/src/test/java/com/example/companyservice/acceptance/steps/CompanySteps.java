@@ -1,7 +1,6 @@
 package com.example.companyservice.acceptance.steps;
 
-import com.example.companyservice.dto.request.CompanyUpdateRequestDto;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 

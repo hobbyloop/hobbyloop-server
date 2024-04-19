@@ -67,7 +67,7 @@ public class TicketServiceImpl implements TicketService{
     @Override
     @Transactional
     public TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto, MultipartFile ticketImage) {
-        String ticketImageKey = saveS3Img(ticketImage);
+        String ticketImageKey = amazonS3Service.saveS3Img(ticketImage, "TicketImage");
         String ticketImageUrl = amazonS3Service.getFileUrl(ticketImageKey);
         Ticket ticket = Ticket.of(centerId, ticketImageKey, ticketImageUrl, requestDto);
         Ticket saveTicket = ticketRepository.save(ticket);
@@ -113,7 +113,7 @@ public class TicketServiceImpl implements TicketService{
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
 
         if (ticketImage != null) {
-            String ticketImageKey = saveS3Img(ticketImage);
+            String ticketImageKey = amazonS3Service.saveS3Img(ticketImage, "TicketImage");
             String ticketImageUrl = amazonS3Service.getFileUrl(ticketImageKey);
             ticket.updateTicketImage(ticketImageKey, ticketImageUrl);
         }
@@ -144,13 +144,5 @@ public class TicketServiceImpl implements TicketService{
         float scoreSum = 0;
         for (Review review : reviewList) scoreSum += review.getScore();
         return scoreSum / reviewList.size();
-    }
-
-    private String saveS3Img(MultipartFile profileImg) {
-        try {
-            return amazonS3Service.upload(profileImg, "CenterImage");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

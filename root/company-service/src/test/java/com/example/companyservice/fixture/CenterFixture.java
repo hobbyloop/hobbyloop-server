@@ -1,7 +1,7 @@
 package com.example.companyservice.fixture;
 
-import com.example.companyservice.dto.request.CenterCreateRequestDto;
-import com.example.companyservice.dto.request.HourRequestDto;
+import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.company.dto.request.HourRequestDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

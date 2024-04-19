@@ -1,10 +1,10 @@
 package com.example.companyservice.acceptance;
 
 import com.example.companyservice.acceptance.steps.CompanySteps;
-import com.example.companyservice.client.TicketServiceClient;
+import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.fixture.CompanyFixture;
-import com.example.companyservice.dto.BaseResponseDto;
-import com.example.companyservice.repository.CompanyRepository;
+import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.company.repository.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

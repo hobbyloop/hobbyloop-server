@@ -1,8 +1,8 @@
 package com.example.companyservice.acceptance.steps;
 
-import com.example.companyservice.dto.request.CenterCreateRequestDto;
-import com.example.companyservice.dto.response.CenterCreateResponseDto;
-import com.example.companyservice.dto.response.CenterResponseListDto;
+import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.company.dto.response.CenterCreateResponseDto;
+import com.example.companyservice.company.dto.response.CenterResponseListDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
