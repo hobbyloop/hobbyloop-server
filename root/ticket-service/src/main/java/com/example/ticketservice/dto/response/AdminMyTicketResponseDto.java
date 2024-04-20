@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder
@@ -48,7 +51,7 @@ public class AdminMyTicketResponseDto {
                 .ticketName(ticket.getName())
                 .ticketImageUrl(ticket.getTicketImageUrl())
                 .operatingHour(generateOperatingHour(centerInfo.getOperatingHourList()))
-                .breakHour(generateBreakHour(centerInfo.getBreakHourList()))
+                .breakHour(generateBreakHour(centerInfo.getOperatingHourList()))
                 .expirationStartDate(ticket.getExpirationStartDate())
                 .expirationEndDate(ticket.getExpirationEndDate())
                 .totalCount(ticket.getTotalCount())
@@ -86,15 +89,24 @@ public class AdminMyTicketResponseDto {
         return sb.toString();
     }
 
-    private static String generateBreakHour(List<HourResponseDto> breakHourList) {
-        if (breakHourList == null || breakHourList.isEmpty()) {
+    private static String generateBreakHour(List<HourResponseDto> operatingHourList) {
+        Set<String> operatingDays = operatingHourList.stream()
+                .map(HourResponseDto::getDay)
+                .collect(Collectors.toSet());
+
+        List<String> allDays = Arrays.asList("월", "화", "수", "목", "금", "토", "일");
+        List<String> breakDays = allDays.stream()
+                .filter(day -> !operatingDays.contains(day))
+                .collect(Collectors.toList());
+
+        if (breakDays.isEmpty()) {
             return "휴무 없음";
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for (HourResponseDto hour : breakHourList) {
-            sb.append(hour.getDay()).append(" ");
+        for (String day : breakDays) {
+            sb.append(day).append(" ");
         }
 
         sb.append("휴무");
