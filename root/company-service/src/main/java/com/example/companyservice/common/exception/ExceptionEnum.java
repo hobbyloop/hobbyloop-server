@@ -1,4 +1,4 @@
-package com.example.companyservice.company.common.exception;
+package com.example.companyservice.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

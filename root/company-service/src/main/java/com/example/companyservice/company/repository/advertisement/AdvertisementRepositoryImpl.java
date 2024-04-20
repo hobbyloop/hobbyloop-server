@@ -37,6 +37,7 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
                 .where(advertisement.isOpen.eq(true)
                         .and(advertisement.adType.eq(AdvertisementTypeEnum.CPC.getTypeValue()))
                         .and(betweenDate()))
+                .orderBy(advertisement.price.desc())
                 .fetch();
     }
 

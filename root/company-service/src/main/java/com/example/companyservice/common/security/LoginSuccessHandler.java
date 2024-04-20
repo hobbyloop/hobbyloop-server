@@ -1,7 +1,7 @@
-package com.example.companyservice.company.security;
+package com.example.companyservice.common.security;
 
-import com.example.companyservice.company.common.exception.ApiException;
-import com.example.companyservice.company.common.exception.ExceptionEnum;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.repository.CompanyRepository;
 import jakarta.servlet.http.HttpServletRequest;

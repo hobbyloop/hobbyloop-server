@@ -1,4 +1,4 @@
-package com.example.companyservice.company.service;
+package com.example.companyservice.common.service;
 
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;

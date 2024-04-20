@@ -1,7 +1,7 @@
-package com.example.companyservice.company.common.util;
+package com.example.companyservice.common.util;
 
-import com.example.companyservice.company.common.exception.ApiException;
-import com.example.companyservice.company.common.exception.ExceptionEnum;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
