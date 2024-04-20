@@ -30,4 +30,8 @@ public class Lecture extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
+
+    private Long centerId;
+
+    private Long ticketId;
 }

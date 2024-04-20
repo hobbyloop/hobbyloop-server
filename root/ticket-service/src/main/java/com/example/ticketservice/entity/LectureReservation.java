@@ -17,13 +17,22 @@ public class LectureReservation extends TimeStamped {
 
     private int status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_ticket_id")
-    private LectureTicket lectureTicket;
+    private Long lectureScheduleId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lecture_pass_id")
-    private LecturePass lecturePass;
+    @JoinColumn(name = "user_ticket_id")
+    private UserTicket userTicket;
+
+    private Long lecturePassId;
 
     private Long memberId;
+
+    public static LectureReservation of(UserTicket userTicket, Long lectureScheduleId, Long memberId) {
+        return LectureReservation.builder()
+                .status(ReservationStatusEnum.CONFIRM.getReservationStatusType())
+                .userTicket(userTicket)
+                .lectureScheduleId(lectureScheduleId)
+                .memberId(memberId)
+                .build();
+    }
 }

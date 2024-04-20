@@ -1,0 +1,110 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: ap-northeast-2
+  AWS_S3_BUCKET: hobbyloop-deploy-bucket
+  AWS_CODE_DEPLOY_APPLICATION: hobbyloop-deploy
+  AWS_CODE_DEPLOY_GROUP: hobbyloop-deploy-group
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'corretto'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build -x test
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.CICD_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.CICD_SECRET_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Upload Discovery Server to AWS S3
+      run: |
+        aws deploy push \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
+          --ignore-hidden-files \
+          --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-discovery-server.zip \
+          --source ./discovery-server/build/libs
+
+    - name: Upload Api Gateway Server to AWS S3
+      run: |
+        aws deploy push \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-api-gateway-server \
+          --ignore-hidden-files \
+          --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-api-gateway-server.zip \
+          --source ./api-gateway-server/build/libs
+
+    - name: Upload Company Service to AWS S3
+      run: |
+        aws deploy push \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-company-service \
+          --ignore-hidden-files \
+          --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-company-service.zip \
+          --source ./company-service/build/libs
+
+    - name: Upload Ticket Service to AWS S3
+      run: |
+        aws deploy push \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-ticket-service \
+          --ignore-hidden-files \
+          --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-ticket-service.zip \
+          --source ./ticket-service/build/libs
+
+    - name: Deploy Discovery Server to AWS EC2 from S3
+      run: |
+        aws deploy create-deployment \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-discovery-server \
+          --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-discovery-server.zip,bundleType=zip
+
+    - name: Deploy Api Gateway Server to AWS EC2 from S3
+      run: |
+        aws deploy create-deployment \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-api-gateway-server \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-api-gateway-server \
+          --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-api-gateway-server.zip,bundleType=zip
+
+    - name: Deploy Company Service to AWS EC2 from S3
+      run: |
+        aws deploy create-deployment \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-company-service \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-company-service \
+          --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-company-service.zip,bundleType=zip
+
+    - name: Deploy Ticket Service to AWS EC2 from S3
+      run: |
+        aws deploy create-deployment \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-ticket-service \
+          --deployment-config-name CodeDeployDefault.AllAtOnce \
+          --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-ticket-service \
+          --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-ticket-service.zip,bundleType=zip

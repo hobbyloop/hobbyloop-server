@@ -5,21 +5,18 @@ server:
 spring:
   application:
     name: company-service
-  datasource:
-    url: jdbc:mysql://localhost:3306/companydb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     generate-ddl: true
     properties:
       hibernate:
         default_batch_fetch_size: 500
+  profiles:
+    include: s3, db, secret, oauth
 
 eureka:
   instance:
