@@ -33,10 +33,10 @@ jobs:
         distribution: 'corretto'
 
     - name: Grant execute permission for gradlew
-      run: chmod +x ./gradlew
+      run: chmod +x /root/gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build -x test
+      run: /root/gradlew build -x test
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -51,7 +51,7 @@ jobs:
           --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-discovery-server.zip \
-          --source ./discovery-server/build/libs
+          --source /root/discovery-server/build/libs
 
     - name: Upload Api Gateway Server to AWS S3
       run: |
