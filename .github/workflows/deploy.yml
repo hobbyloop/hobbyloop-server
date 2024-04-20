@@ -38,10 +38,10 @@ jobs:
         ls -la
 
     - name: Grant execute permission for gradlew
-      run: chmod +x /root/gradlew
+      run: chmod +x ./root/gradlew
 
     - name: Build with Gradle Wrapper
-      run: /root/gradlew build -x test
+      run: ./root/gradlew build -x test
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -56,7 +56,7 @@ jobs:
           --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-discovery-server.zip \
-          --source /root/discovery-server/build/libs
+          --source ./root/discovery-server/build/libs
 
     - name: Upload Api Gateway Server to AWS S3
       run: |
@@ -64,7 +64,7 @@ jobs:
           --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-api-gateway-server \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-api-gateway-server.zip \
-          --source ./api-gateway-server/build/libs
+          --source ./root/api-gateway-server/build/libs
 
     - name: Upload Company Service to AWS S3
       run: |
@@ -72,7 +72,7 @@ jobs:
           --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-company-service \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-company-service.zip \
-          --source ./company-service/build/libs
+          --source ./root/company-service/build/libs
 
     - name: Upload Ticket Service to AWS S3
       run: |
@@ -80,7 +80,7 @@ jobs:
           --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-ticket-service \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-ticket-service.zip \
-          --source ./ticket-service/build/libs
+          --source ./root/ticket-service/build/libs
 
     - name: Deploy Discovery Server to AWS EC2 from S3
       run: |
