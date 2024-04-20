@@ -41,7 +41,8 @@ jobs:
       run: chmod +x ./root/gradlew
 
     - name: Build with Gradle Wrapper
-      run: ./root/gradlew build -x test
+      run: ./gradlew build -x test
+      working-directory: ./root
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
