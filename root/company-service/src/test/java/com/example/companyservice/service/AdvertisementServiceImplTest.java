@@ -61,7 +61,7 @@ public class AdvertisementServiceImplTest {
                     .adEnd(LocalDate.now().plusDays(10))
                     .adRank(20 - i + 1)
                     .build();
-            Advertisement advertisement = Advertisement.of(advertisementRequestDto, center);
+            Advertisement advertisement = Advertisement.of(advertisementRequestDto, center, null, null);
             advertisement.updateIsOpen(true);
             advertisementRepository.save(advertisement);
         }
