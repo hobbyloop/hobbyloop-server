@@ -5,6 +5,7 @@ import com.example.ticketservice.dto.request.ReviewRequestDto;
 import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.response.ReviewCommentResponseDto;
 import com.example.ticketservice.dto.response.ReviewResponseDto;
+import com.example.ticketservice.dto.response.TicketReviewListByCenterResponseDto;
 import com.example.ticketservice.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -53,5 +54,13 @@ public class ReviewController {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(reviewService.getReviewList(memberId, ticketId, pageNo, sortId)));
+    }
+
+    @GetMapping("/centers/{centerId}/reviews/{pageNo}/{sortId}")
+    public ResponseEntity<BaseResponseDto<TicketReviewListByCenterResponseDto>> getTicketReviewListByCenter(@PathVariable long centerId,
+                                                                                                            @PathVariable int pageNo,
+                                                                                                            @PathVariable int sortId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(reviewService.getReviewListByCenter(centerId, pageNo, sortId)));
     }
 }

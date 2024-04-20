@@ -78,22 +78,22 @@ public class CenterFixture {
     }
 
     private static List<HourResponseDto> defaultOperatingHourList = List.of(
-            HourResponseDto.builder().day("MON").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
-            HourResponseDto.builder().day("TUE").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
-            HourResponseDto.builder().day("WED").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
-            HourResponseDto.builder().day("THU").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
-            HourResponseDto.builder().day("FRI").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
-            HourResponseDto.builder().day("SAT").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
-            HourResponseDto.builder().day("SUN").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build()
+            HourResponseDto.builder().day("월").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
+            HourResponseDto.builder().day("화").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
+            HourResponseDto.builder().day("수").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
+            HourResponseDto.builder().day("목").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
+            HourResponseDto.builder().day("금").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
+            HourResponseDto.builder().day("토").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build(),
+            HourResponseDto.builder().day("일").openAt(DEFAULT_OPEN_AT).closeAt(DEFAULT_CLOSE_AT).build()
     );
 
     private static List<HourResponseDto> defaultBreakingHourList = List.of(
-            HourResponseDto.builder().day("MON").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
-            HourResponseDto.builder().day("TUE").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
-            HourResponseDto.builder().day("WED").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
-            HourResponseDto.builder().day("THU").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
-            HourResponseDto.builder().day("FRI").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
-            HourResponseDto.builder().day("SAT").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
-            HourResponseDto.builder().day("SUN").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build()
+            HourResponseDto.builder().day("월").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
+            HourResponseDto.builder().day("화").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
+            HourResponseDto.builder().day("수").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
+            HourResponseDto.builder().day("목").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
+            HourResponseDto.builder().day("금").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
+            HourResponseDto.builder().day("토").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build(),
+            HourResponseDto.builder().day("일").openAt(DEFAULT_BREAK_OPEN_AT).closeAt(DEFAULT_BREAK_CLOSE_AT).build()
     );
 }

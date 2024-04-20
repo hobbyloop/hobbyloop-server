@@ -38,6 +38,17 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Review> getReviewListByCenterSorting(long centerId, int pageNo, int sortId) {
+        return queryFactory
+                .selectFrom(review)
+                .where(review.ticket.centerId.eq(centerId))
+                .limit(20)
+                .offset(pageNo * 20)
+                .orderBy(createOrderSpecifier(sortId))
+                .fetch();
+    }
+
     private BooleanExpression ltReviewId(long reviewId) {
         return reviewId != -1 ? review.id.lt(reviewId) : null;
     }

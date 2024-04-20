@@ -90,4 +90,10 @@ public class AdminTicketController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
     }
+
+    @GetMapping("/my/{centerId}")
+    public ResponseEntity<BaseResponseDto<List<AdminMyTicketResponseDto>>> getMyTicketList(@PathVariable long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getMyTicketList(centerId)));
+    }
 }

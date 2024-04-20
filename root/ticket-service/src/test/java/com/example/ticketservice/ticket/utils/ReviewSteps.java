@@ -1,8 +1,11 @@
 package com.example.ticketservice.ticket.utils;
 
 import com.example.ticketservice.dto.request.ReviewRequestDto;
+import com.example.ticketservice.dto.response.ReviewByCenterResponseDto;
 import com.example.ticketservice.dto.response.ReviewResponseDto;
+import com.example.ticketservice.dto.response.TicketReviewListByCenterResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -69,6 +72,31 @@ public class ReviewSteps {
         }
 
         return reviewList;
+    }
+
+    public static TicketReviewListByCenterResponseDto getReviewListByCenter(long centerId, int pageNo, int sortId) throws Exception {
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .header("id", 1L)   // TODO: Replace with actual member ID
+                .when()
+                .get("/api/v1/centers/{centerId}/reviews/{pageNo}/{sortId}", centerId, pageNo, sortId)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode data = objectMapper.readTree(responseBody).get("data");
+
+        int reviewCount = data.get("reviewCount").asInt();
+        float score = (float) data.get("score").asDouble();
+
+        List<ReviewByCenterResponseDto> reviewList = objectMapper.convertValue(
+                data.get("reviewList"),
+                new TypeReference<List<ReviewByCenterResponseDto>>() {}
+        );
+
+        return new TicketReviewListByCenterResponseDto(reviewCount, score, reviewList);
     }
 
     private static File generateMockImageFile() throws IOException {

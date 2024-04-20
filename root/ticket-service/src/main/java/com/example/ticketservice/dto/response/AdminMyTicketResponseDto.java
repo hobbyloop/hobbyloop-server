@@ -3,7 +3,6 @@ package com.example.ticketservice.dto.response;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.HourResponseDto;
 import com.example.ticketservice.entity.Ticket;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,11 +17,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class AdminTicketResponseDto {
-
+@AllArgsConstructor
+@NoArgsConstructor
+public class AdminMyTicketResponseDto {
     private Long ticketId;
 
     private String centerName;
@@ -45,15 +43,8 @@ public class AdminTicketResponseDto {
 
     private int issueCount;
 
-    @JsonProperty("isUpload")
-    private boolean isUpload;
-
-    private boolean upload;
-
-    private float score;
-
-    public static AdminTicketResponseDto of(CenterInfoResponseDto centerInfo, Ticket ticket, float score) {
-        return AdminTicketResponseDto.builder()
+    public static AdminMyTicketResponseDto from(Ticket ticket, CenterInfoResponseDto centerInfo) {
+        return AdminMyTicketResponseDto.builder()
                 .ticketId(ticket.getId())
                 .centerName(centerInfo.getCenterName())
                 .address(centerInfo.getAddress())
@@ -65,8 +56,6 @@ public class AdminTicketResponseDto {
                 .expirationEndDate(ticket.getExpirationEndDate())
                 .totalCount(ticket.getTotalCount())
                 .issueCount(ticket.getIssueCount())
-                .isUpload(ticket.isUpload())
-                .score(score)
                 .build();
     }
 

@@ -5,9 +5,7 @@ import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 
 public interface TicketService {
     List<TicketResponseDto> getTicketList(long centerId, long ticketId);
@@ -27,4 +25,8 @@ public interface TicketService {
     void uploadTicket(long ticketId);
 
     void cancelUploadTicket(long ticketId);
+
+    List<TicketByCenterResponseDto> getTicketListByCenter(long centerId);
+
+    List<AdminMyTicketResponseDto> getMyTicketList(long centerId);
 }

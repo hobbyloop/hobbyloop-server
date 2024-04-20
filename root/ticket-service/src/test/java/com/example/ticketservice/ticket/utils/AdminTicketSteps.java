@@ -142,6 +142,23 @@ public class AdminTicketSteps {
                 .statusCode(200);
     }
 
+    public static List<AdminMyTicketResponseDto> getMyTicketList(long centerId) throws JsonProcessingException {
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .get("/api/v1/admin/tickets/my/{centerId}", centerId)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        return objectMapper.readValue(dataNode.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, AdminMyTicketResponseDto.class));
+    }
+
     private static File generateMockImageFile() throws IOException {
         File tempFile = File.createTempFile("test", ".jpg");
         tempFile.deleteOnExit();
