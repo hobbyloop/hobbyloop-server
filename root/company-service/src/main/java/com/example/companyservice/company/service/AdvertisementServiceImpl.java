@@ -1,7 +1,8 @@
 package com.example.companyservice.company.service;
 
-import com.example.companyservice.company.common.exception.ApiException;
-import com.example.companyservice.company.common.exception.ExceptionEnum;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
 import com.example.companyservice.company.repository.advertisement.AdvertisementRepository;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service

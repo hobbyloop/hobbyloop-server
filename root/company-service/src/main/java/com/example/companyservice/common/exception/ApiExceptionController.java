@@ -1,8 +1,8 @@
-package com.example.companyservice.company.controller;
+package com.example.companyservice.common.exception;
 
-import com.example.companyservice.company.common.exception.ApiException;
-import com.example.companyservice.company.common.exception.ApiExceptionEntity;
-import com.example.companyservice.company.common.exception.ExceptionEnum;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ApiExceptionEntity;
+import com.example.companyservice.common.exception.ExceptionEnum;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

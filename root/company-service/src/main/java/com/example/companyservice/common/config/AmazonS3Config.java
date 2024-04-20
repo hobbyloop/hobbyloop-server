@@ -1,4 +1,4 @@
-package com.example.companyservice.company.config;
+package com.example.companyservice.common.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

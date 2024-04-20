@@ -1,7 +1,7 @@
 package com.example.companyservice.company.service;
 
-import com.example.companyservice.company.common.exception.ApiException;
-import com.example.companyservice.company.common.exception.ExceptionEnum;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.company.entity.Bookmark;
 import com.example.companyservice.company.entity.Center;
 import com.example.companyservice.company.repository.bookmark.BookmarkRepository;

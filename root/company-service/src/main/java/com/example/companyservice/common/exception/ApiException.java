@@ -1,4 +1,4 @@
-package com.example.companyservice.company.common.exception;
+package com.example.companyservice.common.exception;
 
 public class ApiException extends RuntimeException {
     private ExceptionEnum error;

@@ -1,6 +1,6 @@
 package com.example.companyservice.company.controller;
 
-import com.example.companyservice.company.common.util.Utils;
+import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
 import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.company.dto.response.*;

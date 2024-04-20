@@ -1,12 +1,13 @@
 package com.example.companyservice.company.service;
 
+import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.company.client.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.companyservice.company.client.dto.response.TicketInfoClientResponseDto;
 import com.example.companyservice.company.client.dto.response.TicketClientResponseDto;
 import com.example.companyservice.company.client.dto.response.TicketDetailClientResponseDto;
-import com.example.companyservice.company.common.exception.ApiException;
-import com.example.companyservice.company.common.exception.ExceptionEnum;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -219,37 +219,39 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HotCenterTicketResponseDto> getHotCenterTicketList(long memberId, double latitude, double longitude) {
+    public List<HotCenterTicketResponseDto> getHotCenterTicketList(long memberId, int allowLocation, Double latitude, Double longitude) {
         List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Long> centerIdList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCAdvertisement();
-        toMainHomeCenterResponseDto(memberId, latitude, longitude, responseDtoList, advertisementList, centerIdList);
+        toMainHomeCenterResponseDto(memberId, allowLocation, latitude, longitude, responseDtoList, advertisementList, centerIdList);
         Map<Long, TicketInfoClientResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
         return responseDtoList.stream().map(c -> HotCenterTicketResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, double latitude, double longitude) {
+    public List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, int allowLocation, Double latitude, Double longitude) {
         List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCCPMAdvertisement();
         List<Long> centerIdList = new ArrayList<>();
-        toMainHomeCenterResponseDto(memberId, latitude, longitude, responseDtoList, advertisementList, centerIdList);
+        toMainHomeCenterResponseDto(memberId, allowLocation, latitude, longitude, responseDtoList, advertisementList, centerIdList);
         Map<Long, TicketInfoClientResponseDto> ticketResponseDtoMap = ticketServiceClient.getRecommendTicketList(centerIdList).getData();
         return responseDtoList.stream().map(c -> RecommendedCenterResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
     }
 
-    private void toMainHomeCenterResponseDto(long memberId, double latitude, double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
-        advertisementList.forEach(ad -> {
-            Center center = ad.getCenter();
-            Double distance = commonService.getDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
-            if (distance <= 3) {
-                centerIdList.add(center.getId());
-                boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(center.getId(), memberId);
-                MainHomeCenterResponseDto responseDto = MainHomeCenterResponseDto.of(center, isBookmark);
-                responseDtoList.add(responseDto);
+    private void toMainHomeCenterResponseDto(long memberId, int allowLocation, Double latitude, Double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
+        for (Advertisement advertisement : advertisementList) {
+            if (centerIdList.size() >= 30) break;
+            Center center = advertisement.getCenter();
+            if (allowLocation == 1) {
+                Double distance = commonService.getDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
+                if (distance > 3) continue;
             }
-        });
+            centerIdList.add(center.getId());
+            boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(center.getId(), memberId);
+            MainHomeCenterResponseDto responseDto = MainHomeCenterResponseDto.of(center, isBookmark);
+            responseDtoList.add(responseDto);
+        }
     }
 
     private void saveCenterImage(Center center, List<MultipartFile> centerImageList) {
