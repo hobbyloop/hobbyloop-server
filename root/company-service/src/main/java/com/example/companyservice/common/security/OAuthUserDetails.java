@@ -1,4 +1,4 @@
-package com.example.companyservice.company.security;
+package com.example.companyservice.common.security;
 
 import lombok.Getter;
 import lombok.Setter;

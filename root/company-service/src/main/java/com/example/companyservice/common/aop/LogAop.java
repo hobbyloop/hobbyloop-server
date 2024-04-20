@@ -1,4 +1,4 @@
-package com.example.companyservice.company.common.aop;
+package com.example.companyservice.common.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

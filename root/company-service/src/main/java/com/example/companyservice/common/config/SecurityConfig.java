@@ -1,7 +1,7 @@
-package com.example.companyservice.company.config;
+package com.example.companyservice.common.config;
 
-import com.example.companyservice.company.security.LoginSuccessHandler;
-import com.example.companyservice.company.security.OAuth2UserDetailsService;
+import com.example.companyservice.common.security.LoginSuccessHandler;
+import com.example.companyservice.common.security.OAuth2UserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;

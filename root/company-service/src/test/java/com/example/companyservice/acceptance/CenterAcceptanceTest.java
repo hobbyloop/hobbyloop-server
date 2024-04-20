@@ -8,7 +8,7 @@ import com.example.companyservice.company.dto.response.CenterCreateResponseDto;
 import com.example.companyservice.fixture.CenterFixture;
 import com.example.companyservice.fixture.CompanyFixture;
 import com.example.companyservice.company.repository.CompanyRepository;
-import com.example.companyservice.company.service.AmazonS3Service;
+import com.example.companyservice.common.service.AmazonS3Service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

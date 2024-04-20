@@ -1,6 +1,6 @@
 package com.example.companyservice.company.controller;
 
-import com.example.companyservice.company.common.util.Utils;
+import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.dto.response.BookmarkCenterResponseDto;
 import com.example.companyservice.company.dto.response.CenterInfoDetailResponseDto;
 import com.example.companyservice.company.dto.BaseResponseDto;
@@ -39,23 +39,23 @@ public class CenterController {
                 .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId, bookmarkId, sortId)));
     }
 
-    @GetMapping("/hot-tickets/{latitude}/{longitude}")
+    @GetMapping(value = {"/hot-tickets/{allow-location}/{latitude}/{longitude}", "/hot-tickets/{allow-location}"})
     public ResponseEntity<BaseResponseDto<List<HotCenterTicketResponseDto>>> getHotCenterTicketList(HttpServletRequest request,
-                                                                                                    @PathVariable(value = "latitude") double latitude,
-                                                                                                    @PathVariable(value = "longitude") double longitude) {
+                                                                                                    @PathVariable(value = "allow-location") int allowLocation,
+                                                                                                    @PathVariable(required = false, value = "latitude") Double latitude,
+                                                                                                    @PathVariable(required = false, value = "longitude") Double longitude) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getHotCenterTicketList(memberId, latitude, longitude)));
+                .body(new BaseResponseDto<>(centerService.getHotCenterTicketList(memberId, allowLocation, latitude, longitude)));
     }
 
-    @GetMapping("/recommend/{latitude}/{longitude}")
+    @GetMapping(value = {"/recommend/{allow-location}/{latitude}/{longitude}", "/recommend/{allow-location}"})
     public ResponseEntity<BaseResponseDto<List<RecommendedCenterResponseDto>>> getRecommendedCenterList(HttpServletRequest request,
-                                                                                                        @PathVariable(value = "latitude") double latitude,
-                                                                                                        @PathVariable(value = "longitude") double longitude) {
+                                                                                                        @PathVariable(value = "allow-location") int allowLocation,
+                                                                                                        @PathVariable(required = false, value = "latitude") Double latitude,
+                                                                                                        @PathVariable(required = false, value = "longitude") Double longitude) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getRecommendedCenterList(memberId, latitude, longitude)));
+                .body(new BaseResponseDto<>(centerService.getRecommendedCenterList(memberId, allowLocation, latitude, longitude)));
     }
-
-    // TODO 카테고리별 시설 리스트 조회
 }
