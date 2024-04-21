@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Discovery Server 설정
-DISCOVERY_SERVER_ROOT="/home/ubuntu/app/discovery"
+DISCOVERY_SERVER_ROOT="/home/ubuntu/app/discovery-server"
 DISCOVERY_LATEST_JAR=$(ls -t /home/ubuntu/app/discovery-server/build/libs/*.jar | grep -v "plain" | head -1)
 DISCOVERY_SERVER_JAR="$DISCOVERY_SERVER_ROOT/discovery-server.jar"
 DISCOVERY_SERVER_APP_LOG="$DISCOVERY_SERVER_ROOT/discovery-server.log"
