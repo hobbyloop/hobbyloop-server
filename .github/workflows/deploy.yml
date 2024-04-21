@@ -53,11 +53,13 @@ jobs:
 
     - name: Upload Discovery Server to AWS S3
       run: |
+        cd root/discovery-server
+        zip -r $GITHUB_SHA-discovery-server.zip ./
         aws deploy push \
           --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-discovery-server.zip \
-          --source ./root/discovery-server/build/libs
+          --source ./
 
     - name: Upload Api Gateway Server to AWS S3
       run: |
