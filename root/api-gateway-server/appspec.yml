@@ -12,6 +12,9 @@ permissions:
     group: ubuntu
 
 hooks:
+  BeforeInstall:
+    - location: scripts/get-secrets.sh
+      timeout: 60
   AfterInstall:
     - location: scripts/stop.sh
       timeout: 60
