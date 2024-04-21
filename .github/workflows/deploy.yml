@@ -56,7 +56,7 @@ jobs:
         cd root/discovery-server
         zip -r $GITHUB_SHA-discovery-server.zip ./
         aws deploy push \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-discovery-server.zip \
           --source ./
@@ -88,7 +88,7 @@ jobs:
     - name: Deploy Discovery Server to AWS EC2 from S3
       run: |
         aws deploy create-deployment \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-discovery-server \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-discovery-server \
           --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-discovery-server.zip,bundleType=zip
