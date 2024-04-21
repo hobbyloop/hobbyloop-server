@@ -50,6 +50,12 @@ jobs:
     - name: Get secrets from AWS Parameter Store
       run: |
         aws ssm get-parameter --name "/api-gateway-server/secret" --with-decryption --query "Parameter.Value" --output text > ./api-gateway-server/src/main/resources/application-secret.yml
+        aws ssm get-parameter --name "/company-service/secret" --with-decryption --query "Parameter.Value" --output text > ./company-service/src/main/resources/application-secret.yml
+        aws ssm get-parameter --name "/company-service/db" --with-decryption --query "Parameter.Value" --output text > ./company-service/src/main/resources/application-db.yml
+        aws ssm get-parameter --name "/company-service/oauth" --with-decryption --query "Parameter.Value" --output text > ./company-service/src/main/resources/application-oauth.yml
+        aws ssm get-parameter --name "/company-service/s3" --with-decryption --query "Parameter.Value" --output text > ./company-service/src/main/resources/application-s3.yml
+        aws ssm get-parameter --name "/ticket-service/db" --with-decryption --query "Parameter.Value" --output text > ./ticket-service/src/main/resources/application-db.yml
+        aws ssm get-parameter --name "/ticket-service/s3" --with-decryption --query "Parameter.Value" --output text > ./ticket-service/src/main/resources/application-s3.yml
       working-directory: ./root
       
     - name: Build with Gradle Wrapper
