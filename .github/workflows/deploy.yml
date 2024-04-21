@@ -40,6 +40,13 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x ./root/gradlew
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.CICD_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.CICD_SECRET_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
     - name: Get secrets from AWS Parameter Store
       run: |
         aws ssm get-parameter --name "/api-gateway-server/secret" --with-decryption --query "Parameter.Value" --output text > ./api-gateway-server/src/main/resources/application-secret.yml
@@ -48,13 +55,6 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
       working-directory: ./root
-
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.CICD_ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.CICD_SECRET_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
 
     - name: Upload Discovery Server to AWS S3
       run: |
