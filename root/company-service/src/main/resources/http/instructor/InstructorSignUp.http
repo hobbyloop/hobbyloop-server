@@ -1,0 +1,26 @@
+POST http://localhost:8000/company-service/api/v1/instructors/sign-up
+Content-Type: application/json
+Accept: application/json
+
+{
+  "profile": {
+    "name": "개발자",
+    "dateOfBirth": "1900-01-01",
+    "phoneNumber": "010-0000-0000",
+    "gender": "MALE"
+  },
+  "secret": {
+    "ci": "ci",
+    "di": "di"
+  },
+  "oauth": {
+    "subject": "subject",
+    "email": "hobbyloop@gmail.com",
+    "provider": "GOOGLE",
+    "token": "token"
+  },
+  "marketing": {
+    "consentToMarketingCommunications": false,
+    "consentToPersonalInformation": false
+  }
+}
