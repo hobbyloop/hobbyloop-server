@@ -10,7 +10,7 @@ Accept: application/json
     "gender": "MALE"
   },
   "secret": {
-    "ci": "ci",
+    "ci": "ci2",
     "di": "di"
   },
   "oauth": {
