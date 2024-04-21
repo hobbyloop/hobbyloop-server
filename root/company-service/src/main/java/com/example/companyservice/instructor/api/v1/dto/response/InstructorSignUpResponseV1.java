@@ -1,6 +1,5 @@
 package com.example.companyservice.instructor.api.v1.dto.response;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.example.companyservice.instructor.application.dto.InstructorSignUpResult;
