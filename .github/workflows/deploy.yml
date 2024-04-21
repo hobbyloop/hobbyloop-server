@@ -63,27 +63,33 @@ jobs:
 
     - name: Upload Api Gateway Server to AWS S3
       run: |
+        cd root/api-gateway-server
+        zip -r $GITHUB_SHA-api-gateway-server.zip ./
         aws deploy push \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-api-gateway-server \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-api-gateway-server.zip \
-          --source ./root/api-gateway-server/build/libs
+          --source ./
 
     - name: Upload Company Service to AWS S3
       run: |
+        cd root/company-service
+        zip -r $GITHUB_SHA-company-service.zip ./
         aws deploy push \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-company-service \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-company-service.zip \
-          --source ./root/company-service/build/libs
+          --source ./
 
     - name: Upload Ticket Service to AWS S3
       run: |
+        cd root/ticket-service
+        zip -r $GITHUB_SHA-ticket-service.zip ./
         aws deploy push \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-ticket-service \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --ignore-hidden-files \
           --s3-location s3://$AWS_S3_BUCKET/$GITHUB_SHA-ticket-service.zip \
-          --source ./root/ticket-service/build/libs
+          --source ./
 
     - name: Deploy Discovery Server to AWS EC2 from S3
       run: |
@@ -96,7 +102,7 @@ jobs:
     - name: Deploy Api Gateway Server to AWS EC2 from S3
       run: |
         aws deploy create-deployment \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-api-gateway-server \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-api-gateway-server \
           --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-api-gateway-server.zip,bundleType=zip
@@ -104,7 +110,7 @@ jobs:
     - name: Deploy Company Service to AWS EC2 from S3
       run: |
         aws deploy create-deployment \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-company-service \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-company-service \
           --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-company-service.zip,bundleType=zip
@@ -112,7 +118,7 @@ jobs:
     - name: Deploy Ticket Service to AWS EC2 from S3
       run: |
         aws deploy create-deployment \
-          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }}-ticket-service \
+          --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
           --deployment-config-name CodeDeployDefault.AllAtOnce \
           --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }}-ticket-service \
           --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA-ticket-service.zip,bundleType=zip
