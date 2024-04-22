@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class UserTicketServiceImpl implements UserTicketService {
     private final UserTicketRepository userTicketRepository;
     private final TicketRepository ticketRepository;
+    private final CenterMembershipService centerMembershipService;
     private final CompanyServiceClient companyServiceClient;
     private final MemberServiceClient memberServiceClient;
 
@@ -70,6 +71,8 @@ public class UserTicketServiceImpl implements UserTicketService {
 
         userTicket.approve();
         ticket.issue();
+
+        centerMembershipService.joinCenterMembership(ticket.getCenterId(), userTicket.getMemberId());
     }
 
     @Override
