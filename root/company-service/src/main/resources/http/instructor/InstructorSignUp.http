@@ -1,4 +1,4 @@
-POST http://localhost:8000/company-service/api/v1/instructors/sign-up
+POST {{host}}/company-service/api/v1/instructors/sign-up
 Content-Type: application/json
 Accept: application/json
 
@@ -10,7 +10,7 @@ Accept: application/json
     "gender": "MALE"
   },
   "secret": {
-    "ci": "ci2",
+    "ci": "ci234",
     "di": "di"
   },
   "oauth": {
