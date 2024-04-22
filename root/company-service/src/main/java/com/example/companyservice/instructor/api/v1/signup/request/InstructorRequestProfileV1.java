@@ -1,4 +1,4 @@
-package com.example.companyservice.instructor.api.v1.dto.request;
+package com.example.companyservice.instructor.api.v1.signup.request;
 
 import java.time.LocalDate;
 

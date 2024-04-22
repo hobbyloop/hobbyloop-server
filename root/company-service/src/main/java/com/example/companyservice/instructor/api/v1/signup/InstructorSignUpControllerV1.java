@@ -1,4 +1,4 @@
-package com.example.companyservice.instructor.api.v1.controller;
+package com.example.companyservice.instructor.api.v1.signup;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.companyservice.instructor.api.v1.dto.request.InstructorSignUpRequestV1;
-import com.example.companyservice.instructor.api.v1.dto.response.InstructorSignUpResponseV1;
-import com.example.companyservice.instructor.application.dto.InstructorSignUpCommand;
-import com.example.companyservice.instructor.application.dto.InstructorSignUpResult;
-import com.example.companyservice.instructor.application.usecase.InstructorSignUpUseCase;
+import com.example.companyservice.instructor.api.v1.signup.request.InstructorSignUpRequestV1;
+import com.example.companyservice.instructor.api.v1.signup.response.InstructorSignUpResponseV1;
+import com.example.companyservice.instructor.application.signup.InstructorSignUpCommand;
+import com.example.companyservice.instructor.application.signup.InstructorSignUpResult;
+import com.example.companyservice.instructor.application.signup.InstructorSignUpUseCase;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.example.companyservice.instructor.application.dto;
+package com.example.companyservice.instructor.application.signup;
 
 import com.example.companyservice.instructor.domain.Instructor;
 import com.example.companyservice.instructor.domain.InstructorOauth;

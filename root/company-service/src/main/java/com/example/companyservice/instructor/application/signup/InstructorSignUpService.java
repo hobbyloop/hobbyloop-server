@@ -1,10 +1,8 @@
-package com.example.companyservice.instructor.application.usecase;
+package com.example.companyservice.instructor.application.signup;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.companyservice.instructor.application.dto.InstructorSignUpCommand;
-import com.example.companyservice.instructor.application.dto.InstructorSignUpResult;
 import com.example.companyservice.instructor.domain.Instructor;
 import com.example.companyservice.instructor.domain.InstructorOauth;
 import com.example.companyservice.instructor.domain.InstructorProfile;
