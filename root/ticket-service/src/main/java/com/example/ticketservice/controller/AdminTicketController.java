@@ -78,19 +78,6 @@ public class AdminTicketController {
                 .body(new BaseResponseDto<>(ticketService.getTicketInfo(ticketId)));
     }
 
-    @GetMapping("/members/unapproved/{centerId}")
-    public ResponseEntity<BaseResponseDto<List<UnapprovedUserTicketListResponseDto>>> getUnapprovedUserTicketList(@PathVariable long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(userTicketService.getUnapprovedUserTicketList(centerId)));
-    }
-
-    @PatchMapping("/members/{userTicketId}/approve")
-    public ResponseEntity<BaseResponseDto<Void>> approveUserTicket(@PathVariable long userTicketId) {
-        userTicketService.approveUserTicket(userTicketId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>());
-    }
-
     @GetMapping("/my/{centerId}")
     public ResponseEntity<BaseResponseDto<List<AdminMyTicketResponseDto>>> getMyTicketList(@PathVariable long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
