@@ -9,11 +9,14 @@ import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.entity.Ticket;
 import com.example.ticketservice.entity.UserTicket;
+import com.example.ticketservice.event.UserTicketApprovedEvent;
 import com.example.ticketservice.repository.ticket.TicketRepository;
 import com.example.ticketservice.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.YearMonth;
@@ -26,7 +29,7 @@ import java.util.stream.Collectors;
 public class UserTicketServiceImpl implements UserTicketService {
     private final UserTicketRepository userTicketRepository;
     private final TicketRepository ticketRepository;
-    private final CenterMembershipService centerMembershipService;
+    private final ApplicationEventPublisher eventPublisher;
     private final CompanyServiceClient companyServiceClient;
     private final MemberServiceClient memberServiceClient;
 
@@ -42,8 +45,20 @@ public class UserTicketServiceImpl implements UserTicketService {
         UserTicket userTicket = UserTicket.of(ticket, memberId);
         userTicketRepository.save(userTicket);
 
-        //ticket.issue();
         return userTicket.getId();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processOfflinePurchaseTicket(long memberId, long ticketId) {
+        Ticket ticket = ticketRepository.findForUpdate(ticketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+
+        UserTicket userTicket = UserTicket.of(ticket, memberId);
+        userTicket.approve();
+        userTicketRepository.save(userTicket);
+
+        ticket.issue();
     }
 
     @Override
@@ -72,7 +87,7 @@ public class UserTicketServiceImpl implements UserTicketService {
         userTicket.approve();
         ticket.issue();
 
-        centerMembershipService.joinCenterMembership(ticket.getCenterId(), userTicket.getMemberId());
+        eventPublisher.publishEvent(new UserTicketApprovedEvent(ticket.getCenterId(), userTicket.getMemberId()));
     }
 
     @Override

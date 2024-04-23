@@ -28,4 +28,16 @@ public class CenterMembership extends TimeStamped {
         this.memberName = memberName;
         this.phoneNumber = phoneNumber;
     }
+
+    public boolean isExpired() {
+        return status == CenterMembershipStatusEnum.EXPIRED.getStatusType();
+    }
+
+    public boolean isExpiringSoon() {
+        return status == CenterMembershipStatusEnum.EXPIRING_SOON.getStatusType();
+    }
+
+    public void renew() {
+        status = CenterMembershipStatusEnum.RENEWED.getStatusType();
+    }
 }

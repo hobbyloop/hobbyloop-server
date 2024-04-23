@@ -1,8 +1,10 @@
 package com.example.ticketservice.controller;
 
 import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.dto.request.CenterMembershipJoinRequestDto;
 import com.example.ticketservice.dto.response.CenterMemberResponseDto;
 import com.example.ticketservice.dto.response.CenterMembershipDetailResponseDto;
+import com.example.ticketservice.dto.response.CenterMembershipJoinedResponseDto;
 import com.example.ticketservice.dto.response.UnapprovedUserTicketListResponseDto;
 import com.example.ticketservice.service.CenterMembershipService;
 import com.example.ticketservice.service.UserTicketService;
@@ -19,6 +21,14 @@ import java.util.List;
 public class CenterMembershipController {
     private final CenterMembershipService centerMembershipService;
     private final UserTicketService userTicketService;
+
+    @PostMapping("/{centerId}/{memberId}")
+    public ResponseEntity<BaseResponseDto<CenterMembershipJoinedResponseDto>> joinCenterMembershipByAdmin(
+            @PathVariable Long centerId, @PathVariable Long memberId, @RequestBody CenterMembershipJoinRequestDto requestDto
+            ) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponseDto<>(centerMembershipService.joinCenterMembershipByAdmin(centerId, memberId, requestDto)));
+    }
 
     @GetMapping("/{centerId}/{pageNo}/{sortId}")
     public ResponseEntity<BaseResponseDto<List<CenterMemberResponseDto>>> getCenterMemberList(

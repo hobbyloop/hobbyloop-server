@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface CenterMembershipRepository extends JpaRepository<CenterMembership, Long>, CenterMembershipRepositoryCustom {
     List<CenterMembership> findAllByCenterId(Long centerId);
+
+    boolean existsByMemberId(Long memberId);
 }
