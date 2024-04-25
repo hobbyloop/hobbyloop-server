@@ -18,4 +18,6 @@ public interface TicketClientService {
     Map<Long, TicketInfoClientResponseDto> getHotTicketList(List<Long> centerIdList);
 
     Map<Long, TicketInfoClientResponseDto> getRecommendTicketList(List<Long> centerIdList);
+
+    boolean getHasTicket(long centerId);
 }

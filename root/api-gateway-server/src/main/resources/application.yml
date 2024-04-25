@@ -66,22 +66,6 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/company-service/(?<segment>.*), /$\{segment}
             - JwtAuthenticationFilter
-        - id: instructor-service
-          uri: lb://INSTRUCTOR-SERVICE
-          predicates:
-            - Path=/instructor-service/**
-            - Method=GET, POST, PATCH, DELETE
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/instructor-service/(?<segment>.*), /$\{segment}
-        - id: member-service
-          uri: lb://MEMBER-SERVICE
-          predicates:
-            - Path=/member-service/**
-            - Method=GET, POST, PATCH, DELETE
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/member-service/(?<segment>.*), /$\{segment}
         - id: ticket-service
           uri: lb://TICKET-SERVICE
           predicates:
