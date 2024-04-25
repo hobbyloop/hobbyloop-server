@@ -50,4 +50,10 @@ public class TicketClientController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketClientService.getRecommendTicketList(centerIdList)));
     }
+
+    @GetMapping("/has-ticket/{centerId}")
+    public ResponseEntity<BaseResponseDto<Boolean>> getHasTicket(@PathVariable(value = "centerId") long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketClientService.getHasTicket(centerId)));
+    }
 }

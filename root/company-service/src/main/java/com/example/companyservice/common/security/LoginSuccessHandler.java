@@ -39,7 +39,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String accessToken = jwtUtil.createToken(company.getId());
         String refreshToken = jwtUtil.createRefreshToken(company.getId());
 
-        String url = UriComponentsBuilder.fromUriString("http://localhost/welcome")
+        String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + company.getProvider() + "/callback")
                 .queryParam("access-token", accessToken)
                 .queryParam("refresh-token", refreshToken)
                 .build()
