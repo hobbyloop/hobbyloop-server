@@ -94,6 +94,12 @@ public class TicketClientServiceImpl implements TicketClientService {
         return recommendTicketResponseDtoMap;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean getHasTicket(long centerId) {
+        return ticketRepository.existsByCenterId(centerId);
+    }
+
     private float getScore(List<Review> reviewList) {
         if (reviewList.size() == 0) return 0;
         float scoreSum = 0;

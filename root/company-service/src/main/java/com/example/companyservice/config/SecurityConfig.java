@@ -1,4 +1,4 @@
-package com.example.companyservice.common.config;
+package com.example.companyservice.config;
 
 import com.example.companyservice.common.security.LoginSuccessHandler;
 import com.example.companyservice.common.security.OAuth2UserDetailsService;
@@ -43,8 +43,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         .requestMatchers(new MvcRequestMatcher(introspector, "/**")).permitAll())
                 .oauth2Login((oauth2Login) ->
-                        oauth2Login.userInfoEndpoint(userInfoEndpointConfig ->
-                                userInfoEndpointConfig.userService(oAuth2UserDetailsService)).successHandler(successHandler))
+                        oauth2Login
+                                .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
+                                        .userService(oAuth2UserDetailsService)).successHandler(successHandler))
                 .headers(headersConfigurer -> headersConfigurer
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 

@@ -1,7 +1,8 @@
 package com.example.ticketservice.ticket.acceptance;
 
 import com.example.ticketservice.AcceptanceTest;
-import com.example.ticketservice.MemberFixture;
+import com.example.ticketservice.centermembership.CenterMembershipSteps;
+import com.example.ticketservice.fixture.MemberFixture;
 import com.example.ticketservice.client.MemberServiceClient;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.fixture.CenterFixture;
@@ -16,8 +17,6 @@ import com.example.ticketservice.ticket.utils.TicketSteps;
 import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -198,9 +197,9 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         long userTicketId2 = UserTicketSteps.purchaseTicket(ticketIdOfNonRefundableCenter);
         long userTicketId3 = UserTicketSteps.purchaseTicket(ticketIdOfDefaultCenter2);
 
-        AdminTicketSteps.approveUserTicket(userTicketId1);
-        AdminTicketSteps.approveUserTicket(userTicketId2);
-        AdminTicketSteps.approveUserTicket(userTicketId3);
+        CenterMembershipSteps.approveUserTicket(userTicketId1);
+        CenterMembershipSteps.approveUserTicket(userTicketId2);
+        CenterMembershipSteps.approveUserTicket(userTicketId3);
 
         // when
         Map<String, AvailableUserTicketsWithCenterInfo> response = UserTicketSteps.getMyAvailableUserTicketList();
@@ -238,25 +237,6 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.size()).isEqualTo(1);
         assertThat(response.containsKey(YearMonth.of(thisYear, thisMonth))).isTrue();
-    }
-
-    @Test
-    public void getUnapprovedUserTicketListSuccess() throws Exception {
-        // given
-        long centerId = 1L;
-
-        mockForCreateTicket();
-        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
-        AdminTicketSteps.uploadTicket(ticketId);
-        Long userTicketId = UserTicketSteps.purchaseTicket(ticketId);
-
-        // when
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
-        List<UnapprovedUserTicketListResponseDto> response = AdminTicketSteps.getUnapprovedUserTicketList(centerId);
-
-        // then
-        assertThat(response.size()).isEqualTo(1);
-        assertThat(response.get(0).getUserTicketId()).isEqualTo(userTicketId);
     }
 
     @Test
@@ -304,28 +284,6 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(responses.size()).isEqualTo(2);
         assertThat(responses.get(0).getTicketId()).isEqualTo(ticketId3);
-    }
-
-    @Test
-    public void approveUserTicketSuccess() throws Exception {
-        // given
-        long centerId = 1L;
-
-        mockForCreateTicket();
-        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
-        AdminTicketSteps.uploadTicket(ticketId);
-        UserTicketSteps.purchaseTicket(ticketId);
-
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
-        Long userTicketId = AdminTicketSteps.getUnapprovedUserTicketList(centerId).get(0).getUserTicketId();
-
-        // when
-        AdminTicketSteps.approveUserTicket(userTicketId);
-
-        // then
-        mockForGetTicketDetail();
-        TicketDetailResponseDto ticket = AdminTicketSteps.getTicketDetail(ticketId);
-        assertThat(ticket.getIssueCount()).isEqualTo(1);
     }
 
     private void mockForCreateTicket() throws IOException {

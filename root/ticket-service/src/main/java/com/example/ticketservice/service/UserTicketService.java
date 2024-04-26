@@ -9,6 +9,8 @@ import java.util.Map;
 public interface UserTicketService {
     Long purchaseTicket(long memberId, long ticketId);
 
+    void processOfflinePurchaseTicket(long memberId, long ticketId);
+
     List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId);
 
     void approveUserTicket(long userTicketId);
