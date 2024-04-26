@@ -1,6 +1,7 @@
 package com.example.ticketservice.fixture;
 
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.entity.Ticket;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -20,7 +21,7 @@ public class TicketFixture {
 
     public static TicketCreateRequestDto defaultTicketCreateRequest() {
         return TicketCreateRequestDto.builder()
-                .name("티켓 이름")
+                .name("6:1 필라테스 15회")
                 .category("필라테스")
                 .introduce("티켓 소개")
                 .expirationStartDate(EXPIRATION_START_DATE)
@@ -35,6 +36,28 @@ public class TicketFixture {
                 .calculatedPrice((int) (LOW_PRICE - (LOW_PRICE * 0.1)))
                 .refundRegulation(1)
                 .refundPercentage(10)
+                .build();
+    }
+
+    public static Ticket uploadedTicket(Long centerId) {
+        return Ticket.builder()
+                .name("6:1 필라테스 15회")
+                .category(1)
+                .introduce("필라테스입니다.")
+                .expirationStartDate(EXPIRATION_START_DATE)
+                .expirationEndDate(EXPIRATION_END_DATE)
+                .duration(30)
+                .useCount(USE_COUNT)
+                .isTotalCount(true)
+                .totalCount(TOTAL_COUNT)
+                .price(LOW_PRICE)
+                .vat(1000)
+                .discountRate(10)
+                .calculatedPrice((int) (LOW_PRICE - (LOW_PRICE * 0.1)))
+                .refundRegulation(1)
+                .refundPercentage(10)
+                .isUpload(true)
+                .centerId(centerId)
                 .build();
     }
 

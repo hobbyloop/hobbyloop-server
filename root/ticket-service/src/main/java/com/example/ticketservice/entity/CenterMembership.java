@@ -22,6 +22,7 @@ public class CenterMembership extends TimeStamped {
 
     private String phoneNumber;
 
+    @Setter
     private int status;
 
     public void updateMemberInfo(String memberName, String phoneNumber) {
