@@ -16,14 +16,12 @@ public class CompanyFixture {
     public static Company defaultSocialCompany() {
         Company company = Company.builder()
                 .email("company@company.com")
-                .password("password")
                 .provider("kakao")
                 .providerId("123456")
+                .role(Role.COMPANY)
                 .isDelete(false)
                 .createStatus(CreateStatusEnum.WAIT.getTypeValue())
                 .build();
-
-        company.addRole(Role.COMPANY);
 
         return company;
     }

@@ -3,6 +3,7 @@ package com.example.companyservice.common.security;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.util.CookieUtils;
+import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.entity.Role;
 import com.example.companyservice.company.repository.CompanyRepository;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @Component
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    private final JWTUtil jwtUtil;
+    private final JwtUtils jwtUtils;
 
     private final CompanyRepository companyRepository;
 
@@ -49,8 +50,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             String provider = authMember.getProvider();
             String providerId = authMember.getProviderId();
 
-            log.info("state : {}", cookieState.get());
             String state = cookieState.get();
+            log.info("state : {}", state);
 
             if ("company".equals(state)) {
                 Optional<Company> optionalCompany = companyRepository.findByEmail(email);
@@ -58,7 +59,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 if (optionalCompany.isPresent()) {
                     company = optionalCompany.get();
                 } else {
-                    company = Company.from(email, provider, providerId);
+                    company = Company.from(email, provider, providerId, Role.COMPANY);
                     companyRepository.save(company);
                 }
                 sendToken(request, response, company.getId(), provider, company.getCi());
@@ -73,8 +74,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     }
 
     private void sendToken(HttpServletRequest request, HttpServletResponse response, Long id, String provider, String ci) throws IOException {
-        String accessToken = jwtUtil.createToken(id);
-        String refreshToken = jwtUtil.createRefreshToken(id);
+        String accessToken = jwtUtils.createToken(id);
+        String refreshToken = jwtUtils.createRefreshToken(id);
 
         String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + provider + "/callback")
                 .queryParam("access-token", accessToken)

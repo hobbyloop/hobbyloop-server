@@ -30,9 +30,7 @@ public class Company extends TimeStamped {
 
     private String di;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<Role> roleSet = new HashSet<>();
+    private Role role;
 
     private Boolean isDutyFree;
 
@@ -76,11 +74,12 @@ public class Company extends TimeStamped {
 
     private Long companyLatePlanId;
 
-    public static Company from(String email, String provider, String providerId) {
+    public static Company from(String email, String provider, String providerId, Role role) {
         return Company.builder()
                 .email(email)
                 .provider(provider)
                 .providerId(providerId)
+                .role(role)
                 .isDelete(false)
                 .build();
     }
@@ -114,9 +113,5 @@ public class Company extends TimeStamped {
 
     public void deleteCompany() {
         this.isDelete = true;
-    }
-
-    public void addRole(Role role) {
-        roleSet.add(role);
     }
 }
