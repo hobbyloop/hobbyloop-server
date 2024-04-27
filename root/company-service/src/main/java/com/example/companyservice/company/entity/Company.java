@@ -22,11 +22,13 @@ public class Company extends TimeStamped {
 
     private String email;
 
-    private String password;
-
     private String provider;
 
     private String providerId;
+
+    private String ci;
+
+    private String di;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
@@ -74,14 +76,18 @@ public class Company extends TimeStamped {
 
     private Long companyLatePlanId;
 
-    public static Company from(String email) {
+    public static Company from(String email, String provider, String providerId) {
         return Company.builder()
                 .email(email)
+                .provider(provider)
+                .providerId(providerId)
                 .isDelete(false)
                 .build();
     }
 
     public void updateCompany(CompanyUpdateRequestDto requestDto, Long companyLatePlanId) {
+        this.ci = requestDto.getCi();
+        this.di = requestDto.getDi();
         this.isOption1 = requestDto.isOption1();
         this.isOption2 = requestDto.isOption2();
         this.isDutyFree = requestDto.isDutyFree();

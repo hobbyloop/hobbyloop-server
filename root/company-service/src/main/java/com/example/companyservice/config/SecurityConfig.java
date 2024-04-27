@@ -1,5 +1,6 @@
 package com.example.companyservice.config;
 
+import com.example.companyservice.common.security.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.example.companyservice.common.security.LoginSuccessHandler;
 import com.example.companyservice.common.security.OAuth2UserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
     private final OAuth2UserDetailsService oAuth2UserDetailsService;
 
     private final LoginSuccessHandler successHandler;
@@ -44,8 +47,11 @@ public class SecurityConfig {
                         .requestMatchers(new MvcRequestMatcher(introspector, "/**")).permitAll())
                 .oauth2Login((oauth2Login) ->
                         oauth2Login
+                                .authorizationEndpoint(authorizationEndpointConfig -> authorizationEndpointConfig
+                                        .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
                                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                                        .userService(oAuth2UserDetailsService)).successHandler(successHandler))
+                                        .userService(oAuth2UserDetailsService))
+                                .successHandler(successHandler))
                 .headers(headersConfigurer -> headersConfigurer
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
