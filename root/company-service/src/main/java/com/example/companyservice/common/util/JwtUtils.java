@@ -1,4 +1,4 @@
-package com.example.companyservice.common.security;
+package com.example.companyservice.common.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -15,7 +15,7 @@ import java.util.Date;
 
 @Component
 @Slf4j
-public class JWTUtil {
+public class JwtUtils {
 
     // 암호화할 때 필요한 비밀 키(secret key)
     @Value("${token.secret}")
