@@ -10,7 +10,8 @@ public class CenterMembershipFixture {
                 "홍길동",
                 "010-1234-5678",
                 "남",
-                23
+                "2000-01-01",
+                "honggildong@gmail.com"
         );
 
     }

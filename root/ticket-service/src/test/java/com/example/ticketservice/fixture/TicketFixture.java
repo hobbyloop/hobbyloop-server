@@ -26,7 +26,7 @@ public class TicketFixture {
                 .introduce("티켓 소개")
                 .expirationStartDate(EXPIRATION_START_DATE)
                 .expirationEndDate(EXPIRATION_END_DATE)
-                .duration(30)
+                .duration(60)
                 .useCount(USE_COUNT)
                 .isTotalCount(true)
                 .totalCount(TOTAL_COUNT)

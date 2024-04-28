@@ -1,5 +1,6 @@
 package com.example.ticketservice.centermembership;
 
+import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.DatabaseCleanup;
 import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.MemberServiceClient;
@@ -23,10 +24,12 @@ import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
+import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -43,17 +46,17 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 @SpringBatchTest
-@SpringBootTest
-@ActiveProfiles("test")
-public class CenterMembershipBatchTest {
+public class CenterMembershipBatchTest extends AcceptanceTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    private DatabaseCleanup databaseCleanup;
+    @Qualifier("expiringSoonCenterMembershipJob")
+    private Job expiringSoonCenterMembershipJob;
 
     @Autowired
-    private TicketRepository ticketRepository;
+    @Qualifier("expiredCenterMembershipJob")
+    private Job expiredCenterMembershipJob;
 
     @Autowired
     private UserTicketRepository userTicketRepository;
@@ -82,7 +85,7 @@ public class CenterMembershipBatchTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        databaseCleanup.execute();
+        super.setUp();
 
         mockForCreateTicket();
         pilatesTicketId = AdminTicketSteps.createTicket(pilatesCenterId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
@@ -95,18 +98,57 @@ public class CenterMembershipBatchTest {
     }
 
     @Test
+    public void expiringSoonCenterMembershipJob() throws Exception {
+        // given
+        Long activeMemberId = 1L;
+        Long expiringSoonMemberId = 2L;
+
+        mockForPurchaseTicket();
+        Long activeBakingTicketId = UserTicketSteps.purchaseTicket(bakingTicketId, activeMemberId);
+
+        Long activePilatesTicketId = UserTicketSteps.purchaseTicket(pilatesTicketId, expiringSoonMemberId);
+        Long expiringSoonPilatesTicketId = UserTicketSteps.purchaseTicket(pilatesTicketId2, expiringSoonMemberId);
+
+        CenterMembershipSteps.approveUserTicket(activeBakingTicketId);
+        CenterMembershipSteps.approveUserTicket(activePilatesTicketId);
+        CenterMembershipSteps.approveUserTicket(expiringSoonPilatesTicketId);
+
+        LocalDate now = LocalDate.now();
+        UserTicket expiringSoonPilatesTicket = userTicketRepository.findById(expiringSoonPilatesTicketId).get();
+        ReflectionTestUtils.setField(expiringSoonPilatesTicket, "endDate", now.plusDays(25));
+        userTicketRepository.save(expiringSoonPilatesTicket);
+
+        // when
+        jobLauncherTestUtils.setJob(expiringSoonCenterMembershipJob);
+        JobExecution execution = jobLauncherTestUtils.launchJob();
+
+        // then
+        CenterMembership activeCenterMembership = centerMembershipRepository.findByMemberIdAndCenterId(activeMemberId, bakingCenterId);
+        CenterMembership expiringSoonCenterMembership = centerMembershipRepository.findByMemberIdAndCenterId(expiringSoonMemberId, pilatesCenterId);
+
+        assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        assertThat(activeCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.ACTIVE.getStatusType());
+        assertThat(expiringSoonCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.EXPIRING_SOON.getStatusType());
+
+    }
+
+    @Test
     public void expiredCenterMembershipJob() throws Exception {
         // given
         Long activeMemberId = 1L;
         Long expiredMemberId = 2L;
 
         mockForPurchaseTicket();
-        UserTicketSteps.purchaseTicket(pilatesTicketId, activeMemberId);
-        UserTicketSteps.purchaseTicket(pilatesTicketId2, activeMemberId);
-        UserTicketSteps.purchaseTicket(bakingTicketId, expiredMemberId);
+        Long expiredPilatesTicketId = UserTicketSteps.purchaseTicket(pilatesTicketId, activeMemberId);
+        Long activePilatesTicketId = UserTicketSteps.purchaseTicket(pilatesTicketId2, activeMemberId);
+        Long expiredBakingTicketId = UserTicketSteps.purchaseTicket(bakingTicketId, expiredMemberId);
 
-        UserTicket pilatesTicket = userTicketRepository.findById(pilatesTicketId).get();
-        UserTicket bakingTicket = userTicketRepository.findById(bakingTicketId).get();
+        CenterMembershipSteps.approveUserTicket(expiredPilatesTicketId);
+        CenterMembershipSteps.approveUserTicket(activePilatesTicketId);
+        CenterMembershipSteps.approveUserTicket(expiredBakingTicketId);
+
+        UserTicket pilatesTicket = userTicketRepository.findById(expiredPilatesTicketId).get();
+        UserTicket bakingTicket = userTicketRepository.findById(expiredBakingTicketId).get();
 
         LocalDate now = LocalDate.now();
         ReflectionTestUtils.setField(pilatesTicket, "endDate", now.minusDays(1));
@@ -114,6 +156,7 @@ public class CenterMembershipBatchTest {
         userTicketRepository.saveAll(Arrays.asList(pilatesTicket, bakingTicket));
 
         // when
+        jobLauncherTestUtils.setJob(expiredCenterMembershipJob);
         JobExecution execution = jobLauncherTestUtils.launchJob();
 
         // then
@@ -122,6 +165,40 @@ public class CenterMembershipBatchTest {
 
         assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         assertThat(expiredCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.EXPIRED.getStatusType());
+        assertThat(activeCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.ACTIVE.getStatusType());
+    }
+
+    @Test
+    public void renewAfterExpiring() throws Exception {
+        // given
+        Long memberId = 1L;
+
+        mockForPurchaseTicket();
+        Long expiredPilatesTicketId = UserTicketSteps.purchaseTicket(pilatesTicketId, memberId);
+
+        CenterMembershipSteps.approveUserTicket(expiredPilatesTicketId);
+
+        UserTicket pilatesTicket = userTicketRepository.findById(expiredPilatesTicketId).get();
+
+        LocalDate now = LocalDate.now();
+        ReflectionTestUtils.setField(pilatesTicket, "endDate", now.minusDays(1));
+        userTicketRepository.save(pilatesTicket);
+
+        jobLauncherTestUtils.setJob(expiredCenterMembershipJob);
+        JobExecution execution = jobLauncherTestUtils.launchJob();
+
+        CenterMembership expiredCenterMembership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, pilatesCenterId);
+        assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        assertThat(expiredCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.EXPIRED.getStatusType());
+
+        // when
+        Long activePilatesTicketId = UserTicketSteps.purchaseTicket(pilatesTicketId2, memberId);
+
+        CenterMembershipSteps.approveUserTicket(activePilatesTicketId);
+
+        // then
+        CenterMembership activeCenterMembership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, pilatesCenterId);
+        assertThat(activeCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.RENEWED.getStatusType());
     }
 
     private void mockForCreateTicket() throws IOException {

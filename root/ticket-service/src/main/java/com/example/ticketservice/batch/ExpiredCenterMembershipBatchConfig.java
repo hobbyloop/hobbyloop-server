@@ -17,6 +17,7 @@ import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.LocalDate;
@@ -27,14 +28,14 @@ import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
-public class BatchConfig {
+public class ExpiredCenterMembershipBatchConfig {
 
     private final UserTicketRepository userTicketRepository;
     private final CenterMembershipRepository centerMembershipRepository;
 
     @Bean
     public Job expiredCenterMembershipJob(JobRepository jobRepository, Step expiredCenterMembershipStep) {
-        return new JobBuilder("expiredCenterMembership", jobRepository)
+        return new JobBuilder("expiredCenterMembershipJob", jobRepository)
                 .start(expiredCenterMembershipStep)
                 .build();
     }
@@ -54,10 +55,15 @@ public class BatchConfig {
 
     @Bean
     public RepositoryItemReader<UserTicket> userTicketReader() {
+        Map<String, Sort.Direction> sorts = new HashMap<>();
+        sorts.put("id", Sort.Direction.ASC);
+
         return new RepositoryItemReaderBuilder<UserTicket>()
                 .name("userTicketReader")
                 .repository(userTicketRepository)
                 .methodName("findAll")
+                .sorts(sorts)
+                .pageSize(100)
                 .build();
     }
 
@@ -69,23 +75,8 @@ public class BatchConfig {
             @Override
             public Map<String, List<UserTicket>> process(UserTicket item) throws Exception {
                 String key = item.getMemberId() + "_" + item.getTicket().getCenterId();
-                List<UserTicket> tickets = ticketsByMemberAndCenter.getOrDefault(key, new ArrayList<>());
-                tickets.add(item);
-                ticketsByMemberAndCenter.put(key, tickets);
-                return getResult();
-            }
-
-
-            public Map<String, List<UserTicket>> getResult() {
-                Map<String, List<UserTicket>> expiredMemberships = new HashMap<>();
-                for (Map.Entry<String, List<UserTicket>> entry : ticketsByMemberAndCenter.entrySet()) {
-                    if (entry.getValue().stream().noneMatch(ticket ->
-                            ticket.getEndDate().isAfter(LocalDate.now()) && ticket.getRemainingCount() > 0)) {
-                        expiredMemberships.put(entry.getKey(), entry.getValue());
-                    }
-                }
-
-                return expiredMemberships;
+                ticketsByMemberAndCenter.computeIfAbsent(key, k -> new ArrayList<>()).add(item);
+                return ticketsByMemberAndCenter;
             }
         };
     }
@@ -95,14 +86,18 @@ public class BatchConfig {
         return items -> {
             for (Map<String, List<UserTicket>> expiredMemberships : items) {
                 for (Map.Entry<String, List<UserTicket>> entry : expiredMemberships.entrySet()) {
-                    String[] memberAndCenter = entry.getKey().split("_");
-                    Long memberId = Long.valueOf(memberAndCenter[0]);
-                    Long centerId = Long.valueOf(memberAndCenter[1]);
+                    List<UserTicket> userTickets = entry.getValue();
+                    if (userTickets.stream().noneMatch(ticket ->
+                            ticket.getEndDate().isAfter(LocalDate.now()) && ticket.getRemainingCount() > 0)) {
+                        String[] memberAndCenter = entry.getKey().split("_");
+                        Long memberId = Long.valueOf(memberAndCenter[0]);
+                        Long centerId = Long.valueOf(memberAndCenter[1]);
 
-                    CenterMembership membership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, centerId);
-                    if (membership != null) {
-                        membership.setStatus(CenterMembershipStatusEnum.EXPIRED.getStatusType());
-                        centerMembershipRepository.save(membership);
+                        CenterMembership membership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, centerId);
+                        if (membership != null) {
+                            membership.setStatus(CenterMembershipStatusEnum.EXPIRED.getStatusType());
+                            centerMembershipRepository.save(membership);
+                        }
                     }
                 }
             }

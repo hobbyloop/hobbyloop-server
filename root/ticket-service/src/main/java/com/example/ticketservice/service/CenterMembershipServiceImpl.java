@@ -41,14 +41,12 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void joinCenterMembership(Long centerId, Long memberId) {
-        Optional<CenterMembership> existingCenterMembership = centerMembershipRepository.findById(centerId);
-        if (existingCenterMembership.isPresent()) {
-            CenterMembership centerMembership = existingCenterMembership.get();
-            if (centerMembership.isExpired() || centerMembership.isExpiringSoon()) {
-                centerMembership.renew();
-                return;
+        CenterMembership existingCenterMembership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, centerId);
+        if (existingCenterMembership != null) {
+            if (existingCenterMembership.isExpired() || existingCenterMembership.isExpiringSoon()) {
+                existingCenterMembership.renew();
             }
-            throw new ApiException(ExceptionEnum.CENTER_MEMBERSHIP_ALREADY_JOINED_EXCEPTION);
+            return;
         }
 
         MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(memberId).getData();
