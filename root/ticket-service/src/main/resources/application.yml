@@ -5,6 +5,7 @@ server:
 spring:
   application:
     name: ticket-service
+
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -15,8 +16,16 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 500
+  batch:
+    job:
+      enabled: false
+      names: expiredCenterMembershipJob, expiringSoonCenterMembershipJob
+    jdbc:
+      initialize-schema: always
+
   profiles:
     include: s3, db
+
 
 eureka:
   instance:

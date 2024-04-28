@@ -14,7 +14,8 @@ public class CenterMembershipJoinedResponseDto {
     private String memberName;
     private String phoneNumber;
     private String gender;
-    private int age;
+    private String email;
+    private String birthday;
     private String ticketName;
 
     public static CenterMembershipJoinedResponseDto of(CenterMembershipJoinRequestDto request, String ticketName) {
@@ -22,7 +23,8 @@ public class CenterMembershipJoinedResponseDto {
                 .memberName(request.getMemberName())
                 .phoneNumber(request.getPhoneNumber())
                 .gender(request.getGender())
-                .age(request.getAge())
+                .email(request.getEmail())
+                .birthday(request.getBirthday())
                 .ticketName(ticketName)
                 .build();
     }

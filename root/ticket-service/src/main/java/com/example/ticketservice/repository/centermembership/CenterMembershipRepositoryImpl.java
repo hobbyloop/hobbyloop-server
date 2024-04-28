@@ -26,7 +26,6 @@ public class CenterMembershipRepositoryImpl implements CenterMembershipRepositor
                     .offset(pageNo * 20)
                     .orderBy(centerMembership.updatedAt.desc())
                     .fetch();
-
         }
 
         return queryFactory
