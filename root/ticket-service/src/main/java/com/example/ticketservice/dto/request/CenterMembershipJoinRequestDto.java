@@ -10,5 +10,6 @@ public class CenterMembershipJoinRequestDto {
     private String memberName;
     private String phoneNumber;
     private String gender;
-    private int age;
+    private String birthday;
+    private String email;
 }

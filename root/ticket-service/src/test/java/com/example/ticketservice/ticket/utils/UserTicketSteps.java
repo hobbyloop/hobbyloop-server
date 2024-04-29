@@ -36,6 +36,20 @@ public class UserTicketSteps {
         return objectMapper.readTree(responseBody).get("data").asLong();
     }
 
+    public static Long purchaseTicket(Long ticketId, Long memberId) throws Exception {
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .header("id", memberId)   // TODO: Replace with actual member ID
+                .post("/api/v1/user-tickets/{ticketId}/purchase", ticketId)
+                .then().log().all()
+                .statusCode(201)
+                .extract().asString();
+
+        return objectMapper.readTree(responseBody).get("data").asLong();
+    }
+
     public static Map<String, AvailableUserTicketsWithCenterInfo> getMyAvailableUserTicketList() throws Exception {
 
             String responseBody = RestAssured

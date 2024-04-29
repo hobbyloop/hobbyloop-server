@@ -24,6 +24,10 @@ public class CompanyUpdateRequestDto {
     @JsonProperty
     private boolean isDutyFree;
 
+    private String ci;
+
+    private String di;
+
     private String companyName;
 
     private String representativeName;
