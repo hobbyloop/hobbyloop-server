@@ -1,13 +1,13 @@
 package com.example.companyservice.acceptance.steps;
 
-import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 
 public class CompanySteps {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static Long updateCompanyInfo(long companyId, CompanyUpdateRequestDto requestDto) throws Exception {
+    public static Long updateCompanyInfo(long companyId, CompanyCreateRequestDto requestDto) throws Exception {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType("application/json")

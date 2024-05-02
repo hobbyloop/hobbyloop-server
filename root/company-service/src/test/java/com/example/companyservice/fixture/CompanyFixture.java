@@ -1,6 +1,6 @@
 package com.example.companyservice.fixture;
 
-import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.entity.CreateStatusEnum;
 import com.example.companyservice.company.entity.PaymentTypeEnum;
@@ -26,8 +26,8 @@ public class CompanyFixture {
         return company;
     }
 
-    public static CompanyUpdateRequestDto defaultCompanyUpdateRequest() {
-        return CompanyUpdateRequestDto.builder()
+    public static CompanyCreateRequestDto defaultCompanyUpdateRequest() {
+        return CompanyCreateRequestDto.builder()
                 .isOption1(true)
                 .isOption2(true)
                 .isDutyFree(true)

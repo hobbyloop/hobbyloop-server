@@ -48,6 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = Review.of(requestDto, ticket, memberId, "", ticket.getCenterId());
         saveReviewImage(review, ticket, reviewImageList);
         Review saveReview = reviewRepository.save(review);
+        ticket.updateScoreAndReviewCount(saveReview.getScore());
         return saveReview.getId();
     }
 

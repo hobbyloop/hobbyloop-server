@@ -63,6 +63,10 @@ public class Ticket extends TimeStamped {
 
     private boolean isAvailable; // 확인필요
 
+    private float score;
+
+    private int reviewCount;
+
     private boolean isUpload;
 
     private Long centerId;
@@ -137,4 +141,11 @@ public class Ticket extends TimeStamped {
     public void issue() {
         this.issueCount++;
     }
+
+    public void updateScoreAndReviewCount(float score) {
+        float totalScore = this.score * this.reviewCount;
+        float newTotalScore = totalScore + score;
+        this.reviewCount += 1;
+        this.score = newTotalScore / reviewCount;
+    };
 }

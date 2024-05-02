@@ -13,7 +13,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CompanyUpdateRequestDto {
+public class CompanyCreateRequestDto {
+
+    private String email;
+
+    private String provider;
+
+    private String subject;
+
+    private String oauth2AccessToken;
 
     @JsonProperty
     private boolean isOption1;
@@ -48,9 +56,6 @@ public class CompanyUpdateRequestDto {
     private String accountNumber;
 
     private String entryPermission;
-
-    @JsonProperty
-    private boolean isReservationService;
 
     @JsonProperty
     private boolean isLooppass;

@@ -74,16 +74,4 @@ public class AdminCenterController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
     }
-
-    @GetMapping("/original/{centerId}")
-    public ResponseEntity<BaseResponseDto<OriginalCenterResponseDto>> getOriginalCenterInfo(@PathVariable(value = "centerId") long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getOriginalCenterInfo(centerId)));
-    }
-
-    @GetMapping("/original/business/{centerId}")
-    public ResponseEntity<BaseResponseDto<OriginalBusinessResponseDto>> getOriginalBusinessInfo(@PathVariable(value = "centerId") long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
-    }
 }

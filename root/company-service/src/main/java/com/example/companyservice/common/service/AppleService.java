@@ -95,18 +95,20 @@ public class AppleService extends SimpleUrlAuthenticationSuccessHandler {
 
             if (StringUtils.isNotEmpty(state)) {
                 String email = String.valueOf(payload.get("email"));
-                String providerId = String.valueOf(payload.get("sub"));
+                String provider = "Apple";
+                String subject = String.valueOf(payload.get("sub"));
+                String oauth2AccessToken = String.valueOf(jsonObj.get("access_token"));
 
                 if ("company".equals(state)) {
-                    Optional<Company> optionalCompany = companyRepository.findByEmail(email);
-                    Company company;
+                    Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
                     if (optionalCompany.isPresent()) {
-                        company = optionalCompany.get();
+                        Company company = optionalCompany.get();
+                        String accessToken = jwtUtils.createToken(company.getId());
+                        String refreshToken = jwtUtils.createRefreshToken(company.getId());
+                        sendToken(request, response, accessToken, refreshToken, null, null, null, null);
                     } else {
-                        company = Company.from(email, "Apple", providerId, Role.COMPANY);
-                        companyRepository.save(company);
+                        sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                     }
-                    sendToken(request, response, company.getId(), "Apple", company.getCi());
                 } else if ("instructor".equals(state)) {
 
                 } else {
@@ -122,14 +124,22 @@ public class AppleService extends SimpleUrlAuthenticationSuccessHandler {
         }
     }
 
-    public void sendToken(HttpServletRequest request, HttpServletResponse response, Long id, String provider, String ci) throws IOException {
-        String accessToken = jwtUtils.createToken(id);
-        String refreshToken = jwtUtils.createRefreshToken(id);
+    private void sendToken(HttpServletRequest request,
+                           HttpServletResponse response,
+                           String accessToken,
+                           String refreshToken,
+                           String email,
+                           String provider,
+                           String subject,
+                           String oauth2AccessToken) throws IOException {
 
         String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + provider + "/callback")
                 .queryParam("access-token", accessToken)
                 .queryParam("refresh-token", refreshToken)
-                .queryParam("first", StringUtils.isNotEmpty(ci) ? ci : null)
+                .queryParam("email", email)
+                .queryParam("provider", provider)
+                .queryParam("subject", subject)
+                .queryParam("oauth2AccessToken", oauth2AccessToken)
                 .build()
                 .toUri()
                 .toString();
