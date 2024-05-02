@@ -2,6 +2,7 @@ package com.example.ticketservice.service;
 
 import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.MemberServiceClient;
+import com.example.ticketservice.client.dto.response.CenterDistanceInfoResponseDto;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
@@ -11,6 +12,7 @@ import com.example.ticketservice.dto.BaseResponseDto;
 import com.example.ticketservice.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.dto.response.*;
+import com.example.ticketservice.entity.CategoryEnum;
 import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
 import com.example.ticketservice.entity.UserTicket;
@@ -77,7 +79,8 @@ public class TicketServiceImpl implements TicketService{
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         BaseResponseDto<CenterInfoResponseDto> centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId());
-        float score = getScore(ticketId);
+        List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
+        float score = getScore(reviewList);
         return AdminReviewTicketResponseDto.of(centerInfo.getData(), ticket, score);
     }
 
@@ -87,7 +90,8 @@ public class TicketServiceImpl implements TicketService{
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
         List<String> totalImageUrlList = reviewImageRepository.findAllUrlByTicketId(ticket.getId());
-        float score = getScore(ticketId);
+        List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
+        float score = getScore(reviewList);
         return ReviewListTicketResponseDto.of(score, totalImageUrlList);
     }
 
@@ -151,8 +155,60 @@ public class TicketServiceImpl implements TicketService{
         return ticketList.stream().map(t -> AdminMyTicketResponseDto.from(t, centerInfo)).toList();
     }
 
-    private float getScore(long centerId) {
-        List<Review> reviewList = reviewRepository.findAllByCenterId(centerId);
+    @Override
+    @Transactional(readOnly = true)
+    public List<CategoryTicketResponseDto> getCategoryTicket(long memberId,
+                                                             String category,
+                                                             int sortId,
+                                                             int refundable,
+                                                             double score,
+                                                             int pageNo,
+                                                             int allowLocation,
+                                                             Double latitude,
+                                                             Double longitude,
+                                                             List<String> locations) {
+        Map<Long, CenterDistanceInfoResponseDto> centerInfoMap = new HashMap<>();
+        int categoryId = CategoryEnum.findByName(category).getCategoryType();
+        List<CategoryTicketResponseDto> result = new ArrayList<>();
+        while (true) {
+            List<Ticket> ticketList = ticketRepository.getTicketListByCategory(categoryId, sortId, score, pageNo);
+            boolean isResultSizeGoe20 = false;
+
+            for (Ticket ticket : ticketList) {
+                CenterDistanceInfoResponseDto centerInfo;
+                if (centerInfoMap.containsKey(ticket.getCenterId())) {
+                    centerInfo = centerInfoMap.get(ticket.getCenterId());
+                } else {
+                    centerInfo = companyServiceClient.getCenterDistanceInfo(
+                            ticket.getCenterId(),
+                            memberId,
+                            refundable,
+                            allowLocation,
+                            latitude,
+                            longitude,
+                            locations
+                    ).getData();
+                    centerInfoMap.put(ticket.getCenterId(), centerInfo);
+                }
+
+                if (!centerInfo.isSatisfied()) continue;
+
+                List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
+                float reviewScore = getScore(reviewList);
+
+                result.add(CategoryTicketResponseDto.of(centerInfo, ticket.getCalculatedPrice(), reviewScore, reviewList.size()));
+                if (result.size() >= 20) {
+                    isResultSizeGoe20 = true;
+                    break;
+                }
+            }
+
+            if (isResultSizeGoe20) break;
+        }
+        return result;
+    }
+
+    private float getScore(List<Review> reviewList) {
         if (reviewList.size() == 0) return 0;
         float scoreSum = 0;
         for (Review review : reviewList) scoreSum += review.getScore();

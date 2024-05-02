@@ -3,6 +3,5 @@ include 'discovery-server'
 include 'api-gateway-server'
 include 'member-service'
 include 'company-service'
-include 'instructor-service'
 include 'ticket-service'
 

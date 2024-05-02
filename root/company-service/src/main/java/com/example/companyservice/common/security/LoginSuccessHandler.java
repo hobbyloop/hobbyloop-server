@@ -48,21 +48,22 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             OAuthUserDetails authMember = (OAuthUserDetails)authentication.getPrincipal();
             String email = authMember.getEmail();
             String provider = authMember.getProvider();
-            String providerId = authMember.getProviderId();
+            String subject = authMember.getSubject();
+            String oauth2AccessToken = authMember.getOauth2AccessToken();
 
             String state = cookieState.get();
             log.info("state : {}", state);
 
             if ("company".equals(state)) {
-                Optional<Company> optionalCompany = companyRepository.findByEmail(email);
-                Company company;
+                Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
                 if (optionalCompany.isPresent()) {
-                    company = optionalCompany.get();
+                    Company company = optionalCompany.get();
+                    String accessToken = jwtUtils.createToken(company.getId());
+                    String refreshToken = jwtUtils.createRefreshToken(company.getId());
+                    sendToken(request, response, accessToken, refreshToken, null, null, null, null);
                 } else {
-                    company = Company.from(email, provider, providerId, Role.COMPANY);
-                    companyRepository.save(company);
+                    sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }
-                sendToken(request, response, company.getId(), provider, company.getCi());
             } else if ("instructor".equals(state)) {
                 Optional<Instructor> instructor = instructorRepository.findByEmail(authMember.getEmail());
             } else {
@@ -73,14 +74,22 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         }
     }
 
-    private void sendToken(HttpServletRequest request, HttpServletResponse response, Long id, String provider, String ci) throws IOException {
-        String accessToken = jwtUtils.createToken(id);
-        String refreshToken = jwtUtils.createRefreshToken(id);
+    private void sendToken(HttpServletRequest request,
+                           HttpServletResponse response,
+                           String accessToken,
+                           String refreshToken,
+                           String email,
+                           String provider,
+                           String subject,
+                           String oauth2AccessToken) throws IOException {
 
         String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + provider + "/callback")
                 .queryParam("access-token", accessToken)
                 .queryParam("refresh-token", refreshToken)
-                .queryParam("first", StringUtils.isNotEmpty(ci) ? ci : null)
+                .queryParam("email", email)
+                .queryParam("provider", provider)
+                .queryParam("subject", subject)
+                .queryParam("oauth2AccessToken", oauth2AccessToken)
                 .build()
                 .toUri()
                 .toString();

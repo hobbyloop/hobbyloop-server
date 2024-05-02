@@ -43,6 +43,14 @@ spring:
         - id: company-service
           uri: lb://COMPANY-SERVICE
           predicates:
+            - Path=/company-service/api/v1/join/**
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: company-service
+          uri: lb://COMPANY-SERVICE
+          predicates:
             - Path=/company-service/api/v1/admin/**
             - Method=GET, POST, PATCH, DELETE
           filters:

@@ -26,18 +26,22 @@ public class OAuthUserDetails extends User implements OAuth2User {
 
     private String provider;
 
-    private String providerId;
+    private String subject;
+
+    private String oauth2AccessToken;
 
     public OAuthUserDetails(String username,
                             String password,
                             Collection<? extends GrantedAuthority> authorities,
                             Map<String, Object> attr,
                             String provider,
-                            String providerId) {
+                            String subject,
+                            String oauth2AccessToken) {
         this(username, password, authorities);
         this.attr = attr;
         this.provider = provider;
-        this.providerId = providerId;
+        this.subject = subject;
+        this.oauth2AccessToken = oauth2AccessToken;
     }
 
     public OAuthUserDetails(String username,
