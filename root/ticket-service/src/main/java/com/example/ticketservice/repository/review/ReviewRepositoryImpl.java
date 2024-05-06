@@ -44,7 +44,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .selectFrom(review)
                 .where(review.ticket.centerId.eq(centerId))
                 .limit(20)
-                .offset(pageNo * 20)
+                .offset(pageNo * 20L)
                 .orderBy(createOrderSpecifier(sortId))
                 .fetch();
     }

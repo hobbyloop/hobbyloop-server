@@ -19,7 +19,9 @@ public enum ExceptionEnum {
     REVIEW_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다."),
     USER_TICKET_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "UT001", "존재하지 않는 이용권입니다."),
     NO_REMAINING_USER_TICKET_EXCEPTION(HttpStatus.BAD_REQUEST, "UT002", "이용권 잔여 횟수가 없습니다."),
-    EXPIRED_USER_TICKET_EXCEPTION(HttpStatus.BAD_REQUEST, "UT003", "만료된 이용권입니다.");
+    EXPIRED_USER_TICKET_EXCEPTION(HttpStatus.BAD_REQUEST, "UT003", "만료된 이용권입니다."),
+    CENTER_MEMBERSHIP_ALREADY_JOINED_EXCEPTION(HttpStatus.BAD_REQUEST, "CM001", "이미 등록된 회원입니다."),
+    CENTER_MEMBERSHIP_NOT_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "CM002", "존재하지 않는 회원입니다.");
 
     private final HttpStatus status;
     private final String code;

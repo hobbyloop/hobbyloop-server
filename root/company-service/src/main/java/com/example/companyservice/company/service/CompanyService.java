@@ -1,10 +1,10 @@
 package com.example.companyservice.company.service;
 
-import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 
 public interface CompanyService {
 
-    Long updateCompanyInfo(long companyId, CompanyUpdateRequestDto requestDto);
+    Long createCompany(CompanyCreateRequestDto requestDto);
 
     Boolean checkTaxFree(long companyId);
 }

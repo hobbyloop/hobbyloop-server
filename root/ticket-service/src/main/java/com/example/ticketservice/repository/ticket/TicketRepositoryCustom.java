@@ -10,4 +10,6 @@ public interface TicketRepositoryCustom {
     List<Ticket> getTicketList(long centerId, long ticketId);
 
     Optional<Ticket> getMinimumPriceTicket(long centerId);
+
+    List<Ticket> getTicketListByCategory(int category, int sortId, double score, int PgeNo);
 }

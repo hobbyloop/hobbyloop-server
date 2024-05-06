@@ -1,6 +1,6 @@
 package com.example.companyservice.company.client.dto.request;
 
-import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +22,7 @@ public class CompanyRatePlanRequestDto {
 
     private int totalPrice;
 
-    public static CompanyRatePlanRequestDto from(CompanyUpdateRequestDto requestDto) {
+    public static CompanyRatePlanRequestDto from(CompanyCreateRequestDto requestDto) {
         return CompanyRatePlanRequestDto.builder()
                 .entryPermission(requestDto.getEntryPermission())
                 .paymentType(requestDto.getPaymentType())

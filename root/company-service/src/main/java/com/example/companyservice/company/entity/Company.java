@@ -1,12 +1,10 @@
 package com.example.companyservice.company.entity;
 
-import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,15 +20,17 @@ public class Company extends TimeStamped {
 
     private String email;
 
-    private String password;
-
     private String provider;
 
-    private String providerId;
+    private String subject;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    private Set<Role> roleSet = new HashSet<>();
+    private String oauth2AccessToken;
+
+    private String ci;
+
+    private String di;
+
+    private Role role;
 
     private Boolean isDutyFree;
 
@@ -58,8 +58,6 @@ public class Company extends TimeStamped {
 
     private Boolean isLooppass;
 
-    private Boolean isReservationService;
-
     private Boolean isRefundable;
 
     private int createStatus;
@@ -76,33 +74,35 @@ public class Company extends TimeStamped {
 
     private Long companyLatePlanId;
 
-    public static Company from(String email) {
+    public static Company of(CompanyCreateRequestDto requestDto, Long companyLatePlanId) {
         return Company.builder()
-                .email(email)
+                .email(requestDto.getEmail())
+                .provider(requestDto.getProvider())
+                .subject(requestDto.getSubject())
+                .oauth2AccessToken(requestDto.getOauth2AccessToken())
+                .ci(requestDto.getCi())
+                .di(requestDto.getDi())
+                .role(Role.COMPANY)
+                .isOption1(requestDto.isOption1())
+                .isOption2(requestDto.isOption2())
+                .isDutyFree(requestDto.isDutyFree())
+                .companyName(requestDto.getCompanyName())
+                .representativeName(requestDto.getRepresentativeName())
+                .phoneNumber(requestDto.getPhoneNumber())
+                .businessNumber(requestDto.getBusinessNumber())
+                .businessAddress(requestDto.getBusinessAddress())
+                .openingDate(requestDto.getOpeningDate())
+                .onlineReportNumber(requestDto.getOnlineReportNumber())
+                .accountBank(requestDto.getAccountBank())
+                .accountNumber(requestDto.getAccountNumber())
+                .isLooppass(requestDto.isLooppass())
+                .isRefundable(requestDto.isRefundable())
+                .companyLatePlanId(companyLatePlanId)
+                .createStatus(CreateStatusEnum.WAIT.getTypeValue())
+                .latitude(requestDto.getLatitude())
+                .longitude(requestDto.getLongitude())
                 .isDelete(false)
                 .build();
-    }
-
-    public void updateCompany(CompanyUpdateRequestDto requestDto, Long companyLatePlanId) {
-        this.isOption1 = requestDto.isOption1();
-        this.isOption2 = requestDto.isOption2();
-        this.isDutyFree = requestDto.isDutyFree();
-        this.companyName = requestDto.getCompanyName();
-        this.representativeName = requestDto.getRepresentativeName();
-        this.phoneNumber = requestDto.getPhoneNumber();
-        this.businessNumber = requestDto.getBusinessNumber();
-        this.businessAddress = requestDto.getBusinessAddress();
-        this.openingDate = requestDto.getOpeningDate();
-        this.onlineReportNumber = requestDto.getOnlineReportNumber();
-        this.accountBank = requestDto.getAccountBank();
-        this.accountNumber = requestDto.getAccountNumber();
-        this.isLooppass = requestDto.isLooppass();
-        this.isReservationService = requestDto.isReservationService();
-        this.isRefundable = requestDto.isRefundable();
-        this.companyLatePlanId = companyLatePlanId;
-        this.createStatus = CreateStatusEnum.WAIT.getTypeValue();
-        this.latitude = requestDto.getLatitude();
-        this.longitude = requestDto.getLongitude();
     }
 
     public void updateCreateStatus(int status) {
@@ -111,9 +111,5 @@ public class Company extends TimeStamped {
 
     public void deleteCompany() {
         this.isDelete = true;
-    }
-
-    public void addRole(Role role) {
-        roleSet.add(role);
     }
 }

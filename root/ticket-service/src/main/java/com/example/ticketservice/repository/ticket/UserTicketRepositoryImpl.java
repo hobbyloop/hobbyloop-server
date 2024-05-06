@@ -25,7 +25,7 @@ public class UserTicketRepositoryImpl implements UserTicketRepositoryCustom {
                         userTicket.isApprove.isTrue(),
                         userTicket.startDate.loe(now),
                         userTicket.endDate.goe(now),
-                        //userTicket.remainingCount.gt(0),
+                        userTicket.remainingCount.gt(0),
                         userTicket.memberId.eq(memberId)
                 )
                 .fetch();

@@ -11,7 +11,8 @@ public enum EntryAuthorityEnum {
 
     COMMON(1, "일반"),
     ONEDAY(2, "원데이&소수클래스"),
-    PREMIUM(3, "프리미엄");
+    PREMIUM(3, "프리미엄"),
+    RESERVATION(4, "예약서비스");
 
     private final int entryAuthorityType;
 

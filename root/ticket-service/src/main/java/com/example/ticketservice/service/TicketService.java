@@ -29,4 +29,6 @@ public interface TicketService {
     List<TicketByCenterResponseDto> getTicketListByCenter(long centerId);
 
     List<AdminMyTicketResponseDto> getMyTicketList(long centerId);
+
+    List<CategoryTicketResponseDto> getCategoryTicket(long memberId, String category, int sortId, int refundable, double score, int pageNo, int allowLocation, Double latitude, Double longitude, List<String> locations);
 }

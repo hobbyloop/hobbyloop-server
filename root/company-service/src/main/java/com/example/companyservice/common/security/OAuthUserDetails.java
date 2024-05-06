@@ -13,7 +13,6 @@ import java.util.Map;
 
 @Log4j2
 @Getter
-@Setter
 @ToString
 public class OAuthUserDetails extends User implements OAuth2User {
 
@@ -25,12 +24,24 @@ public class OAuthUserDetails extends User implements OAuth2User {
 
     private Map<String, Object> attr;
 
+    private String provider;
+
+    private String subject;
+
+    private String oauth2AccessToken;
+
     public OAuthUserDetails(String username,
                             String password,
                             Collection<? extends GrantedAuthority> authorities,
-                            Map<String, Object> attr) {
+                            Map<String, Object> attr,
+                            String provider,
+                            String subject,
+                            String oauth2AccessToken) {
         this(username, password, authorities);
         this.attr = attr;
+        this.provider = provider;
+        this.subject = subject;
+        this.oauth2AccessToken = oauth2AccessToken;
     }
 
     public OAuthUserDetails(String username,
