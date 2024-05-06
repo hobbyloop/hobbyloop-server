@@ -1,27 +1,27 @@
 package com.example.companyservice.common.security;
 
-import com.example.companyservice.common.exception.ApiException;
-import com.example.companyservice.common.exception.ExceptionEnum;
-import com.example.companyservice.common.util.CookieUtils;
-import com.example.companyservice.common.util.JwtUtils;
-import com.example.companyservice.company.entity.Company;
-import com.example.companyservice.company.entity.Role;
-import com.example.companyservice.company.repository.CompanyRepository;
-import com.example.companyservice.instructor.domain.Instructor;
-import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
+import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-import jakarta.servlet.http.Cookie;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.common.util.CookieUtils;
+import com.example.companyservice.common.util.JwtUtils;
+import com.example.companyservice.company.entity.Company;
+import com.example.companyservice.company.repository.CompanyRepository;
+import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -65,7 +65,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }
             } else if ("instructor".equals(state)) {
-                Optional<Instructor> instructor = instructorRepository.findByEmail(authMember.getEmail());
+
             } else {
 
             }
