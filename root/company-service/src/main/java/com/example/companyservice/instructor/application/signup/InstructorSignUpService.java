@@ -1,10 +1,8 @@
-package com.example.companyservice.instructor.application.usecase;
+package com.example.companyservice.instructor.application.signup;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.companyservice.instructor.application.dto.InstructorSignUpCommand;
-import com.example.companyservice.instructor.application.dto.InstructorSignUpResult;
 import com.example.companyservice.instructor.domain.Instructor;
 import com.example.companyservice.instructor.domain.InstructorOauth;
 import com.example.companyservice.instructor.domain.InstructorProfile;
@@ -26,7 +24,7 @@ public class InstructorSignUpService implements InstructorSignUpUseCase {
 	public InstructorSignUpResult signUp(InstructorSignUpCommand command) {
 		Instructor instructor = instructorRepository.save(
 			new Instructor(
-				command.email(),
+				command.emailAddress(),
 				command.ci(),
 				command.di(),
 				command.consentToMarketingCommunications(),
@@ -51,6 +49,6 @@ public class InstructorSignUpService implements InstructorSignUpUseCase {
 			)
 		);
 
-		return new InstructorSignUpResult(instructor, profile, oauth);
+		return new InstructorSignUpResult(instructor, profile);
 	}
 }

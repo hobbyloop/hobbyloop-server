@@ -8,7 +8,10 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.example.companyservice.common.vo.EmailAddress;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -34,8 +37,8 @@ public class Instructor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@Column(nullable = false)
-	private String email;
+	@Embedded
+	private EmailAddress emailAddress;
 	@Column(nullable = false)
 	private String ci;
 	@Column(nullable = false)
@@ -43,9 +46,9 @@ public class Instructor {
 	@Column(nullable = false, columnDefinition = "varchar(255)")
 	@Enumerated(EnumType.STRING)
 	private InstructorStatus status;
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "tinyint(1)")
 	private boolean consentToMarketingCommunications;
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "tinyint(1)")
 	private boolean consentToPersonalInformation;
 	@Column(nullable = false, updatable = false)
 	@CreatedDate
@@ -54,14 +57,18 @@ public class Instructor {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
-	public Instructor(String email, String ci, String di,
+	public Instructor(EmailAddress emailAddress, String ci, String di,
 		boolean consentToMarketingCommunications, boolean consentToPersonalInformation) {
 
-		this.email = email;
+		this.emailAddress = emailAddress;
 		this.ci = ci;
 		this.di = di;
 		this.status = ACTIVE;
 		this.consentToMarketingCommunications = consentToMarketingCommunications;
 		this.consentToPersonalInformation = consentToPersonalInformation;
+	}
+
+	public String getEmailAddress() {
+		return emailAddress.getValue();
 	}
 }

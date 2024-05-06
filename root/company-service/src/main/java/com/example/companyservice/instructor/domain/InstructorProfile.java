@@ -6,7 +6,10 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.example.companyservice.common.vo.PhoneNumber;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
@@ -31,8 +34,8 @@ public class InstructorProfile {
 	private String name;
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
-	@Column(nullable = false)
-	private String phoneNumber;
+	@Embedded
+	private PhoneNumber phoneNumber;
 	@Column(nullable = false, columnDefinition = "varchar(255)")
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
@@ -46,12 +49,16 @@ public class InstructorProfile {
 	private Instructor instructor;
 
 	public InstructorProfile(
-		String name, LocalDate dateOfBirth, String phoneNumber, Gender gender, Instructor instructor) {
+		String name, LocalDate dateOfBirth, PhoneNumber phoneNumber, Gender gender, Instructor instructor) {
 
 		this.name = name;
 		this.dateOfBirth = dateOfBirth;
 		this.phoneNumber = phoneNumber;
 		this.gender = gender;
 		this.instructor = instructor;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber.getValue();
 	}
 }

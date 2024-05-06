@@ -1,12 +1,9 @@
 package com.example.companyservice.instructor.infrastructure.persistence;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.Repository;
 
 import com.example.companyservice.instructor.domain.Instructor;
 
-import java.util.Optional;
-
-public interface InstructorRepository extends CrudRepository<Instructor, Long> {
-
-    Optional<Instructor> findByEmail(String email);
+public interface InstructorRepository extends Repository<Instructor, Long> {
+	<T extends Instructor> T save(T entity);
 }
