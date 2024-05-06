@@ -17,7 +17,7 @@ Accept: application/json
     "subject": "subject",
     "email": "hobbyloop@gmail.com",
     "provider": "GOOGLE",
-    "token": "token"
+    "oauth2AccessToken": "oauth2AccessToken"
   },
   "marketing": {
     "consentToMarketingCommunications": false,

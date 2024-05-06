@@ -24,7 +24,7 @@ public class InstructorSignUpService implements InstructorSignUpUseCase {
 	public InstructorSignUpResult signUp(InstructorSignUpCommand command) {
 		Instructor instructor = instructorRepository.save(
 			new Instructor(
-				command.email(),
+				command.emailAddress(),
 				command.ci(),
 				command.di(),
 				command.consentToMarketingCommunications(),
@@ -49,6 +49,6 @@ public class InstructorSignUpService implements InstructorSignUpUseCase {
 			)
 		);
 
-		return new InstructorSignUpResult(instructor, profile, oauth);
+		return new InstructorSignUpResult(instructor, profile);
 	}
 }
