@@ -52,6 +52,25 @@ public class AdminCenterController {
                 .body(new BaseResponseDto<>(centerService.getCenterBusiness(centerId)));
     }
 
+    @PostMapping("/quick-button/{centerId}")
+    public ResponseEntity<BaseResponseDto<Void>> updateQuickButton(@PathVariable(value = "centerId") long centerId,
+                                                                   @RequestBody List<Integer> requestDto) {
+        centerService.updateQuickButton(centerId, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDto<>());
+    }
+
+    @GetMapping("/original/{centerId}")
+    public ResponseEntity<BaseResponseDto<OriginalCenterResponseDto>> getOriginalCenterInfo(@PathVariable(value = "centerId") long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getOriginalCenterInfo(centerId)));
+    }
+
+    @GetMapping("/original/business/{centerId}")
+    public ResponseEntity<BaseResponseDto<OriginalBusinessResponseDto>> getOriginalBusinessInfo(@PathVariable(value = "centerId") long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
+    }
+
     @PatchMapping("/{centerId}")
     public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable(value = "centerId") long centerId,
                                                               @RequestPart(value = "requestDto") CenterUpdateRequestDto requestDto,
@@ -59,13 +78,6 @@ public class AdminCenterController {
                                                               @RequestPart(required = false, value = "centerImageList") List<MultipartFile> centerImageList) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto, logoImage, centerImageList)));
-    }
-
-    @PostMapping("/quick-button/{centerId}")
-    public ResponseEntity<BaseResponseDto<Void>> updateQuickButton(@PathVariable(value = "centerId") long centerId,
-                                                                   @RequestBody List<Integer> requestDto) {
-        centerService.updateQuickButton(centerId, requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDto<>());
     }
 
     @PatchMapping("/business/{centerId}")

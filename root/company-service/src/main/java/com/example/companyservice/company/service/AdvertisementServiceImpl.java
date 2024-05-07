@@ -41,6 +41,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             boolean existsByAdRank = advertisementRepository.existsByAdRank(requestDto.getAdRank());
             if (existsByAdRank) {
                 throw new ApiException(ExceptionEnum.RANK_ALREADY_EXIST_EXCEPTION);
+            } else {
+                if (bannerImage == null) {
+                    throw new ApiException(ExceptionEnum.BANNER_NULL_POINTER_EXCEPTION);
+                }
             }
         }
 

@@ -25,18 +25,6 @@ public class CenterClientController {
                 .body(new BaseResponseDto<>(centerService.getCenterInfo(centerId)));
     }
 
-    @GetMapping("/original/{centerId}")
-    public ResponseEntity<BaseResponseDto<OriginalCenterResponseDto>> getOriginalCenterInfo(@PathVariable(value = "centerId") long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getOriginalCenterInfo(centerId)));
-    }
-
-    @GetMapping("/original/business/{centerId}")
-    public ResponseEntity<BaseResponseDto<OriginalBusinessResponseDto>> getOriginalBusinessInfo(@PathVariable(value = "centerId") long centerId) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
-    }
-
     @GetMapping("/distance/{centerId}/{memberId}/{refundable}/{allow-location}/{latitude}/{longitude}")
     public ResponseEntity<BaseResponseDto<CenterDistanceInfoResponseDto>> getCenterDistanceInfo(@PathVariable(value = "centerId") long centerId,
                                                                                                 @PathVariable(value = "memberId") long memberId,
