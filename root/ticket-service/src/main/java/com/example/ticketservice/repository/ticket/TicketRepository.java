@@ -22,4 +22,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>, TicketRep
     List<Ticket> findAllByCenterIdAndIsUploadTrueOrderByCreatedAtDesc(long centerId);
 
     boolean existsByCenterId(long centerId);
+
+    List<Ticket> findAllByCenterIdOrderByCalculatedPrice(long centerId);
 }

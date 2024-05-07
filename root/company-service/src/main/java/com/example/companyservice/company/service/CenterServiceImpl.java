@@ -219,7 +219,7 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<HotCenterTicketResponseDto> getHotCenterTicketList(long memberId, int allowLocation, Double latitude, Double longitude) {
+    public List<HotCenterTicketResponseDto> getHotCenterTicketList(long memberId, int allowLocation, double latitude, double longitude) {
         List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Long> centerIdList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCAdvertisement();
@@ -230,7 +230,7 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, int allowLocation, Double latitude, Double longitude) {
+    public List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, int allowLocation, double latitude, double longitude) {
         List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCCPMAdvertisement();
         List<Long> centerIdList = new ArrayList<>();
@@ -264,12 +264,12 @@ public class CenterServiceImpl implements CenterService {
         return CenterDistanceInfoResponseDto.of(center, isBookmark, isSatisfied);
     }
 
-    private void toMainHomeCenterResponseDto(long memberId, int allowLocation, Double latitude, Double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
+    private void toMainHomeCenterResponseDto(long memberId, int allowLocation, double latitude, double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
         for (Advertisement advertisement : advertisementList) {
             if (centerIdList.size() >= 30) break;
             Center center = advertisement.getCenter();
             if (allowLocation == 1) {
-                Double distance = locationService.getDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
+                double distance = locationService.getDistance(latitude, longitude, center.getLatitude(), center.getLongitude());
                 if (distance > 3) continue;
             }
             centerIdList.add(center.getId());

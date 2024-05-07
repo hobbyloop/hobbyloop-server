@@ -20,7 +20,8 @@ public enum ExceptionEnum {
     BOOKMARK_ALREADY_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "이미 북마크된 시설입니다."),
     BOOKMARK_ALREADY_DELETE_EXCEPTION(HttpStatus.BAD_REQUEST, "B002", "이미 북마크 해제된 시설입니다."),
     RANK_ALREADY_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "A001", "이미 등록된 광고게재순위입니다."),
-    NOT_HAS_TICKET_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "이용권을 등록한 시설만 광고 등록이 가능합니다.");
+    NOT_HAS_TICKET_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "이용권을 등록한 시설만 광고 등록이 가능합니다."),
+    BANNER_NULL_POINTER_EXCEPTION(HttpStatus.NOT_FOUND, "B001", "배너 광고 등록시 배너 이미지를 첨부해주세요.");
 
     private final HttpStatus status;
     private final String code;

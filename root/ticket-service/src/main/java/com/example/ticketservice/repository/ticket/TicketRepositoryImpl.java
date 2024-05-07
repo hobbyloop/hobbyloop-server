@@ -34,7 +34,7 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 queryFactory
                     .selectFrom(ticket)
                     .where(ticket.centerId.eq(centerId))
-                    .orderBy(ticket.calculatedPrice.desc())
+                    .orderBy(ticket.calculatedPrice.asc())
                     .limit(1)
                     .fetchOne());
     }

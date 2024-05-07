@@ -31,10 +31,7 @@ public class TicketController {
                 .body(new BaseResponseDto<>(ticketService.getTicketListByCenter(centerId)));
     }
 
-    @GetMapping (value = {
-            "/category/{category}/{sortId}/{refundable}/{score}/{pageNo}/{allow-location}/{latitude}/{longitude}",
-            "/category/{category}/{sortId}/{refundable}/{score}/{pageNo}/{allow-location}"
-    })
+    @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{pageNo}/{allow-location}/{latitude}/{longitude}")
     public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicket(HttpServletRequest request,
                                                                                               @PathVariable(value = "category") String category,
                                                                                               @PathVariable(value = "sortId") int sortId,
@@ -42,8 +39,8 @@ public class TicketController {
                                                                                               @PathVariable(value = "score") double score,
                                                                                               @PathVariable(value = "pageNo") int pageNo,
                                                                                               @PathVariable(value = "allow-location") int allowLocation,
-                                                                                              @PathVariable(required = false, value = "latitude") Double latitude,
-                                                                                              @PathVariable(required = false, value = "longitude") Double longitude,
+                                                                                              @PathVariable(value = "latitude") Double latitude,
+                                                                                              @PathVariable(value = "longitude") Double longitude,
                                                                                               @RequestParam(value = "location") List<String> locations) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)

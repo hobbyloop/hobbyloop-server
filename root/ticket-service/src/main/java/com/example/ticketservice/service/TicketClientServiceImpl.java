@@ -44,7 +44,7 @@ public class TicketClientServiceImpl implements TicketClientService {
         centerIdList.forEach((i) -> {
             List<Review> reviewList = reviewRepository.findAllByCenterId(i);
             float score = getScore(reviewList);
-            List<Ticket> ticketList = ticketRepository.findAllByCenterId(i);
+            List<Ticket> ticketList = ticketRepository.findAllByCenterIdOrderByCalculatedPrice(i);
             List<BookmarkTicketResponseDto> bookmarkTicketResponseDtoList = ticketList.stream().map(BookmarkTicketResponseDto::from).toList();
             BookmarkScoreTicketResponseDto bookmarkScoreTicketResponseDto = BookmarkScoreTicketResponseDto.of(score, reviewList.size(), bookmarkTicketResponseDtoList);
             bookmarkTicketResponseDtoMap.put(i, bookmarkScoreTicketResponseDto);

@@ -1,6 +1,8 @@
 package com.example.companyservice.company.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +24,8 @@ public class AdvertisementRequestDto {
 
     private int clickCount;
 
+    @Max(value = 25)
+    @Min(value = 1)
     private int adRank;
 
     private int price;

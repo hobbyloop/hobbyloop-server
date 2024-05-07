@@ -37,17 +37,17 @@ public class ExpiringSoonCenterMembershipBatchConfig {
                 .build();
     }
 
-    @Bean
-    public Step expiringSoonCenterMembershipStep(
-            JobRepository jobRepository,
-            PlatformTransactionManager transactionManager
-    ) {
-        return new StepBuilder("expiringSoonCenterMembershipStep", jobRepository)
-                .<UserTicket, UserTicket>chunk(100, transactionManager)
-                .reader(expiringSoonUserTicketReader())
-                .writer(expiringSoonCenterMembershipWriter())
-                .build();
-    }
+//    @Bean
+//    public Step expiringSoonCenterMembershipStep(
+//            JobRepository jobRepository,
+//            PlatformTransactionManager transactionManager
+//    ) {
+//        return new StepBuilder("expiringSoonCenterMembershipStep", jobRepository)
+//                .<UserTicket, UserTicket>chunk(100, transactionManager)
+//                .reader(expiringSoonUserTicketReader())
+//                .writer(expiringSoonCenterMembershipWriter())
+//                .build();
+//    }
 
     @Bean
     public RepositoryItemReader<UserTicket> expiringSoonUserTicketReader() {
