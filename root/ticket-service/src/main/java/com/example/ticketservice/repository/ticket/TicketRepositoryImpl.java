@@ -1,8 +1,10 @@
 package com.example.ticketservice.repository.ticket;
 
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.pay.dto.request.PurchaseHistoryInOneWeekResponseDto;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +51,23 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .offset(pageNo * 20L)
                 .orderBy(createOrderSpecifier(sortId))
                 .fetch();
+    }
+
+    @Override
+    public PurchaseHistoryInOneWeekResponseDto getTicketHighestIssueCount(long centerId) {
+        return queryFactory
+                .select(Projections.constructor(PurchaseHistoryInOneWeekResponseDto.class,
+                                ticket.id,
+                                ticket.name,
+                                ticket.category,
+                                ticket.calculatedPrice
+                        )
+                )
+                .from(ticket)
+                .where(ticket.centerId.eq(centerId))
+                .orderBy(ticket.issueCount.desc())
+                .limit(1)
+                .fetchOne();
     }
 
     private BooleanExpression ltTicketId(long ticketId) {

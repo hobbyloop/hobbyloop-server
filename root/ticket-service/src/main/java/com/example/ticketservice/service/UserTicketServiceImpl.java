@@ -4,12 +4,15 @@ import com.example.ticketservice.client.CompanyServiceClient;
 import com.example.ticketservice.client.MemberServiceClient;
 import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.client.dto.response.MemberInfoResponseDto;
+import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.dto.response.*;
 import com.example.ticketservice.entity.Ticket;
 import com.example.ticketservice.entity.UserTicket;
 import com.example.ticketservice.event.UserTicketApprovedEvent;
+import com.example.ticketservice.pay.entity.PurchaseHistory;
+import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
 import com.example.ticketservice.repository.ticket.TicketRepository;
 import com.example.ticketservice.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +35,7 @@ public class UserTicketServiceImpl implements UserTicketService {
     private final ApplicationEventPublisher eventPublisher;
     private final CompanyServiceClient companyServiceClient;
     private final MemberServiceClient memberServiceClient;
+    private final PurchaseHistoryRepository purchaseHistoryRepository;
 
     @Override
     @Transactional
@@ -44,6 +48,11 @@ public class UserTicketServiceImpl implements UserTicketService {
         // TODO: 결제 -> PayClient.pay(ticket.getPrice());
         UserTicket userTicket = UserTicket.of(ticket, memberId);
         userTicketRepository.save(userTicket);
+
+        // API Test를 위한 구매기록 저장 로직 언제든지 수정하셔도 됩니다.
+        OriginalCenterResponseDto centerInfo = companyServiceClient.getOriginalCenterInfo(ticket.getCenterId()).getData();
+        PurchaseHistory purchaseHistory = PurchaseHistory.of(centerInfo, memberId, ticket, null);
+        purchaseHistoryRepository.save(purchaseHistory);
 
         return userTicket.getId();
     }

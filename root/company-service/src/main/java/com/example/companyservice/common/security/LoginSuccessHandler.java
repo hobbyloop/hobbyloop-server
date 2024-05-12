@@ -60,7 +60,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     Company company = optionalCompany.get();
                     String accessToken = jwtUtils.createToken(company.getId());
                     String refreshToken = jwtUtils.createRefreshToken(company.getId());
-                    sendToken(request, response, accessToken, refreshToken, null, null, null, null);
+                    sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
                 } else {
                     sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }

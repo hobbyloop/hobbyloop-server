@@ -1,6 +1,7 @@
 package com.example.ticketservice.repository.ticket;
 
 import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.pay.dto.request.PurchaseHistoryInOneWeekResponseDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,6 @@ public interface TicketRepositoryCustom {
     Optional<Ticket> getMinimumPriceTicket(long centerId);
 
     List<Ticket> getTicketListByCategory(int category, int sortId, double score, int PgeNo);
+
+    PurchaseHistoryInOneWeekResponseDto getTicketHighestIssueCount(long centerId);
 }

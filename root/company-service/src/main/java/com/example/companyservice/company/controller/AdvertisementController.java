@@ -22,7 +22,7 @@ public class AdvertisementController {
     @PostMapping("/advertisement/{centerId}")
     public ResponseEntity<BaseResponseDto<Long>> createAdvertisement(@PathVariable(value = "centerId") long centerId,
                                                                      @RequestPart(value = "requestDto") AdvertisementRequestDto requestDto,
-                                                                     @RequestPart(value = "bannerImage") MultipartFile bannerImage) {
+                                                                     @RequestPart(required = false, value = "bannerImage") MultipartFile bannerImage) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(advertisementService.createAdvertisement(centerId, requestDto, bannerImage)));
     }

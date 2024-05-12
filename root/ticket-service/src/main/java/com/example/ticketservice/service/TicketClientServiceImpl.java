@@ -69,10 +69,16 @@ public class TicketClientServiceImpl implements TicketClientService {
     public Map<Long, TicketInfoClientResponseDto> getHotTicketList(List<Long> centerIdList) {
         Map<Long, TicketInfoClientResponseDto> hotTicketResponseDtoMap = new HashMap<>();
         centerIdList.forEach((i) -> {
-            PurchaseHistoryInOneWeekResponseDto hotTicketIdInOneWeek = purchaseHistoryRepository.getHotTicketIdInOneWeek(i);
+            Optional<PurchaseHistoryInOneWeekResponseDto> hotTicketIdInOneWeek = purchaseHistoryRepository.getHotTicketIdInOneWeek(i);
             List<Review> reviewList = reviewRepository.findAllByCenterId(i);
             float score = getScore(reviewList);
-            TicketInfoClientResponseDto ticketInfoClientResponseDto = TicketInfoClientResponseDto.from(hotTicketIdInOneWeek, score, reviewList.size());
+            TicketInfoClientResponseDto ticketInfoClientResponseDto;
+            if (hotTicketIdInOneWeek.isPresent()) {
+                ticketInfoClientResponseDto = TicketInfoClientResponseDto.from(hotTicketIdInOneWeek.get(), score, reviewList.size());
+            } else {
+                PurchaseHistoryInOneWeekResponseDto ticketInfo = ticketRepository.getTicketHighestIssueCount(i);
+                ticketInfoClientResponseDto = TicketInfoClientResponseDto.from(ticketInfo, score, reviewList.size());
+            }
             hotTicketResponseDtoMap.put(i, ticketInfoClientResponseDto);
         });
         return hotTicketResponseDtoMap;

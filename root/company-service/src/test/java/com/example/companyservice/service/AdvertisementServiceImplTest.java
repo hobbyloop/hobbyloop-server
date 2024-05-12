@@ -2,6 +2,7 @@ package com.example.companyservice.service;
 
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.company.entity.*;
 import com.example.companyservice.company.service.AdvertisementService;
@@ -40,7 +41,7 @@ public class AdvertisementServiceImplTest {
     @DisplayName("배너 광고 조회")
     public void getAdvertisementList_in3Km() {
         // Given
-        Company company = Company.from("sseioul@naver.com");
+        Company company = Company.of(new CompanyCreateRequestDto(), 1L);
         companyRepository.save(company);
 
         for (int i = 1; i <= 20; i++) {

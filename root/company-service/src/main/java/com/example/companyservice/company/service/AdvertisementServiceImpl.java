@@ -37,6 +37,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
             throw new ApiException(ExceptionEnum.NOT_HAS_TICKET_EXCEPTION);
         }
 
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+
+        Advertisement advertisement;
         if ("배너광고".equals(requestDto.getAdType())) {
             boolean existsByAdRank = advertisementRepository.existsByAdRank(requestDto.getAdRank());
             if (existsByAdRank) {
@@ -46,13 +50,13 @@ public class AdvertisementServiceImpl implements AdvertisementService {
                     throw new ApiException(ExceptionEnum.BANNER_NULL_POINTER_EXCEPTION);
                 }
             }
+            String bannerImageKey = amazonS3Service.saveS3Img(bannerImage, "BannerImage");
+            String bannerImageUrl = amazonS3Service.getFileUrl(bannerImageKey);
+            advertisement = Advertisement.of(requestDto, center, bannerImageKey, bannerImageUrl);
+        } else {
+            advertisement = Advertisement.of(requestDto, center, null, null);
         }
 
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
-        String bannerImageKey = amazonS3Service.saveS3Img(bannerImage, "BannerImage");
-        String bannerImageUrl = amazonS3Service.getFileUrl(bannerImageKey);
-        Advertisement advertisement = Advertisement.of(requestDto, center, bannerImageKey, bannerImageUrl);
         Advertisement saveAdvertisement = advertisementRepository.save(advertisement);
         return saveAdvertisement.getId();
     }

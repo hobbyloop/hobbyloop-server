@@ -25,9 +25,8 @@ public class UserTicketController {
     private final UserTicketService userTicketService;
 
     @PostMapping("/{ticketId}/purchase")
-    public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(@PathVariable long ticketId,
+    public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(@PathVariable(value = "ticketId") long ticketId,
                                                                 HttpServletRequest request) {
-
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(userTicketService.purchaseTicket(memberId, ticketId)));
