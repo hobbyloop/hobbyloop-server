@@ -33,6 +33,6 @@ public interface TicketServiceClient {
     @PostMapping("/api/v1/company-rate-plan")
     BaseResponseDto<Long> createCompanyRatePlan(@RequestBody CompanyRatePlanRequestDto requestDto);
 
-    @GetMapping("/api/v1/has-ticket/{centerId}")
+    @GetMapping("/api/v1/client/tickets/has-ticket/{centerId}")
     BaseResponseDto<Boolean> getHasTicket(@PathVariable(value = "centerId") long centerId);
 }

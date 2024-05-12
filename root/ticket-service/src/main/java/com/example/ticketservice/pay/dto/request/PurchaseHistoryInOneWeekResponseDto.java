@@ -16,6 +16,4 @@ public class PurchaseHistoryInOneWeekResponseDto {
     private int category;
 
     private int calculatedPrice;
-
-    private int count;
 }

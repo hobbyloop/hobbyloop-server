@@ -29,9 +29,9 @@ public class AdminTicketController {
     }
 
     @PostMapping("/management/{centerId}")
-    public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(@PathVariable long centerId,
-                                                                                 @RequestPart TicketCreateRequestDto requestDto,
-                                                                                 @RequestPart(required = false) MultipartFile ticketImage) {
+    public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(@PathVariable(value = "centerId") long centerId,
+                                                                                 @RequestPart(value = "requestDto") TicketCreateRequestDto requestDto,
+                                                                                 @RequestPart(required = false, value = "ticketImage") MultipartFile ticketImage) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(ticketService.createTicket(centerId, requestDto, ticketImage)));
