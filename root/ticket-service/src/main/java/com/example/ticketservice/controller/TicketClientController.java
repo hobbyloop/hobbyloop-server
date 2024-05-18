@@ -1,9 +1,9 @@
 package com.example.ticketservice.controller;
 
+import com.example.ticketservice.client.dto.response.TicketClientBaseResponseDto;
 import com.example.ticketservice.client.dto.response.TicketDetailClientResponseDto;
 import com.example.ticketservice.client.dto.response.TicketInfoClientResponseDto;
 import com.example.ticketservice.dto.BaseResponseDto;
-import com.example.ticketservice.client.dto.response.TicketClientResponseDto;
 import com.example.ticketservice.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.ticketservice.service.TicketClientService;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +22,9 @@ public class TicketClientController {
     private final TicketClientService ticketClientService;
 
     @GetMapping("/{centerId}")
-    public ResponseEntity<BaseResponseDto<List<TicketClientResponseDto>>> getTicketClientResponseDto(@PathVariable(value = "centerId") long centerId) {
+    public ResponseEntity<BaseResponseDto<TicketClientBaseResponseDto>> getTicketList(@PathVariable(value = "centerId") long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(ticketClientService.getTicketClientResponseDto(centerId)));
+                .body(new BaseResponseDto<>(ticketClientService.getTicketList(centerId)));
     }
 
     @PostMapping("/bookmark-ticket-list")

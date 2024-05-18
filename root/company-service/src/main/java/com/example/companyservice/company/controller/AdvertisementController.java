@@ -4,6 +4,7 @@ import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
 import com.example.companyservice.company.service.AdvertisementService;
 import com.example.companyservice.company.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class AdvertisementController {
 
     @PostMapping("/advertisement/{centerId}")
     public ResponseEntity<BaseResponseDto<Long>> createAdvertisement(@PathVariable(value = "centerId") long centerId,
-                                                                     @RequestPart(value = "requestDto") AdvertisementRequestDto requestDto,
+                                                                     @RequestPart(value = "requestDto") @Valid AdvertisementRequestDto requestDto,
                                                                      @RequestPart(required = false, value = "bannerImage") MultipartFile bannerImage) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(advertisementService.createAdvertisement(centerId, requestDto, bannerImage)));

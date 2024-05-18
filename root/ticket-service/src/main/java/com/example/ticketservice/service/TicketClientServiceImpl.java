@@ -1,5 +1,6 @@
 package com.example.ticketservice.service;
 
+import com.example.ticketservice.client.dto.response.TicketClientBaseResponseDto;
 import com.example.ticketservice.client.dto.response.TicketClientResponseDto;
 import com.example.ticketservice.client.dto.response.TicketDetailClientResponseDto;
 import com.example.ticketservice.client.dto.response.TicketInfoClientResponseDto;
@@ -9,6 +10,7 @@ import com.example.ticketservice.entity.Review;
 import com.example.ticketservice.entity.Ticket;
 import com.example.ticketservice.pay.dto.request.PurchaseHistoryInOneWeekResponseDto;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
+import com.example.ticketservice.repository.centermembership.CenterMembershipRepository;
 import com.example.ticketservice.repository.review.ReviewRepository;
 import com.example.ticketservice.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +32,15 @@ public class TicketClientServiceImpl implements TicketClientService {
 
     private final PurchaseHistoryRepository purchaseHistoryRepository;
 
+    private final CenterMembershipRepository centerMembershipRepository;
+
     @Override
     @Transactional(readOnly = true)
-    public List<TicketClientResponseDto> getTicketClientResponseDto(long centerId) {
+    public TicketClientBaseResponseDto getTicketList(long centerId) {
         List<Ticket> ticketList = ticketRepository.findAllByCenterId(centerId);
-        return ticketList.stream().map(TicketClientResponseDto::from).toList();
+        List<TicketClientResponseDto> ticketClientResponseDtoList = ticketList.stream().map(TicketClientResponseDto::from).toList();
+        int membershipCount = centerMembershipRepository.countByCenterId(centerId);
+        return TicketClientBaseResponseDto.of(membershipCount, ticketClientResponseDtoList);
     }
 
     @Override

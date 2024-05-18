@@ -5,6 +5,7 @@ import com.example.companyservice.company.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.service.CompanyService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/join/companies")
-    public ResponseEntity<BaseResponseDto<Long>> createCompany(@RequestBody CompanyCreateRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<Long>> createCompany(@RequestBody @Valid CompanyCreateRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(companyService.createCompany(requestDto)));
     }

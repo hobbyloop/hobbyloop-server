@@ -2,10 +2,7 @@ package com.example.companyservice.company.service;
 
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
-import com.example.companyservice.company.client.dto.response.BookmarkScoreTicketResponseDto;
-import com.example.companyservice.company.client.dto.response.TicketInfoClientResponseDto;
-import com.example.companyservice.company.client.dto.response.TicketClientResponseDto;
-import com.example.companyservice.company.client.dto.response.TicketDetailClientResponseDto;
+import com.example.companyservice.company.client.dto.response.*;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
@@ -89,8 +86,8 @@ public class CenterServiceImpl implements CenterService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         CenterCreateResponseDto centerResponseDto = createCenterResponseDto(centerId, center);
         List<Integer> quickButtonList = quickButtonRepository.findAllButtonIdByCenterId(centerId);
-        List<TicketClientResponseDto> ticketResponseDtoList = ticketServiceClient.getTicketList(centerId).getData();
-        return new CenterHomeResponseDto(centerResponseDto, quickButtonList, ticketResponseDtoList);
+        TicketClientBaseResponseDto ticketBaseResponseDto = ticketServiceClient.getTicketList(centerId).getData();
+        return CenterHomeResponseDto.of(centerResponseDto, quickButtonList, ticketBaseResponseDto);
     }
 
     @Override
