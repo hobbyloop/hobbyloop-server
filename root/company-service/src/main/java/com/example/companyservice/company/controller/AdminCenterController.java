@@ -26,8 +26,8 @@ public class AdminCenterController {
     @PostMapping()
     public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
                                                                                  @RequestPart(value = "requestDto") CenterCreateRequestDto requestDto,
-                                                                                 @RequestPart(required = false, value = "logoImage") MultipartFile logoImage,
-                                                                                 @RequestPart(required = false, value = "centerImageList") List<MultipartFile> centerImageList) {
+                                                                                 @RequestPart(value = "logoImage") MultipartFile logoImage,
+                                                                                 @RequestPart(value = "centerImageList") List<MultipartFile> centerImageList) {
         long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logoImage, centerImageList)));
@@ -74,8 +74,8 @@ public class AdminCenterController {
     @PatchMapping("/{centerId}")
     public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable(value = "centerId") long centerId,
                                                               @RequestPart(value = "requestDto") CenterUpdateRequestDto requestDto,
-                                                              @RequestPart(required = false, value = "logoImage") MultipartFile logoImage,
-                                                              @RequestPart(required = false, value = "centerImageList") List<MultipartFile> centerImageList) {
+                                                              @RequestPart(value = "logoImage") MultipartFile logoImage,
+                                                              @RequestPart(value = "centerImageList") List<MultipartFile> centerImageList) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto, logoImage, centerImageList)));
     }
