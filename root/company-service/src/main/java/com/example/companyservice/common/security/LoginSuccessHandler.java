@@ -3,6 +3,8 @@ package com.example.companyservice.common.security;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.example.companyservice.member.entity.Member;
+import com.example.companyservice.member.repository.MemberRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -34,6 +36,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final InstructorRepository instructorRepository;
 
+    private final MemberRepository memberRepository;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -41,10 +45,14 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("----------------------------");
         log.info("onAuthenticationSuccess");
 
-        Optional<String> cookieState = CookieUtils.getCookie(request, "state")
-                .map(Cookie::getValue);
+        Optional<String> cookieState = CookieUtils.getCookie(request, "state").map(Cookie::getValue);
+        Optional<String> cookieRedirectUri = CookieUtils.getCookie(request, "redirect_uri").map(Cookie::getValue);
 
-        if (cookieState.isPresent() && StringUtils.isNotEmpty(cookieState.get())) {
+        if (cookieState.isPresent() &&
+                StringUtils.isNotEmpty(cookieState.get()) &&
+                cookieRedirectUri.isPresent() &&
+                StringUtils.isNotEmpty(cookieRedirectUri.get())
+        ) {
             OAuthUserDetails authMember = (OAuthUserDetails)authentication.getPrincipal();
             String email = authMember.getEmail();
             String provider = authMember.getProvider();
@@ -53,6 +61,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
             String state = cookieState.get();
             log.info("state : {}", state);
+            String redirectUri = cookieRedirectUri.get();
 
             if ("company".equals(state)) {
                 Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
@@ -60,14 +69,22 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     Company company = optionalCompany.get();
                     String accessToken = jwtUtils.createToken(company.getId());
                     String refreshToken = jwtUtils.createRefreshToken(company.getId());
-                    sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
+                    sendToken(request, response, redirectUri, accessToken, refreshToken, null, provider, null, null);
                 } else {
-                    sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
+                    sendToken(request, response, redirectUri, null, null, email, provider, subject, oauth2AccessToken);
                 }
             } else if ("instructor".equals(state)) {
 
             } else {
-
+                Optional<Member> optionalMember = memberRepository.findByProviderAndSubject(provider, subject);
+                if (optionalMember.isPresent()) {
+                    Member member = optionalMember.get();
+                    String accessToken = jwtUtils.createToken(member.getId());
+                    String refreshToken = jwtUtils.createRefreshToken(member.getId());
+                    sendToken(request, response, redirectUri, accessToken, refreshToken, null, provider, null, null);
+                } else {
+                    sendToken(request, response, redirectUri, null, null, email, provider, subject, oauth2AccessToken);
+                }
             }
         } else {
             throw new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION);
@@ -76,6 +93,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private void sendToken(HttpServletRequest request,
                            HttpServletResponse response,
+                           String redirectUri,
                            String accessToken,
                            String refreshToken,
                            String email,
@@ -83,7 +101,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                            String subject,
                            String oauth2AccessToken) throws IOException {
 
-        String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + provider + "/callback")
+        String url = UriComponentsBuilder.fromUriString(redirectUri + "/oauth/" + provider + "/callback")
                 .queryParam("access-token", accessToken)
                 .queryParam("refresh-token", refreshToken)
                 .queryParam("email", email)

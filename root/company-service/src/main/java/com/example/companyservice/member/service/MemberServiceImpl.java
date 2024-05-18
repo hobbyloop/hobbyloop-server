@@ -19,6 +19,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = Member.of(requestDto);
         Member savedMember = memberRepository.save(member);
 
-        return savedMember.getMemberId();
+        return savedMember.getId();
     }
 }

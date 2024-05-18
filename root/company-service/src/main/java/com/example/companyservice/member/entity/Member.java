@@ -21,7 +21,7 @@ public class Member extends TimeStamped {
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memberId;
+    private Long id;
 
     private String name;
 
