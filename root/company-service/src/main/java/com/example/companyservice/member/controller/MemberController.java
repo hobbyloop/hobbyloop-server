@@ -1,6 +1,6 @@
 package com.example.companyservice.member.controller;
 
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
