@@ -1,7 +1,7 @@
 package com.example.companyservice.common.controller;
 
 import com.example.companyservice.common.service.AppleService;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

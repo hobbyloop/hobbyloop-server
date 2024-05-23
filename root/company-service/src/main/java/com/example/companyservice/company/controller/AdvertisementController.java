@@ -2,7 +2,7 @@ package com.example.companyservice.company.controller;
 
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
 import com.example.companyservice.company.service.AdvertisementService;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.example.companyservice.company.controller;
 
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.service.BookmarkService;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

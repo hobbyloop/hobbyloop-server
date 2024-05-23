@@ -2,9 +2,7 @@ package com.example.companyservice.company.controller;
 
 import com.example.companyservice.company.dto.response.CenterDistanceInfoResponseDto;
 import com.example.companyservice.company.dto.response.CenterInfoResponseDto;
-import com.example.companyservice.company.dto.BaseResponseDto;
-import com.example.companyservice.company.dto.response.OriginalBusinessResponseDto;
-import com.example.companyservice.company.dto.response.OriginalCenterResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.service.CenterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

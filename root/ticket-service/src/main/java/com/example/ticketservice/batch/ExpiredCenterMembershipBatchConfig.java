@@ -34,9 +34,9 @@ public class ExpiredCenterMembershipBatchConfig {
     private final CenterMembershipRepository centerMembershipRepository;
 
     @Bean
-    public Job expiredCenterMembershipJob(JobRepository jobRepository, Step expiredCenterMembershipStep) {
+    public Job expiredCenterMembershipJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("expiredCenterMembershipJob", jobRepository)
-                .start(expiredCenterMembershipStep)
+                .start(expiredCenterMembershipStep(jobRepository, transactionManager))
                 .build();
     }
 

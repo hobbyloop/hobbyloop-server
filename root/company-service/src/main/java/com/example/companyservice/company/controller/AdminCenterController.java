@@ -4,7 +4,7 @@ import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
 import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.company.dto.response.*;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.company.service.CenterService;
 import jakarta.servlet.http.HttpServletRequest;

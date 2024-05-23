@@ -3,7 +3,7 @@ package com.example.companyservice.company.controller;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.dto.response.BookmarkCenterResponseDto;
 import com.example.companyservice.company.dto.response.CenterInfoDetailResponseDto;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.response.HotCenterTicketResponseDto;
 import com.example.companyservice.company.dto.response.RecommendedCenterResponseDto;
 import com.example.companyservice.company.service.CenterService;

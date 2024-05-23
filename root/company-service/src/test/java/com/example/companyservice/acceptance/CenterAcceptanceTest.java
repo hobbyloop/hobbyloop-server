@@ -3,7 +3,7 @@ package com.example.companyservice.acceptance;
 import com.example.companyservice.acceptance.steps.AdminCenterSteps;
 import com.example.companyservice.acceptance.steps.CompanySteps;
 import com.example.companyservice.company.client.TicketServiceClient;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.response.CenterCreateResponseDto;
 import com.example.companyservice.fixture.CenterFixture;
 import com.example.companyservice.fixture.CompanyFixture;

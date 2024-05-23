@@ -1,7 +1,7 @@
 package com.example.companyservice.company.controller;
 
 import com.example.companyservice.common.util.Utils;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.service.CompanyService;
 import jakarta.servlet.http.HttpServletRequest;

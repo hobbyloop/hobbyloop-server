@@ -2,7 +2,7 @@ package com.example.companyservice.company.client;
 
 import com.example.companyservice.company.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.company.client.dto.response.*;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 

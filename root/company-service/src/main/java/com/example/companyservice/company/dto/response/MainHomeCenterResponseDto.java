@@ -20,6 +20,8 @@ public class MainHomeCenterResponseDto {
 
     private String address;
 
+    private boolean isRefundable;
+
     private boolean isBookmark;
 
     public static MainHomeCenterResponseDto of(Center center, boolean isBookmark) {
@@ -28,6 +30,7 @@ public class MainHomeCenterResponseDto {
                 .centerName(center.getCenterName())
                 .logoImageUrl(center.getLogoImageUrl())
                 .address(center.getAddress())
+                .isRefundable(center.getCompany().getIsRefundable())
                 .isBookmark(isBookmark)
                 .build();
     }
