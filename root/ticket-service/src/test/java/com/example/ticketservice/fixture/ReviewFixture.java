@@ -1,6 +1,6 @@
 package com.example.ticketservice.fixture;
 
-import com.example.ticketservice.dto.request.ReviewRequestDto;
+import com.example.ticketservice.ticket.dto.request.ReviewRequestDto;
 
 public class ReviewFixture {
 

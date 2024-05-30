@@ -7,7 +7,7 @@ import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.company.entity.*;
 import com.example.companyservice.company.service.AdvertisementService;
 import com.example.companyservice.company.repository.CenterRepository;
-import com.example.companyservice.company.repository.CompanyRepository;
+import com.example.companyservice.company.repository.company.CompanyRepository;
 import com.example.companyservice.company.repository.advertisement.AdvertisementRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,13 +1,12 @@
 package com.example.ticketservice.lecturereservation;
 
 import com.example.ticketservice.AcceptanceTest;
-import com.example.ticketservice.client.CompanyServiceClient;
-import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.ticket.client.CompanyServiceClient;
+import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.TicketFixture;
-import com.example.ticketservice.service.AmazonS3Service;
+import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
-import com.example.ticketservice.ticket.utils.TicketSteps;
 import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.mock.mockito.MockBean;

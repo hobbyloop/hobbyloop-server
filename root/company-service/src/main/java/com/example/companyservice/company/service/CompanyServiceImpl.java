@@ -7,7 +7,7 @@ import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.common.dto.BaseResponseDto;
-import com.example.companyservice.company.repository.CompanyRepository;
+import com.example.companyservice.company.repository.company.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
