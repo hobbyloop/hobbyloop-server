@@ -1,9 +1,9 @@
 package com.example.ticketservice.ticket.utils;
 
-import com.example.ticketservice.dto.request.ReviewRequestDto;
-import com.example.ticketservice.dto.response.ReviewByCenterResponseDto;
-import com.example.ticketservice.dto.response.ReviewResponseDto;
-import com.example.ticketservice.dto.response.TicketReviewListByCenterResponseDto;
+import com.example.ticketservice.ticket.dto.request.ReviewRequestDto;
+import com.example.ticketservice.ticket.dto.response.ReviewByCenterResponseDto;
+import com.example.ticketservice.ticket.dto.response.ReviewResponseDto;
+import com.example.ticketservice.ticket.dto.response.TicketReviewListByCenterResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,8 +12,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.http.ContentType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;

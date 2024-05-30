@@ -1,10 +1,8 @@
 package com.example.ticketservice.fixture;
 
-import com.example.ticketservice.dto.request.TicketCreateRequestDto;
-import com.example.ticketservice.entity.Ticket;
+import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.ticket.entity.Ticket;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.LocalDate;
 
 public class TicketFixture {

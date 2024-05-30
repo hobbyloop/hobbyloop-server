@@ -1,6 +1,6 @@
 package com.example.ticketservice.pay.controller;
 
-import com.example.ticketservice.dto.BaseResponseDto;
+import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.pay.dto.request.CompanyRatePlanRequestDto;
 import com.example.ticketservice.pay.service.CompanyRatePlanService;
 import lombok.RequiredArgsConstructor;

@@ -51,7 +51,6 @@ public class AdvertisementRepositoryImpl implements AdvertisementRepositoryCusto
                         .or(advertisement.adType.eq(AdvertisementTypeEnum.CPM.getTypeValue()))
                         .and(betweenDate()))
                 .orderBy(advertisement.price.desc())
-                .limit(20)
                 .fetch();
     }
 

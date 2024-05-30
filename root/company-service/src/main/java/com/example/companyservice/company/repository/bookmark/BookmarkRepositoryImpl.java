@@ -21,7 +21,8 @@ public class BookmarkRepositoryImpl implements BookmarkRepositoryCustom {
     public List<Bookmark> getBookmarkList(long memberId, long bookmarkId, int sortId) {
         return queryFactory
                 .selectFrom(bookmark)
-                .where(bookmark.memberId.eq(memberId).and(ltBookmarkId(bookmarkId, sortId)))
+                .where(bookmark.memberId.eq(memberId)
+                        .and(ltBookmarkId(bookmarkId, sortId)))
                 .limit(20)
                 .orderBy(createOrderSpecifier(sortId))
                 .fetch();

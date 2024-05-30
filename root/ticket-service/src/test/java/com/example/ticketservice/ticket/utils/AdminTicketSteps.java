@@ -1,7 +1,7 @@
 package com.example.ticketservice.ticket.utils;
 
-import com.example.ticketservice.dto.request.TicketCreateRequestDto;
-import com.example.ticketservice.dto.response.*;
+import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
+import com.example.ticketservice.ticket.dto.response.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

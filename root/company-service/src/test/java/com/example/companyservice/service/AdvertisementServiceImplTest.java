@@ -2,11 +2,12 @@ package com.example.companyservice.service;
 
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.company.entity.*;
 import com.example.companyservice.company.service.AdvertisementService;
 import com.example.companyservice.company.repository.CenterRepository;
-import com.example.companyservice.company.repository.CompanyRepository;
+import com.example.companyservice.company.repository.company.CompanyRepository;
 import com.example.companyservice.company.repository.advertisement.AdvertisementRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ public class AdvertisementServiceImplTest {
     @DisplayName("배너 광고 조회")
     public void getAdvertisementList_in3Km() {
         // Given
-        Company company = Company.from("sseioul@naver.com");
+        Company company = Company.of(new CompanyCreateRequestDto(), 1L);
         companyRepository.save(company);
 
         for (int i = 1; i <= 20; i++) {

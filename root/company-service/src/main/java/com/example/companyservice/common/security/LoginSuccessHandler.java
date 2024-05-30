@@ -1,27 +1,29 @@
 package com.example.companyservice.common.security;
 
-import com.example.companyservice.common.exception.ApiException;
-import com.example.companyservice.common.exception.ExceptionEnum;
-import com.example.companyservice.common.util.CookieUtils;
-import com.example.companyservice.common.util.JwtUtils;
-import com.example.companyservice.company.entity.Company;
-import com.example.companyservice.company.entity.Role;
-import com.example.companyservice.company.repository.CompanyRepository;
-import com.example.companyservice.instructor.domain.Instructor;
-import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
+import java.util.Optional;
+
+import com.example.companyservice.member.entity.Member;
+import com.example.companyservice.member.repository.MemberRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-import jakarta.servlet.http.Cookie;
 
-import java.io.IOException;
-import java.util.Optional;
+import com.example.companyservice.common.exception.ApiException;
+import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.common.util.CookieUtils;
+import com.example.companyservice.common.util.JwtUtils;
+import com.example.companyservice.company.entity.Company;
+import com.example.companyservice.company.repository.company.CompanyRepository;
+import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -34,6 +36,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final InstructorRepository instructorRepository;
 
+    private final MemberRepository memberRepository;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -41,46 +45,69 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("----------------------------");
         log.info("onAuthenticationSuccess");
 
-        Optional<String> cookieState = CookieUtils.getCookie(request, "state")
-                .map(Cookie::getValue);
+        Optional<String> cookieState = CookieUtils.getCookie(request, "state").map(Cookie::getValue);
+        Optional<String> cookieRedirectUri = CookieUtils.getCookie(request, "redirect_uri").map(Cookie::getValue);
 
-        if (cookieState.isPresent() && StringUtils.isNotEmpty(cookieState.get())) {
+        if (cookieState.isPresent() &&
+                StringUtils.isNotEmpty(cookieState.get()) &&
+                cookieRedirectUri.isPresent() &&
+                StringUtils.isNotEmpty(cookieRedirectUri.get())
+        ) {
             OAuthUserDetails authMember = (OAuthUserDetails)authentication.getPrincipal();
             String email = authMember.getEmail();
             String provider = authMember.getProvider();
-            String providerId = authMember.getProviderId();
+            String subject = authMember.getSubject();
+            String oauth2AccessToken = authMember.getOauth2AccessToken();
 
             String state = cookieState.get();
             log.info("state : {}", state);
+            String redirectUri = cookieRedirectUri.get();
 
             if ("company".equals(state)) {
-                Optional<Company> optionalCompany = companyRepository.findByEmail(email);
-                Company company;
+                Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
                 if (optionalCompany.isPresent()) {
-                    company = optionalCompany.get();
+                    Company company = optionalCompany.get();
+                    String accessToken = jwtUtils.createToken(company.getId());
+                    String refreshToken = jwtUtils.createRefreshToken(company.getId());
+                    sendToken(request, response, redirectUri, accessToken, refreshToken, null, provider, null, null);
                 } else {
-                    company = Company.from(email, provider, providerId, Role.COMPANY);
-                    companyRepository.save(company);
+                    sendToken(request, response, redirectUri, null, null, email, provider, subject, oauth2AccessToken);
                 }
-                sendToken(request, response, company.getId(), provider, company.getCi());
             } else if ("instructor".equals(state)) {
-                Optional<Instructor> instructor = instructorRepository.findByEmail(authMember.getEmail());
-            } else {
 
+            } else {
+                Optional<Member> optionalMember = memberRepository.findByProviderAndSubject(provider, subject);
+                if (optionalMember.isPresent()) {
+                    Member member = optionalMember.get();
+                    String accessToken = jwtUtils.createToken(member.getId());
+                    String refreshToken = jwtUtils.createRefreshToken(member.getId());
+                    sendToken(request, response, redirectUri, accessToken, refreshToken, null, provider, null, null);
+                } else {
+                    sendToken(request, response, redirectUri, null, null, email, provider, subject, oauth2AccessToken);
+                }
             }
         } else {
             throw new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION);
         }
     }
 
-    private void sendToken(HttpServletRequest request, HttpServletResponse response, Long id, String provider, String ci) throws IOException {
-        String accessToken = jwtUtils.createToken(id);
-        String refreshToken = jwtUtils.createRefreshToken(id);
+    private void sendToken(HttpServletRequest request,
+                           HttpServletResponse response,
+                           String redirectUri,
+                           String accessToken,
+                           String refreshToken,
+                           String email,
+                           String provider,
+                           String subject,
+                           String oauth2AccessToken) throws IOException {
 
-        String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + provider + "/callback")
+        String url = UriComponentsBuilder.fromUriString(redirectUri + "/oauth/" + provider + "/callback")
                 .queryParam("access-token", accessToken)
                 .queryParam("refresh-token", refreshToken)
-                .queryParam("first", StringUtils.isNotEmpty(ci) ? ci : null)
+                .queryParam("email", email)
+                .queryParam("provider", provider)
+                .queryParam("subject", subject)
+                .queryParam("oauth2AccessToken", oauth2AccessToken)
                 .build()
                 .toUri()
                 .toString();

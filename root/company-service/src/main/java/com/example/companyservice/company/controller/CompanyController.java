@@ -1,10 +1,11 @@
 package com.example.companyservice.company.controller;
 
 import com.example.companyservice.common.util.Utils;
-import com.example.companyservice.company.dto.BaseResponseDto;
-import com.example.companyservice.company.dto.request.CompanyUpdateRequestDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
+import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.service.CompanyService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +18,10 @@ public class CompanyController {
 
     private final CompanyService companyService;
 
-    @PatchMapping("/admin/companies")
-    public ResponseEntity<BaseResponseDto<Long>> updateCompanyInfo(HttpServletRequest request,
-                                                                   @RequestBody CompanyUpdateRequestDto requestDto) {
-        long companyId = Utils.parseAuthorizedId(request);
+    @PostMapping("/join/companies")
+    public ResponseEntity<BaseResponseDto<Long>> createCompany(@RequestBody @Valid CompanyCreateRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(companyService.updateCompanyInfo(companyId, requestDto)));
+                .body(new BaseResponseDto<>(companyService.createCompany(requestDto)));
     }
 
     @GetMapping("/admin/companies/check/tax-free")

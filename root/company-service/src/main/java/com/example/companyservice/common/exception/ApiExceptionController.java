@@ -1,8 +1,7 @@
 package com.example.companyservice.common.exception;
 
-import com.example.companyservice.common.exception.ApiException;
-import com.example.companyservice.common.exception.ApiExceptionEntity;
-import com.example.companyservice.common.exception.ExceptionEnum;
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,8 +9,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import java.nio.file.AccessDeniedException;
 
 @RestControllerAdvice
 public class ApiExceptionController {

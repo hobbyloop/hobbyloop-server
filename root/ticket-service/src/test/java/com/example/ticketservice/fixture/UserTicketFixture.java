@@ -1,7 +1,7 @@
 package com.example.ticketservice.fixture;
 
-import com.example.ticketservice.entity.Ticket;
-import com.example.ticketservice.entity.UserTicket;
+import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
 
 import java.time.LocalDate;
 

@@ -1,7 +1,8 @@
 package com.example.ticketservice.pay.entity;
 
-import com.example.ticketservice.entity.Ticket;
-import com.example.ticketservice.entity.TimeStamped;
+import com.example.ticketservice.ticket.client.dto.response.OriginalCenterResponseDto;
+import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,11 +36,29 @@ public class PurchaseHistory extends TimeStamped {
 
     private Long memberId;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
     private Long memberCouponId;
 
     private Long looppassId;
+
+    public static PurchaseHistory of(OriginalCenterResponseDto centerInfo,
+                                     Long memberId,
+                                     Ticket ticket,
+                                     Long memberCouponId) {
+        return PurchaseHistory.builder()
+                .type(1)
+                .date(LocalDateTime.now())
+                .price(10000)
+                .usePoint(1000)
+                .isRefund(false)
+                .centerName(centerInfo.getCenterName())
+                .centerLogo(centerInfo.getLogoImageUrl())
+                .memberId(memberId)
+                .ticket(ticket)
+                .memberCouponId(memberCouponId)
+                .build();
+    }
 }

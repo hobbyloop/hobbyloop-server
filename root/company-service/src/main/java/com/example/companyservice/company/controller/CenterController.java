@@ -3,7 +3,7 @@ package com.example.companyservice.company.controller;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.dto.response.BookmarkCenterResponseDto;
 import com.example.companyservice.company.dto.response.CenterInfoDetailResponseDto;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.response.HotCenterTicketResponseDto;
 import com.example.companyservice.company.dto.response.RecommendedCenterResponseDto;
 import com.example.companyservice.company.service.CenterService;
@@ -39,21 +39,21 @@ public class CenterController {
                 .body(new BaseResponseDto<>(centerService.getBookmarkCenterList(memberId, bookmarkId, sortId)));
     }
 
-    @GetMapping(value = {"/hot-tickets/{allow-location}/{latitude}/{longitude}", "/hot-tickets/{allow-location}"})
+    @GetMapping("/hot-tickets/{allow-location}/{latitude}/{longitude}")
     public ResponseEntity<BaseResponseDto<List<HotCenterTicketResponseDto>>> getHotCenterTicketList(HttpServletRequest request,
                                                                                                     @PathVariable(value = "allow-location") int allowLocation,
-                                                                                                    @PathVariable(required = false, value = "latitude") Double latitude,
-                                                                                                    @PathVariable(required = false, value = "longitude") Double longitude) {
+                                                                                                    @PathVariable(value = "latitude") double latitude,
+                                                                                                    @PathVariable(value = "longitude") double longitude) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getHotCenterTicketList(memberId, allowLocation, latitude, longitude)));
     }
 
-    @GetMapping(value = {"/recommend/{allow-location}/{latitude}/{longitude}", "/recommend/{allow-location}"})
+    @GetMapping("/recommend/{allow-location}/{latitude}/{longitude}")
     public ResponseEntity<BaseResponseDto<List<RecommendedCenterResponseDto>>> getRecommendedCenterList(HttpServletRequest request,
                                                                                                         @PathVariable(value = "allow-location") int allowLocation,
-                                                                                                        @PathVariable(required = false, value = "latitude") Double latitude,
-                                                                                                        @PathVariable(required = false, value = "longitude") Double longitude) {
+                                                                                                        @PathVariable(value = "latitude") double latitude,
+                                                                                                        @PathVariable(value = "longitude") double longitude) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getRecommendedCenterList(memberId, allowLocation, latitude, longitude)));

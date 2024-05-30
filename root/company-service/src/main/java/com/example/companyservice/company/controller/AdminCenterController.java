@@ -4,7 +4,7 @@ import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
 import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.company.dto.response.*;
-import com.example.companyservice.company.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.company.service.CenterService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +26,8 @@ public class AdminCenterController {
     @PostMapping()
     public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
                                                                                  @RequestPart(value = "requestDto") CenterCreateRequestDto requestDto,
-                                                                                 @RequestPart(required = false, value = "logoImage") MultipartFile logoImage,
-                                                                                 @RequestPart(required = false, value = "centerImageList") List<MultipartFile> centerImageList) {
+                                                                                 @RequestPart(value = "logoImage") MultipartFile logoImage,
+                                                                                 @RequestPart(value = "centerImageList") List<MultipartFile> centerImageList) {
         long companyId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(centerService.createCenter(companyId, requestDto, logoImage, centerImageList)));
@@ -52,27 +52,11 @@ public class AdminCenterController {
                 .body(new BaseResponseDto<>(centerService.getCenterBusiness(centerId)));
     }
 
-    @PatchMapping("/{centerId}")
-    public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable(value = "centerId") long centerId,
-                                                              @RequestPart(value = "requestDto") CenterUpdateRequestDto requestDto,
-                                                              @RequestPart(required = false, value = "logoImage") MultipartFile logoImage,
-                                                              @RequestPart(required = false, value = "centerImageList") List<MultipartFile> centerImageList) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto, logoImage, centerImageList)));
-    }
-
     @PostMapping("/quick-button/{centerId}")
     public ResponseEntity<BaseResponseDto<Void>> updateQuickButton(@PathVariable(value = "centerId") long centerId,
                                                                    @RequestBody List<Integer> requestDto) {
         centerService.updateQuickButton(centerId, requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDto<>());
-    }
-
-    @PatchMapping("/business/{centerId}")
-    public ResponseEntity<BaseResponseDto<Long>> updateBusinessInfo(@PathVariable(value = "centerId") long centerId,
-                                                                    @RequestBody BusinessRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
     }
 
     @GetMapping("/original/{centerId}")
@@ -85,5 +69,21 @@ public class AdminCenterController {
     public ResponseEntity<BaseResponseDto<OriginalBusinessResponseDto>> getOriginalBusinessInfo(@PathVariable(value = "centerId") long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getOriginalBusinessInfo(centerId)));
+    }
+
+    @PatchMapping("/{centerId}")
+    public ResponseEntity<BaseResponseDto<Long>> updateCenter(@PathVariable(value = "centerId") long centerId,
+                                                              @RequestPart(value = "requestDto") CenterUpdateRequestDto requestDto,
+                                                              @RequestPart(value = "logoImage") MultipartFile logoImage,
+                                                              @RequestPart(value = "centerImageList") List<MultipartFile> centerImageList) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.updateCenter(centerId, requestDto, logoImage, centerImageList)));
+    }
+
+    @PatchMapping("/business/{centerId}")
+    public ResponseEntity<BaseResponseDto<Long>> updateBusinessInfo(@PathVariable(value = "centerId") long centerId,
+                                                                    @RequestBody BusinessRequestDto requestDto) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
     }
 }
