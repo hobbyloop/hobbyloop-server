@@ -1,6 +1,6 @@
 package com.example.ticketservice.fixture;
 
-import com.example.ticketservice.client.dto.response.MemberInfoResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 
 import java.time.LocalDate;
 

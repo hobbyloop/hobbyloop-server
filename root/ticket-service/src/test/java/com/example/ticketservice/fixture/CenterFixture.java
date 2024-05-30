@@ -1,9 +1,9 @@
 package com.example.ticketservice.fixture;
 
-import com.example.ticketservice.client.dto.response.CenterInfoResponseDto;
-import com.example.ticketservice.client.dto.response.HourResponseDto;
-import com.example.ticketservice.client.dto.response.OriginalBusinessResponseDto;
-import com.example.ticketservice.client.dto.response.OriginalCenterResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.HourResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.OriginalBusinessResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.OriginalCenterResponseDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

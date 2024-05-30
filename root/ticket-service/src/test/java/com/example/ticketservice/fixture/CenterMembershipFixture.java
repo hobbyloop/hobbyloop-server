@@ -1,6 +1,6 @@
 package com.example.ticketservice.fixture;
 
-import com.example.ticketservice.dto.request.CenterMembershipJoinRequestDto;
+import com.example.ticketservice.ticket.dto.request.CenterMembershipJoinRequestDto;
 
 public class CenterMembershipFixture {
 

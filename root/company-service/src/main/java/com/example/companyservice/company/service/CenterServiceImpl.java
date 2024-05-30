@@ -14,6 +14,7 @@ import com.example.companyservice.company.entity.*;
 import com.example.companyservice.company.repository.*;
 import com.example.companyservice.company.repository.advertisement.AdvertisementRepository;
 import com.example.companyservice.company.repository.bookmark.BookmarkRepository;
+import com.example.companyservice.company.repository.company.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

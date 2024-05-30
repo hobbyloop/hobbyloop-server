@@ -1,18 +1,18 @@
 package com.example.ticketservice.centermembership;
 
 import com.example.ticketservice.AcceptanceTest;
-import com.example.ticketservice.client.CompanyServiceClient;
-import com.example.ticketservice.client.MemberServiceClient;
-import com.example.ticketservice.dto.BaseResponseDto;
-import com.example.ticketservice.dto.response.CenterMemberResponseDto;
-import com.example.ticketservice.dto.response.CenterMembershipJoinedResponseDto;
-import com.example.ticketservice.dto.response.TicketDetailResponseDto;
-import com.example.ticketservice.dto.response.UnapprovedUserTicketListResponseDto;
+import com.example.ticketservice.ticket.client.CompanyServiceClient;
+import com.example.ticketservice.ticket.client.MemberServiceClient;
+import com.example.ticketservice.ticket.dto.BaseResponseDto;
+import com.example.ticketservice.ticket.dto.response.CenterMemberResponseDto;
+import com.example.ticketservice.ticket.dto.response.CenterMembershipJoinedResponseDto;
+import com.example.ticketservice.ticket.dto.response.TicketDetailResponseDto;
+import com.example.ticketservice.ticket.dto.response.UnapprovedUserTicketListResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.CenterMembershipFixture;
 import com.example.ticketservice.fixture.MemberFixture;
 import com.example.ticketservice.fixture.TicketFixture;
-import com.example.ticketservice.service.AmazonS3Service;
+import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
 import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;

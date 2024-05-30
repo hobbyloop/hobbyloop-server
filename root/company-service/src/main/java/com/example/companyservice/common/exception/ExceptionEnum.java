@@ -14,6 +14,8 @@ public enum ExceptionEnum {
     API_PARAMETER_EXCEPTION(HttpStatus.BAD_REQUEST, "E005", "파라미터 타입과 값을 확인하세요."),
     NOT_EXIST_EMAIL_EXCEPTION(HttpStatus.NOT_FOUND, "A001", "존재하지 않는 관리자 계정입니다."),
     PASSWORD_NOT_MATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "A002", "비밀번호가 일치하지 않습니다."),
+    ALREADY_ACCEPT_COMPANY_EXCEPTION(HttpStatus.BAD_REQUEST, "A003", "이미 승인된 업체입니다."),
+    ALREADY_REJECT_COMPANY_EXCEPTION(HttpStatus.BAD_REQUEST, "A004", "이미 거절된 업체입니다."),
     NOT_SUPPORT_PROVIDER_TYPE(HttpStatus.BAD_REQUEST, "E006", "지원하지 않는 소셜로그인입니다."),
     ACCESS_NOW_ALLOW_EXCEPTION(HttpStatus.FORBIDDEN, "E007", "접근 권한이 없습니다."),
     LOGIN_FAIL_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "E008", "로그인 실패"),

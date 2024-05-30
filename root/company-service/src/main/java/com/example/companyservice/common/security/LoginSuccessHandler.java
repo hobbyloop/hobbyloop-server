@@ -16,7 +16,7 @@ import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.util.CookieUtils;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.entity.Company;
-import com.example.companyservice.company.repository.CompanyRepository;
+import com.example.companyservice.company.repository.company.CompanyRepository;
 import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
 
 import jakarta.servlet.http.Cookie;
