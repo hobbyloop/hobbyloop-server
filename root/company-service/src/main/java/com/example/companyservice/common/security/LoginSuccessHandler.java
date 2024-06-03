@@ -46,13 +46,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         log.info("onAuthenticationSuccess");
 
         Optional<String> cookieState = CookieUtils.getCookie(request, "state").map(Cookie::getValue);
-        Optional<String> cookieRedirectUri = CookieUtils.getCookie(request, "redirect_uri").map(Cookie::getValue);
 
-        if (cookieState.isPresent() &&
-                StringUtils.isNotEmpty(cookieState.get()) &&
-                cookieRedirectUri.isPresent() &&
-                StringUtils.isNotEmpty(cookieRedirectUri.get())
-        ) {
+        if (cookieState.isPresent() && StringUtils.isNotEmpty(cookieState.get())) {
             OAuthUserDetails authMember = (OAuthUserDetails)authentication.getPrincipal();
             String email = authMember.getEmail();
             String provider = authMember.getProvider();
@@ -61,7 +56,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
             String state = cookieState.get();
             log.info("state : {}", state);
-            String redirectUri = cookieRedirectUri.get();
 
             if ("company".equals(state)) {
                 Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
@@ -69,9 +63,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     Company company = optionalCompany.get();
                     String accessToken = jwtUtils.createToken(company.getId());
                     String refreshToken = jwtUtils.createRefreshToken(company.getId());
-                    sendToken(request, response, redirectUri, accessToken, refreshToken, null, provider, null, null);
+                    sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
                 } else {
-                    sendToken(request, response, redirectUri, null, null, email, provider, subject, oauth2AccessToken);
+                    sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }
             } else if ("instructor".equals(state)) {
 
@@ -81,9 +75,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     Member member = optionalMember.get();
                     String accessToken = jwtUtils.createToken(member.getId());
                     String refreshToken = jwtUtils.createRefreshToken(member.getId());
-                    sendToken(request, response, redirectUri, accessToken, refreshToken, null, provider, null, null);
+                    sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
                 } else {
-                    sendToken(request, response, redirectUri, null, null, email, provider, subject, oauth2AccessToken);
+                    sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }
             }
         } else {
@@ -93,7 +87,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private void sendToken(HttpServletRequest request,
                            HttpServletResponse response,
-                           String redirectUri,
                            String accessToken,
                            String refreshToken,
                            String email,
@@ -101,7 +94,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                            String subject,
                            String oauth2AccessToken) throws IOException {
 
-        String url = UriComponentsBuilder.fromUriString(redirectUri + "/oauth/" + provider + "/callback")
+        String url = UriComponentsBuilder.fromUriString("http://localhost:3000/oauth/" + provider + "/callback")
                 .queryParam("access-token", accessToken)
                 .queryParam("refresh-token", refreshToken)
                 .queryParam("email", email)
