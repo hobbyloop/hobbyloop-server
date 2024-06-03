@@ -15,18 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/admin")
+@RequestMapping("/api/v1")
 public class AdminController {
 
     private final AdminService adminService;
 
-    @PostMapping("/join")
+    @PostMapping("/join/admins")
     public ResponseEntity<BaseResponseDto<Long>> join(@RequestBody @Valid AdminRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(adminService.join(requestDto)));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login/admins")
     public ResponseEntity<BaseResponseDto<LoginResponseDto>> login(@RequestBody @Valid AdminRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(adminService.login(requestDto)));
