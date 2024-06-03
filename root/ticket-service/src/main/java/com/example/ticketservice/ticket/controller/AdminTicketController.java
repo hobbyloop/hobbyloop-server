@@ -19,11 +19,10 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/tickets")
 public class AdminTicketController {
     private final TicketService ticketService;
-    private final UserTicketService userTicketService;
 
     @GetMapping("/management/{centerId}/{ticketId}")
-    public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable long centerId,
-                                                                                  @PathVariable long ticketId) {
+    public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(@PathVariable(value = "centerId") long centerId,
+                                                                                  @PathVariable(value = "ticketId") long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketList(centerId, ticketId)));
     }
@@ -38,42 +37,42 @@ public class AdminTicketController {
     }
 
     @GetMapping("/management/{ticketId}")
-    public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> getTicketDetail(@PathVariable long ticketId) {
+    public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> getTicketDetail(@PathVariable(value = "ticketId") long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketDetail(ticketId)));
     }
 
     @PatchMapping("/management/{ticketId}")
-    public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> updateTicket(@PathVariable long ticketId,
-                                                                                 @RequestPart TicketUpdateRequestDto requestDto,
-                                                                                 @RequestPart(required = false) MultipartFile ticketImage) {
+    public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> updateTicket(@PathVariable(value = "ticketId") long ticketId,
+                                                                                 @RequestPart(value = "requestDto") TicketUpdateRequestDto requestDto,
+                                                                                 @RequestPart(value = "ticketImage") MultipartFile ticketImage) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.updateTicket(ticketId, requestDto, ticketImage)));
     }
 
     @PatchMapping("/management/{ticketId}/upload")
-    public ResponseEntity<BaseResponseDto<Void>> uploadTicket(@PathVariable long ticketId) {
+    public ResponseEntity<BaseResponseDto<Void>> uploadTicket(@PathVariable(value = "ticketId") long ticketId) {
         ticketService.uploadTicket(ticketId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
     }
 
     @PatchMapping("/management/{ticketId}/cancel-upload")
-    public ResponseEntity<BaseResponseDto<Void>> cancelUploadTicket(@PathVariable long ticketId) {
+    public ResponseEntity<BaseResponseDto<Void>> cancelUploadTicket(@PathVariable(value = "ticketId") long ticketId) {
         ticketService.cancelUploadTicket(ticketId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
     }
 
     @GetMapping("/review/{centerId}/{ticketId}")
-    public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(@PathVariable long centerId,
-                                                                                            @PathVariable long ticketId) {
+    public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(@PathVariable(value = "centerId") long centerId,
+                                                                                            @PathVariable(value = "ticketId") long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getAdminTicketList(centerId, ticketId)));
     }
 
     @GetMapping("/review/{ticketId}")
-    public ResponseEntity<BaseResponseDto<AdminReviewTicketResponseDto>> getTicketInfo(@PathVariable long ticketId) {
+    public ResponseEntity<BaseResponseDto<AdminReviewTicketResponseDto>> getTicketInfo(@PathVariable(value = "ticketId") long ticketId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getTicketInfo(ticketId)));
     }
