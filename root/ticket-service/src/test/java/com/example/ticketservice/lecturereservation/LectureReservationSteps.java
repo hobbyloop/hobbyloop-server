@@ -7,7 +7,7 @@ public class LectureReservationSteps {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static Long reserveLecture(long userTicketId) throws Exception {
-        long lectureScheduleId = 1L;
+        long lectureScheduleId = 1L; // TODO: Replace with actual lectureScheduleId
 
         String responseBody = RestAssured
                 .given().log().all()

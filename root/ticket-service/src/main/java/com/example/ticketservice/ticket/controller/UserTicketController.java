@@ -4,6 +4,7 @@ import com.example.ticketservice.ticket.common.util.Utils;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
+import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
 import com.example.ticketservice.ticket.service.UserTicketService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,12 @@ public class UserTicketController {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(userTicketService.getAvailableUserTicketList(memberId)));
+    }
+
+    @GetMapping("/using-histories")
+    public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(userTicketService.getUserTicketUsingHistory(memberId)));
     }
 }

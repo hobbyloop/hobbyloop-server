@@ -2,6 +2,7 @@ package com.example.ticketservice.ticket.acceptance;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.centermembership.CenterMembershipSteps;
+import com.example.ticketservice.lecturereservation.LectureReservationSteps;
 import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.ReviewFixture;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -192,6 +194,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         long ticketIdOfNonRefundableCenter = AdminTicketSteps.createTicket(nonRefundableCenterId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         AdminTicketSteps.uploadTicket(ticketIdOfNonRefundableCenter);
 
+        mockForPurchaseTicket();
         long userTicketId1 = UserTicketSteps.purchaseTicket(ticketIdOfDefaultCenter);
         long userTicketId2 = UserTicketSteps.purchaseTicket(ticketIdOfNonRefundableCenter);
         long userTicketId3 = UserTicketSteps.purchaseTicket(ticketIdOfDefaultCenter2);
@@ -236,6 +239,27 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.size()).isEqualTo(1);
         assertThat(response.containsKey(YearMonth.of(thisYear, thisMonth))).isTrue();
+    }
+
+    @Test
+    public void getUserTicketUsingHistoriesSuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        mockForPurchaseTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
+        long userTicketId = UserTicketSteps.purchaseTicket(ticketId);
+
+        // when
+        LectureReservationSteps.reserveLecture(userTicketId);
+
+        List<UserTicketUsingHistoryResponseDto> response = UserTicketSteps.getUserTicketUsingHistory();
+
+        // then
+        String yearMonth = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+        assertThat(response.get(0).getUsingHistoryByMonth().get(0).getYearMonth()).isEqualTo(yearMonth);
     }
 
     @Test
@@ -288,13 +312,17 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     private void mockForCreateTicket() throws IOException {
         given(companyServiceClient.getCenterInfo(1L)).willReturn(new BaseResponseDto<>(CenterFixture.defaultCenterInfoResponseDto()));
         given(companyServiceClient.getCenterInfo(2L)).willReturn(new BaseResponseDto<>(CenterFixture.nonRefundableCenterInfoResponseDto()));
-        given(amazonS3Service.upload(any(MultipartFile.class), anyString())).willReturn("test-image-key");
+        given(amazonS3Service.saveS3Img(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
     }
 
     private void mockForGetTicketDetail() {
         given(companyServiceClient.getOriginalCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalCenterResponseDto()));
         given(companyServiceClient.getOriginalBusinessInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalBusinessResponseDto()));
+    }
+
+    private void mockForPurchaseTicket() throws IOException {
+        given(companyServiceClient.getOriginalCenterInfo(anyLong())).willReturn(new BaseResponseDto<>(CenterFixture.defaultOriginalCenterResponseDto()));
     }
 
 }
