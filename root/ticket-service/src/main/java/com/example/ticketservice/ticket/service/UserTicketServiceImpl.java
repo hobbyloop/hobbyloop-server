@@ -184,6 +184,8 @@ public class UserTicketServiceImpl implements UserTicketService {
                 usingHistories.add(new UsingHistoryByMonthDto(entry.getKey(), sortedUsingHistories));
             }
 
+            usingHistories.sort(Comparator.comparing((UsingHistoryByMonthDto history) -> YearMonth.parse(history.getYearMonth(), DateTimeFormatter.ofPattern("yyyy/MM"))).reversed());
+
             UserTicketUsingHistoryResponseDto dto = UserTicketUsingHistoryResponseDto.of(userTicket, centerInfo.getCenterName(), usingHistories);
 
             result.add(dto);

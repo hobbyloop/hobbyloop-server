@@ -10,6 +10,8 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.*;
+import com.example.ticketservice.ticket.entity.LectureReservation;
+import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;
 import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
 import com.example.ticketservice.ticket.utils.ReviewSteps;
@@ -17,7 +19,9 @@ import com.example.ticketservice.ticket.utils.TicketSteps;
 import com.example.ticketservice.ticket.utils.UserTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,6 +44,9 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
     @MockBean
     private AmazonS3Service amazonS3Service;
+
+    @Autowired
+    private LectureReservationRepository lectureReservationRepository;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -251,9 +258,15 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         AdminTicketSteps.uploadTicket(ticketId);
         long userTicketId = UserTicketSteps.purchaseTicket(ticketId);
+        CenterMembershipSteps.approveUserTicket(userTicketId);
 
         // when
         LectureReservationSteps.reserveLecture(userTicketId);
+        long lectureReservationIdOfLastMonth = LectureReservationSteps.reserveLecture(userTicketId);
+
+        LectureReservation lectureReservationOfLastMonth = lectureReservationRepository.findById(lectureReservationIdOfLastMonth).orElseThrow();
+        ReflectionTestUtils.setField(lectureReservationOfLastMonth, "createdAt", LocalDateTime.now().minusDays(31));
+        lectureReservationRepository.save(lectureReservationOfLastMonth);
 
         List<UserTicketUsingHistoryResponseDto> response = UserTicketSteps.getUserTicketUsingHistory();
 
