@@ -39,7 +39,7 @@ public class UserTicketController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<BaseResponseDto<Map<String, AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
+    public ResponseEntity<BaseResponseDto<List<AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(userTicketService.getAvailableUserTicketList(memberId)));

@@ -50,7 +50,7 @@ public class UserTicketSteps {
         return objectMapper.readTree(responseBody).get("data").asLong();
     }
 
-    public static Map<String, AvailableUserTicketsWithCenterInfo> getMyAvailableUserTicketList() throws Exception {
+    public static List<AvailableUserTicketsWithCenterInfo> getMyAvailableUserTicketList() throws Exception {
 
             String responseBody = RestAssured
                     .given().log().all()
@@ -76,7 +76,7 @@ public class UserTicketSteps {
             objectMapper.registerModule(module);
             objectMapper.registerModule(new JavaTimeModule());
 
-            TypeReference<Map<String, AvailableUserTicketsWithCenterInfo>> typeRef = new TypeReference<Map<String, AvailableUserTicketsWithCenterInfo>>() {};
+            TypeReference<List<AvailableUserTicketsWithCenterInfo>> typeRef = new TypeReference<List<AvailableUserTicketsWithCenterInfo>>() {};
             return objectMapper.readValue(dataNode.traverse(), typeRef);
     }
 

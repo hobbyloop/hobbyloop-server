@@ -106,29 +106,28 @@ public class UserTicketServiceImpl implements UserTicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId) {
+    public List<AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId) {
         List<UserTicket> userTicketList = userTicketRepository.findAvailableUserTicketList(memberId);
 
-        return userTicketList.stream()
-                .collect(Collectors.groupingBy(
-                        userTicket -> {
-                            Long centerId = userTicket.getTicket().getCenterId();
-                            CenterInfoResponseDto centerInfoResponseDto = companyServiceClient.getCenterInfo(centerId).getData();
-                            return centerInfoResponseDto.getCenterName();
-                        },
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> {
-                                    UserTicket firstUserTicket = list.get(0);
-                                    Long centerId = firstUserTicket.getTicket().getCenterId();
-                                    CenterInfoResponseDto centerInfoResponseDto = companyServiceClient.getCenterInfo(centerId).getData();
-                                    List<AvailableUserTicketResponseDto> userTicketResponseDtoList = list.stream()
-                                            .map(AvailableUserTicketResponseDto::of)
-                                            .collect(Collectors.toList());
-                                    return AvailableUserTicketsWithCenterInfo.of(centerId, centerInfoResponseDto.isRefundable(), userTicketResponseDtoList);
-                                }
-                        )
-                ));
+        Map<Long, AvailableUserTicketsWithCenterInfo> centerInfoMap = new HashMap<>();
+
+        for (UserTicket userTicket : userTicketList) {
+            Long centerId = userTicket.getTicket().getCenterId();
+
+            if (!centerInfoMap.containsKey(centerId)) {
+                CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(userTicket.getTicket().getCenterId()).getData();
+                AvailableUserTicketsWithCenterInfo availableUserTicketsWithCenterInfo = AvailableUserTicketsWithCenterInfo.of(centerId, centerInfo.getCenterName(), centerInfo.isRefundable(), new ArrayList<>());
+                centerInfoMap.put(centerId, availableUserTicketsWithCenterInfo);
+            }
+
+            AvailableUserTicketsWithCenterInfo availableUserTicketsWithCenterInfo = centerInfoMap.get(centerId);
+
+            AvailableUserTicketResponseDto availableUserTicket = AvailableUserTicketResponseDto.of(userTicket);
+
+            availableUserTicketsWithCenterInfo.getAvailableUserTickets().add(availableUserTicket);
+        }
+
+        return new ArrayList<>(centerInfoMap.values());
     }
 
     @Override
