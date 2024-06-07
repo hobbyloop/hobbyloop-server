@@ -15,7 +15,7 @@ public interface UserTicketService {
 
     void approveUserTicket(long userTicketId);
 
-    Map<String, AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId);
+    List<AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId);
 
     Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId);
 
