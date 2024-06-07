@@ -11,7 +11,9 @@ import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.*;
 import com.example.ticketservice.ticket.entity.LectureReservation;
+import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;
+import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
 import com.example.ticketservice.ticket.utils.ReviewSteps;
@@ -25,6 +27,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -44,6 +47,9 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
     @MockBean
     private AmazonS3Service amazonS3Service;
+
+    @Autowired
+    private UserTicketRepository userTicketRepository;
 
     @Autowired
     private LectureReservationRepository lectureReservationRepository;
@@ -273,6 +279,32 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         // then
         String yearMonth = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
         assertThat(response.get(0).getUsingHistoryByMonth().get(0).getYearMonth()).isEqualTo(yearMonth);
+    }
+
+    @Test
+    public void getUserTicketExpiringHistorySuccess() throws Exception {
+        // given
+        long centerId = 1L;
+
+        mockForCreateTicket();
+        mockForPurchaseTicket();
+        long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
+        long userTicketId = UserTicketSteps.purchaseTicket(ticketId);
+        UserTicketSteps.purchaseTicket(ticketId);
+        CenterMembershipSteps.approveUserTicket(userTicketId);
+
+        // when
+        UserTicket expiredUserTicket = userTicketRepository.findById(userTicketId).orElseThrow();
+        ReflectionTestUtils.setField(expiredUserTicket, "endDate", LocalDate.now().minusDays(1));
+        userTicketRepository.save(expiredUserTicket);
+
+        List<UserTicketExpiringHistoryResponseDto> response = UserTicketSteps.getUserTicketExpiringHistory();
+
+        // then
+        String yearMonth = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+        assertThat(response.size()).isEqualTo(1);
+        assertThat(response.get(0).getExpireCount()).isEqualTo(TicketFixture.USE_COUNT);
     }
 
     @Test

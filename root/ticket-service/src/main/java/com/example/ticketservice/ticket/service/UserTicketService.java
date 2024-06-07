@@ -1,9 +1,6 @@
 package com.example.ticketservice.ticket.service;
 
-import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
-import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
-import com.example.ticketservice.ticket.dto.response.UnapprovedUserTicketListResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.*;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -23,4 +20,7 @@ public interface UserTicketService {
     Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId);
 
     List<UserTicketUsingHistoryResponseDto> getUserTicketUsingHistory(long memberId);
+
+    List<UserTicketExpiringHistoryResponseDto> getUserTicketExpiringHistory(long memberId);
+
 }
