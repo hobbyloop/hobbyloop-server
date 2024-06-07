@@ -99,6 +99,7 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
         List<UserTicket> userTicketList = userTicketRepository.findAllByMemberId(centerMembership.getMemberId());
         List<TicketResponseDto> ticketList = userTicketList.stream()
                 .map(UserTicket::getTicket)
+                .filter(ticket -> ticket.getCenterId().equals(centerMembership.getCenterId()))
                 .map(ticket -> {
                     CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(ticket.getCenterId()).getData();
                     return TicketResponseDto.from(ticket, centerInfo);
