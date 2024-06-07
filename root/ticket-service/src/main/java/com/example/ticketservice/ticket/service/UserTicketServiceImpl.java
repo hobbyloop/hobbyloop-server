@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -157,7 +158,7 @@ public class UserTicketServiceImpl implements UserTicketService {
     @Override
     @Transactional(readOnly = true)
     public List<UserTicketUsingHistoryResponseDto> getUserTicketUsingHistory(long memberId) {
-        List<UserTicket> userTicketList = userTicketRepository.findAllByMemberId(memberId);
+        List<UserTicket> userTicketList = userTicketRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
 
         List<UserTicketUsingHistoryResponseDto> result = new ArrayList<>();
 
@@ -184,7 +185,31 @@ public class UserTicketServiceImpl implements UserTicketService {
                 usingHistories.add(new UsingHistoryByMonthDto(entry.getKey(), sortedUsingHistories));
             }
 
+            usingHistories.sort(Comparator.comparing((UsingHistoryByMonthDto history) -> YearMonth.parse(history.getYearMonth(), DateTimeFormatter.ofPattern("yyyy/MM"))).reversed());
+
             UserTicketUsingHistoryResponseDto dto = UserTicketUsingHistoryResponseDto.of(userTicket, centerInfo.getCenterName(), usingHistories);
+
+            result.add(dto);
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserTicketExpiringHistoryResponseDto> getUserTicketExpiringHistory(long memberId) {
+        List<UserTicket> userTicketList = userTicketRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+
+        List<UserTicketExpiringHistoryResponseDto> result = new ArrayList<>();
+        for (UserTicket userTicket : userTicketList) {
+            if (LocalDate.now().isBefore(userTicket.getEndDate())) {
+                continue;
+            }
+
+            CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(userTicket.getTicket().getCenterId()).getData();
+
+            String yearMonth = userTicket.getEndDate().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+
+            UserTicketExpiringHistoryResponseDto dto = UserTicketExpiringHistoryResponseDto.of(userTicket, centerInfo.getCenterName(), yearMonth);
 
             result.add(dto);
         }

@@ -17,6 +17,8 @@ public interface UserTicketRepository extends JpaRepository<UserTicket, Long>, U
 
     List<UserTicket> findAllByMemberId(long memberId);
 
+    List<UserTicket> findAllByMemberIdOrderByCreatedAtDesc(long memberId);
+
     Optional<UserTicket> findFirstByMemberIdOrderByCreatedAtDesc(long memberId);
 
     Page<UserTicket> findByEndDateBefore(LocalDate endDate, Pageable pageable);

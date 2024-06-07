@@ -5,9 +5,12 @@ import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.TicketFixture;
+import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.service.TicketService;
+import com.example.ticketservice.ticket.service.UserTicketService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -56,6 +59,7 @@ public class TicketServiceTest {
         ticketId = ticketService.createTicket(1L, TicketFixture.defaultTicketCreateRequest(), generateMockImageFile()).getTicketId();
         ticketService.uploadTicket(ticketId);
     }
+
 
     private MultipartFile generateMockImageFile() throws IOException {
         File tempFile = File.createTempFile("test", ".jpg");
