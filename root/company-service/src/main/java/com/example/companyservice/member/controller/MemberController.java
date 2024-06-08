@@ -22,5 +22,4 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK)
             .body(new BaseResponseDto<>(memberService.createMember(requestDto)));
     }
-
 }

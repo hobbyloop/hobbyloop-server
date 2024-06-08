@@ -23,6 +23,10 @@ public class LectureReservationServiceImpl implements LectureReservationService 
         UserTicket userTicket = userTicketRepository.findById(userTicketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.USER_TICKET_NOT_EXIST_EXCEPTION));
 
+        if (!userTicket.isApprove()) {
+            throw new ApiException(ExceptionEnum.UNAPPROVED_USER_TICKET_EXCEPTION);
+        }
+
         // TODO: 해당 이용권으로 예약 가능한지 체크
 
         // TODO: LectureSchedule 정원 수 체크 (LectureClient로 확인)

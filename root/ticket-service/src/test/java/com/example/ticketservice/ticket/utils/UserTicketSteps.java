@@ -2,6 +2,8 @@ package com.example.ticketservice.ticket.utils;
 
 import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
+import com.example.ticketservice.ticket.dto.response.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -48,7 +50,7 @@ public class UserTicketSteps {
         return objectMapper.readTree(responseBody).get("data").asLong();
     }
 
-    public static Map<String, AvailableUserTicketsWithCenterInfo> getMyAvailableUserTicketList() throws Exception {
+    public static List<AvailableUserTicketsWithCenterInfo> getMyAvailableUserTicketList() throws Exception {
 
             String responseBody = RestAssured
                     .given().log().all()
@@ -74,7 +76,7 @@ public class UserTicketSteps {
             objectMapper.registerModule(module);
             objectMapper.registerModule(new JavaTimeModule());
 
-            TypeReference<Map<String, AvailableUserTicketsWithCenterInfo>> typeRef = new TypeReference<Map<String, AvailableUserTicketsWithCenterInfo>>() {};
+            TypeReference<List<AvailableUserTicketsWithCenterInfo>> typeRef = new TypeReference<List<AvailableUserTicketsWithCenterInfo>>() {};
             return objectMapper.readValue(dataNode.traverse(), typeRef);
     }
 
@@ -105,6 +107,44 @@ public class UserTicketSteps {
         objectMapper.registerModule(new JavaTimeModule());
 
         TypeReference<Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>>> typeRef = new TypeReference<Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>>>() {};
+        return objectMapper.readValue(dataNode.traverse(), typeRef);
+    }
+
+    public static List<UserTicketUsingHistoryResponseDto> getUserTicketUsingHistory() throws Exception {
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .header("id", 1L)   // TODO: Replace with actual member ID
+                .get("/api/v1/user-tickets/using-histories")
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        objectMapper.registerModule(new JavaTimeModule());
+
+        TypeReference<List<UserTicketUsingHistoryResponseDto>> typeRef = new TypeReference<List<UserTicketUsingHistoryResponseDto>>() {};
+        return objectMapper.readValue(dataNode.traverse(), typeRef);
+    }
+
+    public static List<UserTicketExpiringHistoryResponseDto> getUserTicketExpiringHistory() throws Exception {
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .header("id", 1L)   // TODO: Replace with actual member ID
+                .get("/api/v1/user-tickets/expiring-histories")
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        objectMapper.registerModule(new JavaTimeModule());
+
+        TypeReference<List<UserTicketExpiringHistoryResponseDto>> typeRef = new TypeReference<List<UserTicketExpiringHistoryResponseDto>>() {};
         return objectMapper.readValue(dataNode.traverse(), typeRef);
 
     }

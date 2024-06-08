@@ -69,7 +69,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Integer> getUsedRank() {
         return advertisementRepository.getUsedRank();
     }

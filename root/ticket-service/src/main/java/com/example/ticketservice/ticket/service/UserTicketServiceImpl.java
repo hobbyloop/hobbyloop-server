@@ -7,17 +7,16 @@ import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDt
 import com.example.ticketservice.ticket.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.ticket.common.exception.ApiException;
 import com.example.ticketservice.ticket.common.exception.ExceptionEnum;
-import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
+import com.example.ticketservice.ticket.dto.response.*;
+import com.example.ticketservice.ticket.entity.LectureReservation;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.event.UserTicketApprovedEvent;
 import com.example.ticketservice.pay.entity.PurchaseHistory;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
+import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
-import com.example.ticketservice.ticket.dto.response.AvailableUserTicketResponseDto;
-import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
-import com.example.ticketservice.ticket.dto.response.UnapprovedUserTicketListResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,7 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class UserTicketServiceImpl implements UserTicketService {
     private final CompanyServiceClient companyServiceClient;
     private final MemberServiceClient memberServiceClient;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
+    private final LectureReservationRepository lectureReservationRepository;
 
     @Override
     @Transactional
@@ -104,29 +106,28 @@ public class UserTicketServiceImpl implements UserTicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId) {
+    public List<AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId) {
         List<UserTicket> userTicketList = userTicketRepository.findAvailableUserTicketList(memberId);
 
-        return userTicketList.stream()
-                .collect(Collectors.groupingBy(
-                        userTicket -> {
-                            Long centerId = userTicket.getTicket().getCenterId();
-                            CenterInfoResponseDto centerInfoResponseDto = companyServiceClient.getCenterInfo(centerId).getData();
-                            return centerInfoResponseDto.getCenterName();
-                        },
-                        Collectors.collectingAndThen(
-                                Collectors.toList(),
-                                list -> {
-                                    UserTicket firstUserTicket = list.get(0);
-                                    Long centerId = firstUserTicket.getTicket().getCenterId();
-                                    CenterInfoResponseDto centerInfoResponseDto = companyServiceClient.getCenterInfo(centerId).getData();
-                                    List<AvailableUserTicketResponseDto> userTicketResponseDtoList = list.stream()
-                                            .map(AvailableUserTicketResponseDto::of)
-                                            .collect(Collectors.toList());
-                                    return AvailableUserTicketsWithCenterInfo.of(centerId, centerInfoResponseDto.isRefundable(), userTicketResponseDtoList);
-                                }
-                        )
-                ));
+        Map<Long, AvailableUserTicketsWithCenterInfo> centerInfoMap = new HashMap<>();
+
+        for (UserTicket userTicket : userTicketList) {
+            Long centerId = userTicket.getTicket().getCenterId();
+
+            if (!centerInfoMap.containsKey(centerId)) {
+                CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(userTicket.getTicket().getCenterId()).getData();
+                AvailableUserTicketsWithCenterInfo availableUserTicketsWithCenterInfo = AvailableUserTicketsWithCenterInfo.of(centerId, centerInfo.getCenterName(), centerInfo.isRefundable(), new ArrayList<>());
+                centerInfoMap.put(centerId, availableUserTicketsWithCenterInfo);
+            }
+
+            AvailableUserTicketsWithCenterInfo availableUserTicketsWithCenterInfo = centerInfoMap.get(centerId);
+
+            AvailableUserTicketResponseDto availableUserTicket = AvailableUserTicketResponseDto.of(userTicket);
+
+            availableUserTicketsWithCenterInfo.getAvailableUserTickets().add(availableUserTicket);
+        }
+
+        return new ArrayList<>(centerInfoMap.values());
     }
 
     @Override
@@ -151,5 +152,66 @@ public class UserTicketServiceImpl implements UserTicketService {
                                 }
                         )
                 ));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserTicketUsingHistoryResponseDto> getUserTicketUsingHistory(long memberId) {
+        List<UserTicket> userTicketList = userTicketRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+
+        List<UserTicketUsingHistoryResponseDto> result = new ArrayList<>();
+
+        for (UserTicket userTicket : userTicketList) {
+            CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(userTicket.getTicket().getCenterId()).getData();
+
+            Map<String, List<UsingHistoryDto>> usingHistoriesByMonth = new HashMap<>();
+            List<LectureReservation> reservations = lectureReservationRepository.findByUserTicket(userTicket);
+            for (LectureReservation reservation : reservations) {
+                String yearMonth = reservation.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+
+                if (!usingHistoriesByMonth.containsKey(yearMonth)) {
+                    usingHistoriesByMonth.put(yearMonth, new ArrayList<>());
+                }
+
+                usingHistoriesByMonth.get(yearMonth).add(UsingHistoryDto.from(reservation));
+            }
+
+            List<UsingHistoryByMonthDto> usingHistories = new ArrayList<>();
+            for (Map.Entry<String, List<UsingHistoryDto>> entry : usingHistoriesByMonth.entrySet()) {
+                List<UsingHistoryDto> sortedUsingHistories = entry.getValue().stream()
+                                .sorted(Comparator.comparing(UsingHistoryDto::getUsedAt).reversed())
+                                        .toList();
+                usingHistories.add(new UsingHistoryByMonthDto(entry.getKey(), sortedUsingHistories));
+            }
+
+            usingHistories.sort(Comparator.comparing((UsingHistoryByMonthDto history) -> YearMonth.parse(history.getYearMonth(), DateTimeFormatter.ofPattern("yyyy/MM"))).reversed());
+
+            UserTicketUsingHistoryResponseDto dto = UserTicketUsingHistoryResponseDto.of(userTicket, centerInfo.getCenterName(), usingHistories);
+
+            result.add(dto);
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserTicketExpiringHistoryResponseDto> getUserTicketExpiringHistory(long memberId) {
+        List<UserTicket> userTicketList = userTicketRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+
+        List<UserTicketExpiringHistoryResponseDto> result = new ArrayList<>();
+        for (UserTicket userTicket : userTicketList) {
+            if (LocalDate.now().isBefore(userTicket.getEndDate())) {
+                continue;
+            }
+
+            CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(userTicket.getTicket().getCenterId()).getData();
+
+            String yearMonth = userTicket.getEndDate().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+
+            UserTicketExpiringHistoryResponseDto dto = UserTicketExpiringHistoryResponseDto.of(userTicket, centerInfo.getCenterName(), yearMonth);
+
+            result.add(dto);
+        }
+        return result;
     }
 }

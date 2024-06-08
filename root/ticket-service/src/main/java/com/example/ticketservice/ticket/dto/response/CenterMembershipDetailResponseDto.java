@@ -1,14 +1,18 @@
 package com.example.ticketservice.ticket.dto.response;
 
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CenterMembershipDetailResponseDto {
     private long centerMembershipId;
     private String memberName;

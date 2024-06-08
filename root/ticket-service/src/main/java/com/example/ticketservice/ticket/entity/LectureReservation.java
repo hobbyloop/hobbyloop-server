@@ -27,11 +27,14 @@ public class LectureReservation extends TimeStamped {
 
     private Long memberId;
 
+    private int remainingCount;
+
     public static LectureReservation of(UserTicket userTicket, Long lectureScheduleId, Long memberId) {
         return LectureReservation.builder()
                 .status(ReservationStatusEnum.CONFIRM.getReservationStatusType())
                 .userTicket(userTicket)
                 .lectureScheduleId(lectureScheduleId)
+                .remainingCount(userTicket.getRemainingCount())
                 .memberId(memberId)
                 .build();
     }

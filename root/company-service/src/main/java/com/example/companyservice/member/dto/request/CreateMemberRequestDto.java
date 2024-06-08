@@ -1,5 +1,6 @@
 package com.example.companyservice.member.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class CreateMemberRequestDto {
 
     private int gender;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate birthday;
 
     private String phoneNumber;

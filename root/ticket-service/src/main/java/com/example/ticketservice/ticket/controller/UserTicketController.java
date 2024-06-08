@@ -4,6 +4,8 @@ import com.example.ticketservice.ticket.common.util.Utils;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
+import com.example.ticketservice.ticket.dto.response.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
 import com.example.ticketservice.ticket.service.UserTicketService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +39,23 @@ public class UserTicketController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<BaseResponseDto<Map<String, AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
+    public ResponseEntity<BaseResponseDto<List<AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(userTicketService.getAvailableUserTicketList(memberId)));
+    }
+
+    @GetMapping("/using-histories")
+    public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(userTicketService.getUserTicketUsingHistory(memberId)));
+    }
+
+    @GetMapping("/expiring-histories")
+    public ResponseEntity<BaseResponseDto<List<UserTicketExpiringHistoryResponseDto>>> getUserTicketExpiringHistories(HttpServletRequest request) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(userTicketService.getUserTicketExpiringHistory(memberId)));
     }
 }

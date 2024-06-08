@@ -2,6 +2,7 @@ package com.example.ticketservice.centermembership;
 
 import com.example.ticketservice.ticket.dto.request.CenterMembershipJoinRequestDto;
 import com.example.ticketservice.ticket.dto.response.CenterMemberResponseDto;
+import com.example.ticketservice.ticket.dto.response.CenterMembershipDetailResponseDto;
 import com.example.ticketservice.ticket.dto.response.CenterMembershipJoinedResponseDto;
 import com.example.ticketservice.ticket.dto.response.UnapprovedUserTicketListResponseDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -75,5 +76,23 @@ public class CenterMembershipSteps {
         JsonNode dataNode = responseJson.get("data");
 
         return objectMapper.readValue(dataNode.toString(), new TypeReference<List<CenterMemberResponseDto>>() {});
+    }
+
+    public static CenterMembershipDetailResponseDto getCenterMembershipDetail(long centerMembershipId) throws Exception {
+
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .get("/api/v1/admin/center-membership/{centerMembershipId}", centerMembershipId)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+        objectMapper.registerModule(new JavaTimeModule());
+
+        return objectMapper.readValue(dataNode.toString(), new TypeReference<CenterMembershipDetailResponseDto>() {});
     }
 }
