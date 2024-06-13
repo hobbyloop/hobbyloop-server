@@ -2,6 +2,7 @@ package com.example.companyservice.member.entity;
 
 import com.example.companyservice.company.entity.TimeStamped;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
+import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,10 @@ public class Member extends TimeStamped {
     private LocalDate birthday;
 
     private String phoneNumber;
+
+    private String profileImageKey;
+
+    private String profileImageUrl;
 
     private boolean isOption1;
 
@@ -72,5 +77,13 @@ public class Member extends TimeStamped {
 
     public void deleteMember() {
         this.isDeleted = false;
+    }
+
+    public void update(MemberUpdateRequestDto request, String profileImageKey, String profileImageUrl) {
+        this.name = request.getName();
+        this.nickname = request.getNickname();
+        this.birthday = request.getBirthday();
+        this.profileImageKey = profileImageKey;
+        this.profileImageUrl = profileImageUrl;
     }
 }
