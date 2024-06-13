@@ -35,6 +35,10 @@ public class DatabaseCleanup implements InitializingBean {
         // 캐스팅된 Field 객체를 사용하여 @Column 어노테이션 접근
         Column column = idField.getAnnotation(Column.class);
 
+        if (column == null || column.name().isEmpty()) {
+            return camelCaseToSnakeCase(idField.getName());
+        }
+
         // @Column 어노테이션의 name 속성 값 반환
         return column.name();
     }
