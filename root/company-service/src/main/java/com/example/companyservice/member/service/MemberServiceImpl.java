@@ -3,7 +3,7 @@ package com.example.companyservice.member.service;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.service.AmazonS3Service;
-import com.example.companyservice.member.client.PointServiceClient;
+import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.MemberInfoResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
@@ -21,7 +21,7 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final AmazonS3Service amazonS3Service;
-    private final PointServiceClient pointServiceClient;
+    private final TicketServiceClient ticketServiceClient;
 
     @Override
     @Transactional
@@ -29,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = Member.of(requestDto);
         Member savedMember = memberRepository.save(member);
 
-        pointServiceClient.join(savedMember.getId()); // 회원가입 포인트 적립
+        ticketServiceClient.earnPointsWhenJoining(savedMember.getId()); // 회원가입 포인트 적립
 
         return savedMember.getId();
     }
