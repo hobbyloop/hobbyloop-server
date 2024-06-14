@@ -1,8 +1,8 @@
 package com.example.ticketservice.ticket.controller;
 
-import com.example.ticketservice.ticket.common.exception.ApiException;
-import com.example.ticketservice.ticket.common.exception.ApiExceptionEntity;
-import com.example.ticketservice.ticket.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ApiExceptionEntity;
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

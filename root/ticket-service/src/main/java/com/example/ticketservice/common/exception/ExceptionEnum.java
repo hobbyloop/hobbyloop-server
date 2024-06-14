@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket.common.exception;
+package com.example.ticketservice.common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

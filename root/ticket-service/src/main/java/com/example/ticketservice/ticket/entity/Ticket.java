@@ -1,7 +1,7 @@
 package com.example.ticketservice.ticket.entity;
 
-import com.example.ticketservice.ticket.common.exception.ApiException;
-import com.example.ticketservice.ticket.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
 import jakarta.persistence.*;

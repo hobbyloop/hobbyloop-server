@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket.config;
+package com.example.ticketservice.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

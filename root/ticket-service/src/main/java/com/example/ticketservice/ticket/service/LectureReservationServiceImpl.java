@@ -1,7 +1,7 @@
 package com.example.ticketservice.ticket.service;
 
-import com.example.ticketservice.ticket.common.exception.ApiException;
-import com.example.ticketservice.ticket.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.ticket.entity.LectureReservation;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;

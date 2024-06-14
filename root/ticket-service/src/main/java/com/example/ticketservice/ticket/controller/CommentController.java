@@ -1,6 +1,6 @@
 package com.example.ticketservice.ticket.controller;
 
-import com.example.ticketservice.ticket.common.util.Utils;
+import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.request.CommentRequestDto;
 import com.example.ticketservice.ticket.dto.response.CommentResponseDto;
