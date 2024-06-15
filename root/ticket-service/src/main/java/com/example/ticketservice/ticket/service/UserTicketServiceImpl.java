@@ -55,8 +55,7 @@ public class UserTicketServiceImpl implements UserTicketService {
         userTicketRepository.save(userTicket);
 
         // API Test를 위한 구매기록 저장 로직 언제든지 수정하셔도 됩니다.
-        OriginalCenterResponseDto centerInfo = companyServiceClient.getOriginalCenterInfo(ticket.getCenterId()).getData();
-        PurchaseHistory purchaseHistory = PurchaseHistory.of(centerInfo, memberId, ticket, null);
+        PurchaseHistory purchaseHistory = PurchaseHistory.of(memberId, ticket, null);
         purchaseHistoryRepository.save(purchaseHistory);
 
         return userTicket.getId();

@@ -30,10 +30,6 @@ public class PurchaseHistory extends TimeStamped {
 
     private boolean isRefund;
 
-    private String centerName;
-
-    private String centerLogo;
-
     private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,8 +40,7 @@ public class PurchaseHistory extends TimeStamped {
 
     private Long looppassId;
 
-    public static PurchaseHistory of(OriginalCenterResponseDto centerInfo,
-                                     Long memberId,
+    public static PurchaseHistory of(Long memberId,
                                      Ticket ticket,
                                      Long memberCouponId) {
         return PurchaseHistory.builder()
@@ -54,8 +49,6 @@ public class PurchaseHistory extends TimeStamped {
                 .price(10000)
                 .usePoint(1000)
                 .isRefund(false)
-                .centerName(centerInfo.getCenterName())
-                .centerLogo(centerInfo.getLogoImageUrl())
                 .memberId(memberId)
                 .ticket(ticket)
                 .memberCouponId(memberCouponId)

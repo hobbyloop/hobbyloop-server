@@ -2,6 +2,8 @@ package com.example.ticketservice.ticket.service;
 
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
+import com.example.ticketservice.ticket.client.MemberServiceClient;
+import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.dto.request.ReviewRequestDto;
 import com.example.ticketservice.ticket.dto.response.ReviewByCenterResponseDto;
 import com.example.ticketservice.ticket.dto.response.ReviewCommentResponseDto;
@@ -40,12 +42,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final AmazonS3Service amazonS3Service;
 
+    private final MemberServiceClient memberServiceClient;
+
     @Override
     @Transactional
     public Long createReview(long memberId, long ticketId, ReviewRequestDto requestDto, List<MultipartFile> reviewImageList) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
-        Review review = Review.of(requestDto, ticket, memberId, "", ticket.getCenterId());
+        MemberInfoResponseDto memberInfoResponseDto = memberServiceClient.getMemberInfo(memberId).getData();
+        Review review = Review.of(requestDto, ticket, memberId, memberInfoResponseDto.getNickname(), ticket.getCenterId());
         saveReviewImage(review, ticket, reviewImageList);
         Review saveReview = reviewRepository.save(review);
         ticket.updateScoreAndReviewCount(saveReview.getScore());
