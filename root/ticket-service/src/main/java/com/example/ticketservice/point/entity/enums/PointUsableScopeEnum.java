@@ -9,7 +9,8 @@ import java.util.Arrays;
 @AllArgsConstructor
 public enum PointUsableScopeEnum {
     GENERAL(1),
-    SPECIFIC(2);
+    SPECIFIC_COMPANY(2),
+    SPECIFIC_CENTER(3);
 
     private final int value;
 

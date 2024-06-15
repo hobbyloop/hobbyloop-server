@@ -4,13 +4,15 @@ import com.example.ticketservice.point.dto.PointEarnedResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryByMonthResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryResponseDto;
+import com.example.ticketservice.point.entity.CenterPointPolicy;
+import com.example.ticketservice.point.entity.CompanyPointPolicy;
 import com.example.ticketservice.point.entity.Point;
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
 import com.example.ticketservice.point.policy.PlatformPointPolicy;
+import com.example.ticketservice.point.policy.PurchasePointPolicy;
 import com.example.ticketservice.point.policy.SignupPointPolicy;
-import com.example.ticketservice.point.repository.PointHistoryRepository;
-import com.example.ticketservice.point.repository.PointRepository;
+import com.example.ticketservice.point.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,12 @@ import java.util.*;
 public class PointServiceImpl implements PointService {
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
+
+    private final PointEventPolicyRepository pointEventPolicyRepository;
+
+    private final CompanyPointPolicyRepository companyPointPolicyRepository;
+
+    private final CenterPointPolicyRepository centerPointPolicyRepository;
 
     @Override
     @Transactional
@@ -102,18 +110,50 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
-    public PointEarnedResponseDto earnPointSpecific(Long memberId, Long companyId, PlatformPointPolicy pointPolicy) {
+    public PointEarnedResponseDto earnPointSpecificCompany(
+            Long memberId, Long companyId, PlatformPointPolicy pointPolicy) {
         Point point = pointRepository.findByMemberIdAndCompanyId(memberId, companyId)
                 .orElseGet(() -> Point.builder()
                         .memberId(memberId)
                         .companyId(companyId)
                         .balance(0L)
-                        .usableScope(PointUsableScopeEnum.SPECIFIC.getValue())
+                        .usableScope(PointUsableScopeEnum.SPECIFIC_COMPANY.getValue())
                         .build());
 
         PointHistory pointHistory = pointPolicy.earnOrUse(point);
         pointHistoryRepository.save(pointHistory);
 
         return new PointEarnedResponseDto(pointHistory.getAmount(), point.getBalance(), pointHistory.getExpirationDateTime());
+    }
+
+//    @Transactional
+//    public PointEarnedResponseDto earnPointSpecificCenter(
+//            Long memberId, Long centerId, CenterPointPolicy pointPolicy
+//    ) {
+//        Point point = pointRepository.findByMemberIdAndCenterId(memberId, centerId)
+//                .orElseGet(() -> Point.builder()
+//                        .memberId(memberId)
+//                        .centerId(centerId)
+//                        .balance(0L)
+//                        .usableScope(PointUsableScopeEnum.SPECIFIC_CENTER.getValue())
+//                        .build());
+//    }
+
+    @Transactional
+    public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount) {
+        // 기본 적립 정책인 PurchasePointPolicy에 대한 적립 메소드 호출 (무조건 General)
+        PointEarnedResponseDto basicEarnedPoint = earnPointGeneral(memberId, new PurchasePointPolicy());
+
+        // CompanyPointPolicy, CenterPointPolicy 가져와서 usableScope 조회하여 그에 따라 적립 메소드 호출
+        Optional<CompanyPointPolicy> optionalCompanyPointPolicy = companyPointPolicyRepository.findByCompanyId(companyId);
+        if (optionalCompanyPointPolicy.isPresent()) {
+            CompanyPointPolicy companyPointPolicy = optionalCompanyPointPolicy.get();
+            if (companyPointPolicy.isSpecificCenterScope()) {
+                CenterPointPolicy centerPointPolicy = centerPointPolicyRepository.findByCenterId(centerId).orElseThrow();
+
+            }
+        }
+
+        // PointEventPolicy도 조회하여 활성 이벤트 존재할 시 적립 메소드 호출
     }
 }

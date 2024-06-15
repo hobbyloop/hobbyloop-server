@@ -9,7 +9,7 @@ public interface PointService {
 
     PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy);
 
-    PointEarnedResponseDto earnPointSpecific(Long memberId, Long companyId, PlatformPointPolicy pointPolicy);
+    PointEarnedResponseDto earnPointSpecificCompany(Long memberId, Long companyId, PlatformPointPolicy pointPolicy);
 
     Long getMemberTotalPoints(Long memberId);
 

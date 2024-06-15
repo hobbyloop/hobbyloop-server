@@ -12,6 +12,7 @@ public class PurchasePointPolicy implements PlatformPointPolicy {
     private final int EXPIRATION_PERIOD_DAYS = 365;
     private final String DESCRIPTION = "구매 시 기본 5% 적립";
 
+    @Override
     public void calculate(Long totalAmount) {
         earnAmount = (long) (totalAmount * EARN_RATE);
     }

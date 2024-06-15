@@ -12,6 +12,11 @@ public class SignupPointPolicy implements PlatformPointPolicy {
     private final String DESCRIPTION = "회원가입 포인트 적립";
 
     @Override
+    public void calculate(Long totalAmount) {
+
+    }
+
+    @Override
     public PointHistory earnOrUse(Point point) {
         point.earn(EARN_AMOUNT);
 
