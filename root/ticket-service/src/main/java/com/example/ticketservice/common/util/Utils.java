@@ -1,7 +1,7 @@
-package com.example.ticketservice.ticket.common.util;
+package com.example.ticketservice.common.util;
 
-import com.example.ticketservice.ticket.common.exception.ApiException;
-import com.example.ticketservice.ticket.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.exception.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

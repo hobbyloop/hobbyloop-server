@@ -1,7 +1,7 @@
 package com.example.ticketservice.ticket.service;
 
-import com.example.ticketservice.ticket.common.exception.ApiException;
-import com.example.ticketservice.ticket.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.exception.ApiException;
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.ticket.dto.request.ReviewRequestDto;
 import com.example.ticketservice.ticket.dto.response.ReviewByCenterResponseDto;
 import com.example.ticketservice.ticket.dto.response.ReviewCommentResponseDto;
