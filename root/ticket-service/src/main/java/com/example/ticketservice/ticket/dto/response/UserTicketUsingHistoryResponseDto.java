@@ -1,6 +1,5 @@
 package com.example.ticketservice.ticket.dto.response;
 
-import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +18,7 @@ public class UserTicketUsingHistoryResponseDto {
     private String ticketName;
     private String centerName;
     private int remainingCount;
+    private int totalCounting;
     private List<UsingHistoryByMonthDto> usingHistoryByMonth;
 
     public static UserTicketUsingHistoryResponseDto of(UserTicket userTicket, String centerName, List<UsingHistoryByMonthDto> usingHistoryByMonth) {
@@ -28,6 +28,7 @@ public class UserTicketUsingHistoryResponseDto {
                 .ticketName(userTicket.getTicket().getName())
                 .centerName(centerName)
                 .remainingCount(userTicket.getRemainingCount())
+                .totalCounting(userTicket.getTicket().getUseCount())
                 .usingHistoryByMonth(usingHistoryByMonth)
                 .build();
     }
