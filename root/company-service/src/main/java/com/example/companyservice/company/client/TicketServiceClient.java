@@ -3,6 +3,7 @@ package com.example.companyservice.company.client;
 import com.example.companyservice.company.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.company.client.dto.response.*;
 import com.example.companyservice.common.dto.BaseResponseDto;
+import com.example.companyservice.member.client.dto.PointEarnedResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,4 +33,7 @@ public interface TicketServiceClient {
 
     @GetMapping("/api/v1/client/tickets/has-ticket/{centerId}")
     BaseResponseDto<Boolean> getHasTicket(@PathVariable(value = "centerId") long centerId);
+
+    @PostMapping("/api/v1/points/client/join/{memberId}")
+    BaseResponseDto<PointEarnedResponseDto> earnPointsWhenJoining(@PathVariable Long memberId);
 }
