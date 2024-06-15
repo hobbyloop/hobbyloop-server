@@ -66,7 +66,7 @@ public class CompanyCreateRequestDto {
     @NotBlank
     private String businessAddress;
 
-    @NotBlank
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate openingDate;
 
