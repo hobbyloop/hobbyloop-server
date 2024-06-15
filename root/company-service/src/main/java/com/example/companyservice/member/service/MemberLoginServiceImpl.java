@@ -39,7 +39,11 @@ public class MemberLoginServiceImpl implements MemberLoginService {
         try {
             URL url = new URL(reqURL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+            if ("Kakao".equals(provider)) {
+                conn.setRequestMethod("POST");
+            } else {
+                conn.setRequestMethod("GET");
+            }
 
             // 요청에 필요한 Header에 포함될 내용
             conn.setRequestProperty("Authorization", "Bearer " + oAuthAccessToken);
@@ -108,7 +112,7 @@ public class MemberLoginServiceImpl implements MemberLoginService {
             userInfo.put("email", email);
             userInfo.put("subject", subject);
         } else {
-            String subject = element.getAsJsonObject().get("sub").getAsString();
+            String subject = element.getAsJsonObject().get("id").getAsString();
             String email = element.getAsJsonObject().get("email").getAsString();
 
             userInfo.put("email", email);
