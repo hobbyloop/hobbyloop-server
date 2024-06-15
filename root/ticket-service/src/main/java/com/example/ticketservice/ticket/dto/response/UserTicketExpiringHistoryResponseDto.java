@@ -18,6 +18,7 @@ public class UserTicketExpiringHistoryResponseDto {
     private String ticketName;
     private String centerName;
     private int remainingCount;
+    private int totalCounting;
     private String yearMonth;
     private int expireCount;
     private LocalDate expiredAt;
@@ -29,6 +30,7 @@ public class UserTicketExpiringHistoryResponseDto {
                 .ticketName(userTicket.getTicket().getName())
                 .centerName(centerName)
                 .remainingCount(0)
+                .totalCounting(userTicket.getTicket().getUseCount())
                 .yearMonth(yearMonth)
                 .expireCount(userTicket.getRemainingCount())
                 .expiredAt(userTicket.getEndDate())
