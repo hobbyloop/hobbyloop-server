@@ -33,6 +33,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     testImplementation 'org.springframework.batch:spring-batch-test'
 
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
 def querydslSrcDir = 'src/main/generated'

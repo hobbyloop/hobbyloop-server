@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Builder
 public class MemberInfoResponseDto {
     private String memberName;
+    private String nickname;
     private String phoneNumber;
     private LocalDate birthday;
     private String gender;
@@ -17,6 +18,7 @@ public class MemberInfoResponseDto {
     public static MemberInfoResponseDto from(Member member) {
         return MemberInfoResponseDto.builder()
                 .memberName(member.getName())
+                .nickname(member.getNickname())
                 .phoneNumber(member.getPhoneNumber())
                 .birthday(member.getBirthday())
                 .gender("남") // TODO: instructor 패키지의 Gender 수정 필요

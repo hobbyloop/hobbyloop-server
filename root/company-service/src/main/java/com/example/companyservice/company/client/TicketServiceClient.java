@@ -35,5 +35,5 @@ public interface TicketServiceClient {
     BaseResponseDto<Boolean> getHasTicket(@PathVariable(value = "centerId") long centerId);
 
     @PostMapping("/api/v1/points/client/join/{memberId}")
-    BaseResponseDto<PointEarnedResponseDto> earnPointsWhenJoining(@PathVariable Long memberId);
+    BaseResponseDto<PointEarnedResponseDto> earnPointsWhenJoining(@PathVariable(value = "memberId") Long memberId);
 }
