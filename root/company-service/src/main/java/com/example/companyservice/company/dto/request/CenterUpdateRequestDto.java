@@ -1,6 +1,7 @@
 package com.example.companyservice.company.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,14 +27,13 @@ public class CenterUpdateRequestDto {
     @NotBlank
     private String kakaoLink;
 
-    @NotBlank
     private List<HourRequestDto> operatingHourList;
 
     private List<HourRequestDto> breakHourList;
 
-    @NotBlank
+    @NotNull
     private double latitude;
 
-    @NotBlank
+    @NotNull
     private double longitude;
 }

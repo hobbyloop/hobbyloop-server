@@ -3,6 +3,7 @@ package com.example.companyservice.company.dto.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,15 +32,15 @@ public class CompanyCreateRequestDto {
     @NotBlank
     private String oauth2AccessToken;
 
-    @NotBlank
+    @NotNull
     @JsonProperty
     private boolean isOption1;
 
-    @NotBlank
+    @NotNull
     @JsonProperty
     private boolean isOption2;
 
-    @NotBlank
+    @NotNull
     @JsonProperty
     private boolean isDutyFree;
 
@@ -89,18 +90,18 @@ public class CompanyCreateRequestDto {
     @NotBlank
     private String paymentType;
 
-    @NotBlank
+    @NotNull
     private int price;
 
-    @NotBlank
+    @NotNull
     private int vat;
 
-    @NotBlank
+    @NotNull
     private int totalPrice;
 
-    @NotBlank
+    @NotNull
     private double latitude;
 
-    @NotBlank
+    @NotNull
     private double longitude;
 }
