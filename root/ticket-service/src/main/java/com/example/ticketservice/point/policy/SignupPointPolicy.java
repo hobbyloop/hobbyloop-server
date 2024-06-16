@@ -27,6 +27,7 @@ public class SignupPointPolicy implements PlatformPointPolicy {
                 .balance(point.getBalance())
                 .expirationDateTime(LocalDateTime.now().plusDays(EXPIRATION_PERIOD_DAYS))
                 .description(DESCRIPTION)
+                .isProcessedByBatch(false)
                 .build();
     }
 }

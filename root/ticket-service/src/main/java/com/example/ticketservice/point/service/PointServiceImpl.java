@@ -5,6 +5,7 @@ import com.example.ticketservice.point.dto.PointHistoryByMonthResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryResponseDto;
 import com.example.ticketservice.point.entity.*;
+import com.example.ticketservice.point.entity.enums.PointTypeEnum;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
 import com.example.ticketservice.point.policy.PlatformPointPolicy;
 import com.example.ticketservice.point.policy.PurchasePointPolicy;
@@ -61,7 +62,7 @@ public class PointServiceImpl implements PointService {
     @Override
     @Transactional(readOnly = true)
     public PointHistoryListResponseDto getPointHistory(Long memberId) {
-        List<PointHistory> pointHistoryList = pointHistoryRepository.findByMemberId(memberId);
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByMemberIdAndTypeNot(memberId, PointTypeEnum.EXPIRE.getValue());
 
         Map<String, List<PointHistoryResponseDto>> pointHistoriesByMonth = new HashMap<>();
         for (PointHistory pointHistory : pointHistoryList) {

@@ -21,6 +21,8 @@ public class PointHistory extends TimeStamped {
 
     private Long companyId;
 
+    private Long centerId;
+
     // PointTypeEnum
     private int type;
 
@@ -32,5 +34,24 @@ public class PointHistory extends TimeStamped {
     // type이 EXPIRE일 시, NULL
     private LocalDateTime expirationDateTime;
 
+    // type이 EARN이 아닐 시, NULL
+    private Boolean isProcessedByBatch;
+
     private String description;
+
+    public boolean isGeneralPoint() {
+        return companyId == null && centerId == null;
+    }
+
+    public boolean isCompanyPoint() {
+        return companyId != null && centerId == null;
+    }
+
+    public boolean isCenterPoint() {
+        return companyId == null && centerId != null;
+    }
+
+    public void processByBatch() {
+        isProcessedByBatch = true;
+    }
 }
