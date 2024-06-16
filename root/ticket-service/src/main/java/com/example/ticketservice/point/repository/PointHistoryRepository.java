@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface PointHistoryRepository extends JpaRepository<PointHistory, Integer> {
     List<PointHistory> findByMemberId(Long memberId);
+
+    List<PointHistory> findByMemberIdAndTypeNot(Long memberId, int type);
+
+    List<PointHistory> findByMemberIdAndTypeIs(Long memberId, int type);
 }

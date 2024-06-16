@@ -47,6 +47,7 @@ public class CompanyPointPolicy extends TimeStamped implements PlatformPointPoli
                 .balance(point.getBalance())
                 .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
                 .description("업체 추가 적립") // TODO: 문구 고쳐야함
+                .isProcessedByBatch(false)
                 .build();
     }
 

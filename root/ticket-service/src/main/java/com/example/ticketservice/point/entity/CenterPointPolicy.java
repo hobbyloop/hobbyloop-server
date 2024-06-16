@@ -47,6 +47,7 @@ public class CenterPointPolicy extends TimeStamped implements PlatformPointPolic
                 .balance(point.getBalance())
                 .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
                 .description("센터 추가 적립") // TODO: 문구 고쳐야함
+                .isProcessedByBatch(false)
                 .build();
     }
 

@@ -29,7 +29,6 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class ExpiredCenterMembershipBatchConfig {
-
     private final UserTicketRepository userTicketRepository;
     private final CenterMembershipRepository centerMembershipRepository;
 

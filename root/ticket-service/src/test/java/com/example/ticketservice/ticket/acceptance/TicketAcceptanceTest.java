@@ -2,6 +2,7 @@ package com.example.ticketservice.ticket.acceptance;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.centermembership.CenterMembershipSteps;
+import com.example.ticketservice.fixture.MemberFixture;
 import com.example.ticketservice.lecturereservation.LectureReservationSteps;
 import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.fixture.CenterFixture;
@@ -102,6 +103,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest());
 
         // when
+        mockForCreateReview();
         Long reviewId = ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         AdminReviewTicketResponseDto ticket = AdminTicketSteps.getTicketDetailWithReview(ticketId);
 
@@ -118,6 +120,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForCreateTicket();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
 
+        mockForCreateReview();
         ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.badReviewCreateRequest());
@@ -140,6 +143,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForCreateTicket();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
 
+        mockForCreateReview();
         ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.badReviewCreateRequest());
@@ -160,6 +164,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         long centerId = 1L;
 
         mockForCreateTicket();
+        mockForCreateReview();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
@@ -359,6 +364,10 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         given(companyServiceClient.getCenterInfo(2L)).willReturn(new BaseResponseDto<>(CenterFixture.nonRefundableCenterInfoResponseDto()));
         given(amazonS3Service.saveS3Img(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
+    }
+
+    private void mockForCreateReview() {
+        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
     }
 
     private void mockForGetTicketDetail() {

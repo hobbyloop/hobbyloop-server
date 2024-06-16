@@ -193,10 +193,10 @@ public class CenterMembershipBatchTest extends AcceptanceTest {
         assertThat(activeCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.RENEWED.getStatusType());
     }
 
-    private void mockForCreateTicket() throws IOException {
+    private void mockForCreateTicket() {
         given(companyServiceClient.getCenterInfo(pilatesCenterId)).willReturn(new BaseResponseDto<>(CenterFixture.defaultCenterInfoResponseDto()));
         given(companyServiceClient.getCenterInfo(bakingCenterId)).willReturn(new BaseResponseDto<>(CenterFixture.nonRefundableCenterInfoResponseDto()));
-        given(amazonS3Service.upload(any(MultipartFile.class), anyString())).willReturn("test-image-key");
+        given(amazonS3Service.saveS3Img(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
     }
 

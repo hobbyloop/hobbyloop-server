@@ -262,6 +262,14 @@ public class CenterServiceImpl implements CenterService {
         return CenterDistanceInfoResponseDto.of(center, isBookmark, isSatisfied);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Long getCompanyIdOfCenter(Long centerId) {
+        Center center = centerRepository.findById(centerId).orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+
+        return center.getCompany().getId();
+    }
+
     private void toMainHomeCenterResponseDto(long memberId, int allowLocation, double latitude, double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
         for (Advertisement advertisement : advertisementList) {
             if (centerIdList.size() >= 30) break;

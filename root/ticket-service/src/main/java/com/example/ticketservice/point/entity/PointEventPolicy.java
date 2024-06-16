@@ -66,6 +66,7 @@ public class PointEventPolicy extends TimeStamped implements PlatformPointPolicy
                 .balance(point.getBalance())
                 .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
                 .description(description)
+                .isProcessedByBatch(false)
                 .build();
     }
 }

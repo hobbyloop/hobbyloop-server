@@ -2,6 +2,7 @@ package com.example.ticketservice.point;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.point.dto.PointEarnedResponseDto;
+import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,5 +25,17 @@ public class PointAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(response).isNotNull();
         assertThat(response.getBalance()).isEqualTo(3000L);
+    }
+
+    @Test
+    public void getPointHistorySuccess() throws Exception {
+        // given
+        PointSteps.earnPointWhenJoining(memberId);
+
+        // when
+        PointHistoryListResponseDto response = PointSteps.getPointHistory(memberId);
+
+        // then
+        assertThat(response.getTotalPoints()).isEqualTo(3000L);
     }
 }
