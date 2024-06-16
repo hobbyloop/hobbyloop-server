@@ -23,7 +23,11 @@ public enum ExceptionEnum {
     UNAPPROVED_USER_TICKET_EXCEPTION(HttpStatus.BAD_REQUEST, "UT004", "승인되지 않은 이용권입니다."),
     CENTER_MEMBERSHIP_ALREADY_JOINED_EXCEPTION(HttpStatus.BAD_REQUEST, "CM001", "이미 등록된 회원입니다."),
     CENTER_MEMBERSHIP_NOT_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "CM002", "존재하지 않는 회원입니다."),
-    INVALID_POINT_SCOPE_EXCEPTION(HttpStatus.BAD_REQUEST, "P001", "포인트 사용 범위가 잘못 설정되었습니다");
+    INVALID_POINT_SCOPE_EXCEPTION(HttpStatus.BAD_REQUEST, "P001", "포인트 사용 범위가 잘못 설정되었습니다."),
+    COUPON_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "CP001", "존재하지 않는 쿠폰입니다."),
+    COUPON_OUT_OF_DATE_EXCEPTION(HttpStatus.BAD_REQUEST, "CP002", "쿠폰 사용 기한 범위를 벗어났습니다."),
+    COUPON_ALREADY_ISSUED_EXCEPTION(HttpStatus.BAD_REQUEST, "CP003", "이미 발급된 쿠폰입니다."),
+    COUPON_SOLD_OUT_EXCEPTION(HttpStatus.BAD_REQUEST, "CP004", "쿠폰을 더이상 발급받을 수 없습니다.");
 
     private final HttpStatus status;
     private final String code;

@@ -39,4 +39,6 @@ public interface CenterService {
     List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, int allowLocation, double latitude, double longitude);
 
     CenterDistanceInfoResponseDto getCenterDistanceInfo(long centerId, long memberId, int refundable, int allowLocation, Double latitude, Double longitude, List<String> locations);
+
+    Long getCompanyIdOfCenter(Long centerId);
 }

@@ -6,6 +6,7 @@ import com.example.ticketservice.ticket.client.dto.response.OriginalBusinessResp
 import com.example.ticketservice.ticket.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,4 +33,7 @@ public interface CompanyServiceClient {
                                                                          @PathVariable(value = "latitude", required = false) Double latitude,
                                                                          @PathVariable(value = "longitude", required = false) Double longitude,
                                                                          @RequestParam(value = "location") List<String> locations);
+
+    @GetMapping("/{centerId}/company")
+    BaseResponseDto<Long> getCompanyIdOfCenter(@PathVariable(value = "centerId") Long centerId);
 }

@@ -34,4 +34,10 @@ public class CenterClientController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getCenterDistanceInfo(centerId, memberId, refundable, allowLocation, latitude, longitude, locations)));
     }
+
+    @GetMapping("/{centerId}/company")
+    public ResponseEntity<BaseResponseDto<Long>> getCompanyIdOfCenter(@PathVariable(value = "centerId") Long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(centerService.getCompanyIdOfCenter(centerId)));
+    }
 }
