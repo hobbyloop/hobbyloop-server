@@ -21,4 +21,17 @@ public class Utils {
             throw new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
         }
     }
+
+    /**
+     * HttpServletRequest로부터 header에서 권한을 조회합니다.
+     * @param request
+     * @return
+     */
+    public static String parseRole(HttpServletRequest request) {
+        try {
+            return request.getHeader("role");
+        } catch (NumberFormatException ex) {
+            throw new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
+        }
+    }
 }

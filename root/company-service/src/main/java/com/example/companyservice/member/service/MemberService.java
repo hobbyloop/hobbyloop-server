@@ -1,5 +1,6 @@
 package com.example.companyservice.member.service;
 
+import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.MemberInfoResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
@@ -8,7 +9,7 @@ import com.example.companyservice.member.dto.response.MemberMyPageHomeResponseDt
 import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
-    Long createMember(CreateMemberRequestDto requestDto);
+    TokenResponseDto createMember(CreateMemberRequestDto requestDto);
 
     void updateMember(long memberId, MemberUpdateRequestDto requestDto, MultipartFile profileImage);
 

@@ -1,5 +1,6 @@
 package com.example.companyservice.common.util;
 
+import com.example.companyservice.company.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -33,8 +34,9 @@ public class JwtUtils {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(Long id) {
+    public String createToken(Long id, Role role) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(id));
+        claims.put("role", role.name());
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)
@@ -44,8 +46,9 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId) {
+    public String createRefreshToken(Long userId, Role role) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(userId));
+        claims.put("role", role.name());
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claims)

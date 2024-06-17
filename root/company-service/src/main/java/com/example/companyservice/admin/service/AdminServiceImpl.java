@@ -1,9 +1,9 @@
 package com.example.companyservice.admin.service;
 
 import com.example.companyservice.admin.dto.request.AdminRequestDto;
-import com.example.companyservice.admin.dto.response.LoginResponseDto;
 import com.example.companyservice.admin.entity.Admin;
 import com.example.companyservice.admin.repository.AdminRepository;
+import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.util.JwtUtils;
@@ -34,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional(readOnly = true)
-    public LoginResponseDto login(AdminRequestDto requestDto) {
+    public TokenResponseDto login(AdminRequestDto requestDto) {
         Admin admin = adminRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.NOT_EXIST_EMAIL_EXCEPTION));
 
@@ -42,8 +42,8 @@ public class AdminServiceImpl implements AdminService {
             throw new ApiException(ExceptionEnum.PASSWORD_NOT_MATCH_EXCEPTION);
         }
 
-        String accessToken = jwtUtils.createToken(admin.getId());
-        String refreshToken = jwtUtils.createRefreshToken(admin.getId());
-        return LoginResponseDto.of(accessToken, refreshToken);
+        String accessToken = jwtUtils.createToken(admin.getId(), admin.getRole());
+        String refreshToken = jwtUtils.createRefreshToken(admin.getId(), admin.getRole());
+        return TokenResponseDto.of(accessToken, refreshToken);
     }
 }
