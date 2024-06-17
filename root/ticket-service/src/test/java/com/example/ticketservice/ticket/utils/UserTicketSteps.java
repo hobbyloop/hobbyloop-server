@@ -1,9 +1,9 @@
 package com.example.ticketservice.ticket.utils;
 
-import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
+import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketExpiringHistoryResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingHistoryResponseDto;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;

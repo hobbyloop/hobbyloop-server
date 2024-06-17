@@ -4,6 +4,7 @@ import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.coupon.dto.CouponCreateRequestDto;
 import com.example.ticketservice.coupon.dto.CouponResponseDto;
+import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.example.ticketservice.coupon.entity.Coupon;
 import com.example.ticketservice.coupon.entity.MemberCoupon;
 import com.example.ticketservice.coupon.repository.CouponRepository;
@@ -45,7 +46,16 @@ public class CouponServiceImpl implements CouponService {
     @Override
     @Transactional(readOnly = true)
     public Long getCountOfAvailableMemberCoupons(Long memberId) {
-        return memberCouponRepository.countByIsUsedFalseAndExpirationDateTimeAfter(LocalDateTime.now());
+        return memberCouponRepository.countByMemberIdAndIsUsedFalseAndExpirationDateTimeAfter(memberId, LocalDateTime.now());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MemberCouponResponseDto> getAvailableMemberCoupons(Long memberId) {
+        return memberCouponRepository.findAllByMemberIdAndIsUsedFalseAndExpirationDateTimeAfter(memberId, LocalDateTime.now())
+                .stream()
+                .map(MemberCouponResponseDto::from)
+                .collect(Collectors.toList());
     }
 
     // TODO: findForUpdate로 바꾸던지 동시성 처리 해야됨

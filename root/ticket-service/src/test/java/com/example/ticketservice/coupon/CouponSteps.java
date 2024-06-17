@@ -1,7 +1,7 @@
 package com.example.ticketservice.coupon;
 
 import com.example.ticketservice.coupon.dto.CouponResponseDto;
-import com.example.ticketservice.ticket.dto.response.UnapprovedUserTicketListResponseDto;
+import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -63,5 +63,23 @@ public class CouponSteps {
         JsonNode dataNode = responseJson.get("data");
 
         return objectMapper.readValue(dataNode.toString(), Long.class);
+    }
+
+    public static List<MemberCouponResponseDto> getAvailableMemberCoupons(Long memberId) throws Exception {
+        String responseBody = RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON.withCharset("UTF-8"))
+                .header("id", memberId)
+                .when()
+                .get("/api/v1/coupons/members")
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        return objectMapper.readValue(dataNode.toString(), objectMapper.getTypeFactory().constructCollectionType(List.class, MemberCouponResponseDto.class));
+
     }
 }
