@@ -1,6 +1,7 @@
 package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
@@ -24,7 +25,7 @@ public class MemberController {
 
     @PostMapping("/join")
     @Operation(summary = "회원가입")
-    public ResponseEntity<BaseResponseDto<Long>> createMember(@RequestBody CreateMemberRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<TokenResponseDto>> createMember(@RequestBody CreateMemberRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(new BaseResponseDto<>(memberService.createMember(requestDto)));
     }

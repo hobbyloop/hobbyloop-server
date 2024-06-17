@@ -24,12 +24,12 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
 
-    private final JWTUtil jwtUtil;
+    private final JwtUtils jwtUtils;
 
     @Autowired
-    public JwtAuthenticationFilter(JWTUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtils jwtUtils) {
         super(Config.class);
-        this.jwtUtil = jwtUtil;
+        this.jwtUtils = jwtUtils;
     }
 
     public static class Config {
@@ -42,14 +42,18 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             ServerHttpRequest request = exchange.getRequest();
 
             // 헤더에서 토큰 뽑아오기
-            String accessToken = jwtUtil.resolveToken(request);
+            String accessToken = jwtUtils.resolveToken(request);
 
             // 유효한 토큰인지 확인합니다.
-            jwtUtil.validateToken(accessToken);
+            jwtUtils.validateToken(accessToken);
 
-            String userId = jwtUtil.getUserPk(accessToken);
+            String userId = jwtUtils.getUserPk(accessToken);
+            String role = jwtUtils.getRole(accessToken);
             exchange.getRequest().mutate()
-                    .headers(httpHeaders -> httpHeaders.add("id", userId)).build();
+                    .headers(httpHeaders -> {
+                        httpHeaders.add("id", userId);
+                        httpHeaders.add("role", role);
+                    }).build();
 
             return chain.filter(exchange);
         };
