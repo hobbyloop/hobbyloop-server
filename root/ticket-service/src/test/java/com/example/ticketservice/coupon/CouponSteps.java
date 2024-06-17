@@ -49,6 +49,23 @@ public class CouponSteps {
         return objectMapper.readValue(dataNode.toString(), Long.class);
     }
 
+    public static void issueAllCoupons(Long memberId, List<CouponResponseDto> coupons) throws Exception {
+        List<Long> couponIds = coupons.stream()
+                        .map(CouponResponseDto::getCouponId)
+                        .toList();
+
+        RestAssured
+            .given().log().all()
+            .contentType(ContentType.JSON.withCharset("UTF-8"))
+            .header("id", memberId)
+            .queryParam("couponIds", couponIds)
+            .when()
+            .post("/api/v1/coupons/issue/all")
+            .then().log().all()
+            .statusCode(201)
+            .extract().asString();
+    }
+
     public static Long getMyCouponCount(Long memberId) throws Exception {
         String responseBody = RestAssured
                 .given().log().all()

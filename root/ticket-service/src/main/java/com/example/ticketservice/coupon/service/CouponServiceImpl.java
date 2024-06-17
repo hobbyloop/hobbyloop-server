@@ -77,4 +77,12 @@ public class CouponServiceImpl implements CouponService {
 
         return memberCouponRepository.save(memberCoupon).getId();
     }
+
+    @Override
+    @Transactional
+    public void issueAllCoupons(Long memberId, List<Long> couponIds) {
+        couponIds.forEach(
+                couponId -> issueSingleCoupon(memberId, couponId)
+        );
+    }
 }

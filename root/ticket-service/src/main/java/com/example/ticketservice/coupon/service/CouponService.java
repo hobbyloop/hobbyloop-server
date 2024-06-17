@@ -16,4 +16,6 @@ public interface CouponService {
     List<CouponResponseDto> getCenterCouponListForMember(Long memberId, Long centerId);
 
     Long issueSingleCoupon(Long memberId, Long couponId);
+
+    void issueAllCoupons(Long memberId, List<Long> couponIds);
 }

@@ -52,4 +52,16 @@ public class CouponController {
     }
 
 
+    @PostMapping("/issue/all")
+    public ResponseEntity<BaseResponseDto<Long>> issueAllCoupons(
+            @RequestParam(value = "couponIds") List<Long> couponIds,
+            HttpServletRequest request
+    ) {
+        Long memberId = Utils.parseAuthorizedId(request);
+
+        couponService.issueAllCoupons(memberId, couponIds);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponseDto<>());
+    }
 }

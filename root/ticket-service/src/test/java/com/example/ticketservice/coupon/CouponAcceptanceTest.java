@@ -67,6 +67,24 @@ public class CouponAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    public void issueAllCouponsSuccess() throws Exception {
+        // given
+        Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
+        Long companyCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.companyPercentageDiscountCouponCreateRequest(companyId));
+        Long generalCouponId = AdminCouponSteps.createCoupon(1L, CouponFixture.generalPercentageDiscountCouponCreateRequest());
+
+        mockForGetCenterCoupons();
+        List<CouponResponseDto> coupons = CouponSteps.getCenterCoupons(memberId, centerId);
+
+        // when
+        CouponSteps.issueAllCoupons(memberId, coupons);
+        List<MemberCouponResponseDto> memberCoupons = CouponSteps.getAvailableMemberCoupons(memberId);
+
+        // then
+        assertThat(memberCoupons.size()).isEqualTo(3);
+    }
+
+    @Test
     public void getMyCouponCountSuccess() throws Exception {
         // given
         Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
