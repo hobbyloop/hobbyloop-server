@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CouponClientController {
     private final CouponService couponService;
 
-    @GetMapping("/my/{memberId}")
+    @GetMapping("/my/count/{memberId}")
     public ResponseEntity<BaseResponseDto<Long>> getCountOfAvailableMemberCoupons(
             @PathVariable(value = "memberId") Long memberId
     ) {
