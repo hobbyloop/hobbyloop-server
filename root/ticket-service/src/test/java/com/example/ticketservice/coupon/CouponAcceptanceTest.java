@@ -15,6 +15,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.BDDMockito.given;
 
 public class CouponAcceptanceTest extends AcceptanceTest {
+
     @MockBean
     private CompanyServiceClient companyServiceClient;
 
@@ -40,14 +41,42 @@ public class CouponAcceptanceTest extends AcceptanceTest {
     public void getCenterCouponsSuccess() throws Exception {
         // given
         Long generalCouponId = AdminCouponSteps.createCoupon(1L, CouponFixture.generalPercentageDiscountCouponCreateRequest());
-        Long companyCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.companyPercentageDiscountCouponCreateRequest());
+        Long outOfDateCouponId = AdminCouponSteps.createCoupon(1L, CouponFixture.generalOutOfDateCouponCreateRequest());
+        Long companyCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.companyPercentageDiscountCouponCreateRequest(companyId));
 
         // when
         mockForGetCenterCoupons();
         List<CouponResponseDto> responses = CouponSteps.getCenterCoupons(memberId, centerId);
 
         // then
+        assertThat(responses).isNotNull();
+        assertThat(responses.size()).isEqualTo(2);
+    }
 
+    @Test
+    public void issueSingleCouponSuccess() throws Exception {
+        // given
+        Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
+
+        // when
+        Long issuedCouponId = CouponSteps.issueSingleCoupon(memberId, centerCouponId);
+
+        // then
+        assertThat(issuedCouponId).isNotNull();
+    }
+
+    @Test
+    public void getMyCouponCountSuccess() throws Exception {
+        // given
+        Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
+        CouponSteps.issueSingleCoupon(memberId, centerCouponId);
+
+        // when
+        Long couponCount = CouponSteps.getMyCouponCount(memberId);
+
+        // then
+        assertThat(couponCount).isNotNull();
+        assertThat(couponCount).isEqualTo(1);
     }
 
     private void mockForGetCenterCoupons() {

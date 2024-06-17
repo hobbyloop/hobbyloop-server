@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class CouponResponseDto {
     private Long couponId;
 
-    private boolean isAlreadyIssued;
+    private boolean alreadyIssued;
 
     private Long minimumPurchaseAmount;
 
@@ -34,7 +34,7 @@ public class CouponResponseDto {
     public static CouponResponseDto from(CouponProjection couponProjection) {
         return CouponResponseDto.builder()
                 .couponId(couponProjection.getCoupon().getId())
-                .isAlreadyIssued(couponProjection.isAlreadyIssued())
+                .alreadyIssued(couponProjection.isAlreadyIssued())
                 .minimumPurchaseAmount(couponProjection.getCoupon().getMinimumPurchaseAmount())
                 .maximumDiscountAmount(couponProjection.getCoupon().getMaximumDiscountAmount())
                 .usableScope(couponProjection.getCoupon().getUsableScope())

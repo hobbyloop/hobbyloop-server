@@ -36,7 +36,7 @@ public class CouponController {
     ) {
         Long memberId = Utils.parseAuthorizedId(request);
 
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(couponService.issueSingleCoupon(memberId, couponId)));
     }
 }
