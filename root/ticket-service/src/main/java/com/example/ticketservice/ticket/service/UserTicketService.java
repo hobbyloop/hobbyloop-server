@@ -17,6 +17,8 @@ public interface UserTicketService {
 
     List<AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId);
 
+    Long getAvailableUserTicketCount(Long memberId);
+
     Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId);
 
     List<UserTicketUsingHistoryResponseDto> getUserTicketUsingHistory(long memberId);

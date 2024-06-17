@@ -130,6 +130,12 @@ public class UserTicketServiceImpl implements UserTicketService {
     }
 
     @Override
+    @Transactional
+    public Long getAvailableUserTicketCount(Long memberId) {
+        return userTicketRepository.countAvailableUserTicketList(memberId);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getRecentPurchaseUserTicketList(long memberId) {
         List<UserTicket> userTicketList = userTicketRepository.findAllByMemberId(memberId);

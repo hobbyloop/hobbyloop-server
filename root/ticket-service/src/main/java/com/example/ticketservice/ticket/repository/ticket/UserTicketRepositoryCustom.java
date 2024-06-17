@@ -7,4 +7,6 @@ import java.util.List;
 public interface UserTicketRepositoryCustom {
 
     List<UserTicket> findAvailableUserTicketList(long memberId);
+
+    Long countAvailableUserTicketList(long memberId);
 }

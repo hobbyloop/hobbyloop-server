@@ -80,6 +80,18 @@ public class UserTicketSteps {
             return objectMapper.readValue(dataNode.traverse(), typeRef);
     }
 
+    public static Long getMyAvailableUserTicketCount() throws Exception {
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .get("/api/v1/client/tickets/my/count/{memberId}", 1L)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        return objectMapper.readTree(responseBody).get("data").asLong();
+    }
+
     public static Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getMyRecentPurchaseUserTicketList() throws Exception {
 
         String responseBody = RestAssured

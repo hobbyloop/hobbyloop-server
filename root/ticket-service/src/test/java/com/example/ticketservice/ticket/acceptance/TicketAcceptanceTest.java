@@ -223,9 +223,11 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         // when
         List<AvailableUserTicketsWithCenterInfo> response = UserTicketSteps.getMyAvailableUserTicketList();
+        Long count = UserTicketSteps.getMyAvailableUserTicketCount();
 
         // then
         assertThat(response.size()).isEqualTo(2);
+        assertThat(count).isEqualTo(3);
         //assertThat(response.containsKey(CenterFixture.DEFAULT_CENTER_NAME)).isTrue();
         //assertThat(response.containsKey(CenterFixture.NON_REFUNDABLE_CENTER_NAME)).isTrue();
         //assertThat(response.get(CenterFixture.DEFAULT_CENTER_NAME).getAvailableUserTickets().size()).isEqualTo(2);
