@@ -11,6 +11,9 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.*;
+import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingHistoryResponseDto;
 import com.example.ticketservice.ticket.entity.LectureReservation;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;
@@ -223,9 +226,11 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         // when
         List<AvailableUserTicketsWithCenterInfo> response = UserTicketSteps.getMyAvailableUserTicketList();
+        Long count = UserTicketSteps.getMyAvailableUserTicketCount();
 
         // then
         assertThat(response.size()).isEqualTo(2);
+        assertThat(count).isEqualTo(3);
         //assertThat(response.containsKey(CenterFixture.DEFAULT_CENTER_NAME)).isTrue();
         //assertThat(response.containsKey(CenterFixture.NON_REFUNDABLE_CENTER_NAME)).isTrue();
         //assertThat(response.get(CenterFixture.DEFAULT_CENTER_NAME).getAvailableUserTickets().size()).isEqualTo(2);

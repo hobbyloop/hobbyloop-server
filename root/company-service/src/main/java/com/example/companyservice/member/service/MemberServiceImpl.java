@@ -8,6 +8,7 @@ import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.MemberInfoResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
+import com.example.companyservice.member.dto.response.MemberMyPageHomeResponseDto;
 import com.example.companyservice.member.entity.Member;
 import com.example.companyservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -67,5 +68,18 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         return MemberInfoResponseDto.from(member);
+    }
+
+    @Override
+    @Transactional
+    public MemberMyPageHomeResponseDto myPageHome(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
+
+        Long points = ticketServiceClient.getMyTotalPoints(memberId).getData();
+        Long ticketCount = ticketServiceClient.getMyTicketCount(memberId).getData();
+        Long couponCount = ticketServiceClient.getCountOfAvailableMemberCoupons(memberId).getData();
+
+        return MemberMyPageHomeResponseDto.of(member, points, ticketCount, couponCount);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket.dto.response;
+package com.example.ticketservice.ticket.dto.response.userticket;
 
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.entity.UserTicket;

@@ -2,10 +2,10 @@ package com.example.ticketservice.ticket.controller;
 
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.request.CenterMembershipJoinRequestDto;
-import com.example.ticketservice.ticket.dto.response.CenterMemberResponseDto;
-import com.example.ticketservice.ticket.dto.response.CenterMembershipDetailResponseDto;
-import com.example.ticketservice.ticket.dto.response.CenterMembershipJoinedResponseDto;
-import com.example.ticketservice.ticket.dto.response.UnapprovedUserTicketListResponseDto;
+import com.example.ticketservice.ticket.dto.response.centermembership.CenterMemberResponseDto;
+import com.example.ticketservice.ticket.dto.response.centermembership.CenterMembershipDetailResponseDto;
+import com.example.ticketservice.ticket.dto.response.centermembership.CenterMembershipJoinedResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UnapprovedUserTicketListResponseDto;
 import com.example.ticketservice.ticket.service.CenterMembershipService;
 import com.example.ticketservice.ticket.service.UserTicketService;
 import lombok.RequiredArgsConstructor;

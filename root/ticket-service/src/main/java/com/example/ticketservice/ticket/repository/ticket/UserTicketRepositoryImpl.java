@@ -30,4 +30,21 @@ public class UserTicketRepositoryImpl implements UserTicketRepositoryCustom {
                 )
                 .fetch();
     }
+
+    @Override
+    public Long countAvailableUserTicketList(long memberId) {
+        LocalDate now = LocalDate.now();
+
+        return queryFactory
+                .select(userTicket.count())
+                .from(userTicket)
+                .where(
+                        userTicket.isApprove.isTrue(),
+                        userTicket.startDate.loe(now),
+                        userTicket.endDate.goe(now),
+                        userTicket.remainingCount.gt(0),
+                        userTicket.memberId.eq(memberId)
+                )
+                .fetchOne();
+    }
 }

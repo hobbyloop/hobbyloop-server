@@ -5,6 +5,7 @@ import com.example.companyservice.company.client.dto.response.*;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.member.client.dto.PointEarnedResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,4 +37,13 @@ public interface TicketServiceClient {
 
     @PostMapping("/api/v1/points/client/join/{memberId}")
     BaseResponseDto<PointEarnedResponseDto> earnPointsWhenJoining(@PathVariable(value = "memberId") Long memberId);
+
+    @GetMapping("/api/v1/coupons/client/my/count/{memberId}")
+    BaseResponseDto<Long> getCountOfAvailableMemberCoupons(@PathVariable(value = "memberId") Long memberId);
+
+    @GetMapping("/api/v1/points/client/my/{memberId}")
+    BaseResponseDto<Long> getMyTotalPoints(@PathVariable(value = "memberId") Long memberId);
+
+    @GetMapping("/api/v1/client/tickets/my/count/{memberId}")
+    BaseResponseDto<Long> getMyTicketCount(@PathVariable(value = "memberId") long memberId);
 }

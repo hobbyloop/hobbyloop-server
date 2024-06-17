@@ -1,6 +1,7 @@
-package com.example.ticketservice.ticket.dto.response;
+package com.example.ticketservice.ticket.dto.response.centermembership;
 
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
+import com.example.ticketservice.ticket.dto.response.TicketResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

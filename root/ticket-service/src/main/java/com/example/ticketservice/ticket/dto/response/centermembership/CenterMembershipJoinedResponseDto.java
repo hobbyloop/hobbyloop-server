@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket.dto.response;
+package com.example.ticketservice.ticket.dto.response.centermembership;
 
 import com.example.ticketservice.ticket.dto.request.CenterMembershipJoinRequestDto;
 import lombok.AllArgsConstructor;

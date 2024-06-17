@@ -46,4 +46,19 @@ public class PointSteps {
         TypeReference<PointHistoryListResponseDto> typeRef = new TypeReference<PointHistoryListResponseDto>() {};
         return objectMapper.readValue(dataNode.traverse(), typeRef);
     }
+
+    public static Long getMyTotalPoints(Long memberId) throws Exception {
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .get("/api/v1/points/client/my/{memberId}", memberId)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        return objectMapper.treeToValue(dataNode, Long.class);
+    }
 }

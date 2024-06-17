@@ -2,6 +2,7 @@ package com.example.ticketservice.coupon;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.coupon.dto.CouponResponseDto;
+import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.example.ticketservice.fixture.CouponFixture;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
@@ -66,6 +67,24 @@ public class CouponAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    public void issueAllCouponsSuccess() throws Exception {
+        // given
+        Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
+        Long companyCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.companyPercentageDiscountCouponCreateRequest(companyId));
+        Long generalCouponId = AdminCouponSteps.createCoupon(1L, CouponFixture.generalPercentageDiscountCouponCreateRequest());
+
+        mockForGetCenterCoupons();
+        List<CouponResponseDto> coupons = CouponSteps.getCenterCoupons(memberId, centerId);
+
+        // when
+        CouponSteps.issueAllCoupons(memberId, coupons);
+        List<MemberCouponResponseDto> memberCoupons = CouponSteps.getAvailableMemberCoupons(memberId);
+
+        // then
+        assertThat(memberCoupons.size()).isEqualTo(3);
+    }
+
+    @Test
     public void getMyCouponCountSuccess() throws Exception {
         // given
         Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
@@ -77,6 +96,21 @@ public class CouponAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(couponCount).isNotNull();
         assertThat(couponCount).isEqualTo(1);
+    }
+
+    @Test
+    public void getAvailableMemberCouponsSuccess() throws Exception {
+        // given
+        Long centerCouponId = AdminCouponSteps.createCoupon(2L, CouponFixture.centerPercentageDiscountCouponCreateRequest(centerId));
+        Long memberCouponId = CouponSteps.issueSingleCoupon(memberId, centerCouponId);
+
+        // when
+        List<MemberCouponResponseDto> responses = CouponSteps.getAvailableMemberCoupons(memberId);
+
+        // then
+        assertThat(responses).isNotNull();
+        assertThat(responses.size()).isEqualTo(1);
+        assertThat(responses.get(0).getMemberCouponId()).isEqualTo(memberCouponId);
     }
 
     private void mockForGetCenterCoupons() {

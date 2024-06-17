@@ -4,10 +4,10 @@ import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
-import com.example.ticketservice.ticket.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.ticket.dto.response.*;
+import com.example.ticketservice.ticket.dto.response.userticket.*;
 import com.example.ticketservice.ticket.entity.LectureReservation;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.entity.UserTicket;
@@ -127,6 +127,12 @@ public class UserTicketServiceImpl implements UserTicketService {
         }
 
         return new ArrayList<>(centerInfoMap.values());
+    }
+
+    @Override
+    @Transactional
+    public Long getAvailableUserTicketCount(Long memberId) {
+        return userTicketRepository.countAvailableUserTicketList(memberId);
     }
 
     @Override

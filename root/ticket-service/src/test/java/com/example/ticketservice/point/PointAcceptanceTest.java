@@ -38,4 +38,16 @@ public class PointAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(response.getTotalPoints()).isEqualTo(3000L);
     }
+
+    @Test
+    public void getMyTotalPointsSuccess() throws Exception {
+        // given
+        PointSteps.earnPointWhenJoining(memberId);
+
+        // when
+        Long points = PointSteps.getMyTotalPoints(memberId);
+
+        // then
+        assertThat(points).isEqualTo(3000L);
+    }
 }
