@@ -75,6 +75,7 @@ public class ExpiringSoonCenterMembershipBatchConfig {
                     CenterMembership membership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, ticket.getTicket().getCenterId());
                     if (membership != null && membership.getStatus() != CenterMembershipStatusEnum.EXPIRED.getStatusType()) {
                         membership.setStatus(CenterMembershipStatusEnum.EXPIRING_SOON.getStatusType());
+                        membership.setUpdatedBy("batch");
                         centerMembershipRepository.save(membership);
                     }
                 }

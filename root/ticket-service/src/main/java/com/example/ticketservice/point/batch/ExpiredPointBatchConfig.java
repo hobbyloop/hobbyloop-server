@@ -82,6 +82,8 @@ public class ExpiredPointBatchConfig {
                         .build();
 
                 pointHistory.processByBatch();
+                pointHistory.setCreatedBy("batch");
+                pointHistory.setUpdatedBy("batch");
 
                 pointHistoryRepository.save(pointHistory);
                 pointRepository.save(point);
@@ -106,6 +108,8 @@ public class ExpiredPointBatchConfig {
                         .build();
 
                 pointHistory.processByBatch();
+                pointHistory.setCreatedBy("batch");
+                pointHistory.setUpdatedBy("batch");
 
                 pointHistoryRepository.save(pointHistory);
                 pointRepository.save(point);
@@ -130,6 +134,8 @@ public class ExpiredPointBatchConfig {
                         .build();
 
                 pointHistory.processByBatch();
+                pointHistory.setCreatedBy("batch");
+                pointHistory.setUpdatedBy("batch");
 
                 pointHistoryRepository.save(pointHistory);
                 pointRepository.save(point);

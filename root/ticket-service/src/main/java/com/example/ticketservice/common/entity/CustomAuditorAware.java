@@ -1,6 +1,7 @@
 package com.example.ticketservice.common.entity;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -9,6 +10,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.Optional;
 
 @Component
+@Slf4j
 public class CustomAuditorAware implements AuditorAware<String> {
 
     @Override
@@ -26,6 +28,6 @@ public class CustomAuditorAware implements AuditorAware<String> {
         if (id.isPresent() && role.isPresent()) {
             return Optional.of(id.get() + " " + role.get());
         }
-        return Optional.empty();
+        return Optional.of("system");
     }
 }

@@ -281,6 +281,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         long lectureReservationIdOfLastMonth = LectureReservationSteps.reserveLecture(userTicketId);
 
         LectureReservation lectureReservationOfLastMonth = lectureReservationRepository.findById(lectureReservationIdOfLastMonth).orElseThrow();
+        assertThat(lectureReservationOfLastMonth.getCreatedBy()).isEqualTo("1 USER");
         ReflectionTestUtils.setField(lectureReservationOfLastMonth, "createdAt", LocalDateTime.now().minusDays(31));
         lectureReservationRepository.save(lectureReservationOfLastMonth);
 

@@ -12,7 +12,7 @@ public class LectureReservationSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", 1L)   // TODO: Replace with actual member ID
+                .headers("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
                 .post("/api/v1/lecture-reservation/{lectureScheduleId}/{userTicketId}", lectureScheduleId, userTicketId)
                 .then().log().all()
                 .statusCode(200)

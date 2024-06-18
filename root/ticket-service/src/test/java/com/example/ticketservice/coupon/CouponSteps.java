@@ -17,7 +17,7 @@ public class CouponSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON.withCharset("UTF-8"))
-                .header("id", memberId)
+                .headers("id", memberId, "role", "USER")
                 .when()
                 .get("/api/v1/coupons/{centerId}", centerId)
                 .then().log().all()
@@ -36,7 +36,7 @@ public class CouponSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON.withCharset("UTF-8"))
-                .header("id", memberId)
+                .headers("id", memberId, "role", "USER")
                 .when()
                 .post("/api/v1/coupons/issue/{couponId}", couponId)
                 .then().log().all()
@@ -57,7 +57,7 @@ public class CouponSteps {
         RestAssured
             .given().log().all()
             .contentType(ContentType.JSON.withCharset("UTF-8"))
-            .header("id", memberId)
+            .headers("id", memberId, "role", "USER")
             .queryParam("couponIds", couponIds)
             .when()
             .post("/api/v1/coupons/issue/all")
@@ -86,7 +86,7 @@ public class CouponSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON.withCharset("UTF-8"))
-                .header("id", memberId)
+                .headers("id", memberId, "role", "USER")
                 .when()
                 .get("/api/v1/coupons/members")
                 .then().log().all()

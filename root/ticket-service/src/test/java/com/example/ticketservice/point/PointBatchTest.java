@@ -62,5 +62,6 @@ public class PointBatchTest extends AcceptanceTest {
         assertThat(memberPoints).isEqualTo(0L);
         expiredHistory = pointHistoryRepository.findById(expiredHistory.getId()).orElseThrow();
         assertThat(expiredHistory.getIsProcessedByBatch()).isTrue();
+        assertThat(expiredHistory.getUpdatedBy()).isEqualTo("batch");
     }
 }

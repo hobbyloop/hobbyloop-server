@@ -28,6 +28,7 @@ public class AdminTicketSteps {
                 .multiPart(new MultiPartSpecBuilder(request).controlName("requestDto").mimeType("application/json").charset(StandardCharsets.UTF_8).build())
                 .multiPart("ticketImage", generateMockImageFile(), "image/jpeg")
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .post("/api/v1/admin/tickets/management/{centerId}", centerId)
                 .then().log().all()
                 .statusCode(201)
@@ -45,6 +46,7 @@ public class AdminTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .get("/api/v1/admin/tickets/management/{centerId}/{ticketId}", centerId, ticketId)
                 .then().log().all()
                 .statusCode(200)
@@ -62,6 +64,7 @@ public class AdminTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .get("/api/v1/admin/tickets/review/{centerId}/{ticketId}", centerId, ticketId)
                 .then().log().all()
                 .statusCode(200)
@@ -79,6 +82,7 @@ public class AdminTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .get("/api/v1/admin/tickets/management/{ticketId}", ticketId)
                 .then().log().all()
                 .statusCode(200)
@@ -96,6 +100,7 @@ public class AdminTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .get("/api/v1/admin/tickets/review/{ticketId}", ticketId)
                 .then().log().all()
                 .statusCode(200)
@@ -111,6 +116,7 @@ public class AdminTicketSteps {
         RestAssured
                 .given().log().all()
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .patch("/api/v1/admin/tickets/management/{ticketId}/upload", ticketId)
                 .then().log().all()
                 .statusCode(200);
@@ -122,6 +128,7 @@ public class AdminTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
+                .headers("id", 1L, "role", "COMPANY")
                 .get("/api/v1/admin/tickets/my/{centerId}", centerId)
                 .then().log().all()
                 .statusCode(200)

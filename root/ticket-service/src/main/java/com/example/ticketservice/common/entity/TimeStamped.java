@@ -3,6 +3,7 @@ package com.example.ticketservice.common.entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -22,9 +23,11 @@ public abstract class TimeStamped {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Setter
     @CreatedBy
     private String createdBy;
 
+    @Setter
     @LastModifiedBy
     private String updatedBy;
 }

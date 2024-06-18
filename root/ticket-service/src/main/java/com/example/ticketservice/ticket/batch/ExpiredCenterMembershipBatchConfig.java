@@ -95,6 +95,7 @@ public class ExpiredCenterMembershipBatchConfig {
                         CenterMembership membership = centerMembershipRepository.findByMemberIdAndCenterId(memberId, centerId);
                         if (membership != null) {
                             membership.setStatus(CenterMembershipStatusEnum.EXPIRED.getStatusType());
+                            membership.setUpdatedBy("batch");
                             centerMembershipRepository.save(membership);
                         }
                     }

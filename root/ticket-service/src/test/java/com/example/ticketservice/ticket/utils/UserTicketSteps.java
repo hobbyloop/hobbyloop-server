@@ -27,7 +27,7 @@ public class UserTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", 1L)   // TODO: Replace with actual member ID
+                .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
                 .post("/api/v1/user-tickets/{ticketId}/purchase", ticketId)
                 .then().log().all()
                 .statusCode(201)
@@ -41,7 +41,7 @@ public class UserTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", memberId)   // TODO: Replace with actual member ID
+                .header("id", memberId, "role", "USER")   // TODO: Replace with actual member ID
                 .post("/api/v1/user-tickets/{ticketId}/purchase", ticketId)
                 .then().log().all()
                 .statusCode(201)
@@ -55,7 +55,7 @@ public class UserTicketSteps {
             String responseBody = RestAssured
                     .given().log().all()
                     .when()
-                    .header("id", 1L)   // TODO: Replace with actual member ID
+                    .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
                     .get("/api/v1/user-tickets/available")
                     .then().log().all()
                     .statusCode(200)
@@ -97,7 +97,7 @@ public class UserTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", 1L)   // TODO: Replace with actual member ID
+                .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
                 .get("/api/v1/user-tickets/recent-purchase")
                 .then().log().all()
                 .statusCode(200)
@@ -126,7 +126,7 @@ public class UserTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", 1L)   // TODO: Replace with actual member ID
+                .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
                 .get("/api/v1/user-tickets/using-histories")
                 .then().log().all()
                 .statusCode(200)
@@ -145,7 +145,7 @@ public class UserTicketSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", 1L)   // TODO: Replace with actual member ID
+                .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
                 .get("/api/v1/user-tickets/expiring-histories")
                 .then().log().all()
                 .statusCode(200)
