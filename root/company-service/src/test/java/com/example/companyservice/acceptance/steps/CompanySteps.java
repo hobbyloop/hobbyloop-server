@@ -11,7 +11,7 @@ public class CompanySteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType("application/json")
-                .header("id", companyId)
+                .headers("id", companyId, "role", "COMPANY")
                 .body(requestDto)
                 .when()
                 .patch("/api/v1/admin/companies")
@@ -26,7 +26,7 @@ public class CompanySteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType("application/json")
-                .header("id", companyId)
+                .headers("id", companyId, "role", "COMPANY")
                 .when()
                 .get("/api/v1/admin/companies/check/tax-free")
                 .then().log().all()

@@ -2,6 +2,7 @@ package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.common.dto.TokenResponseDto;
+import com.example.companyservice.common.security.RoleAuthorization;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
@@ -34,6 +35,7 @@ public class MemberController {
     }
 
     @PatchMapping
+    @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "마이페이지 - 내 정보 수정", description = "내 정보 조회 호출 후 호출 가능")
     public ResponseEntity<BaseResponseDto<Void>> updateMember(
             @RequestPart(value = "requestDto") MemberUpdateRequestDto requestDto,
@@ -46,6 +48,7 @@ public class MemberController {
     }
 
     @GetMapping
+    @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "마이페이지 - 내 정보 수정 화면에 필요한 정보 조회", description = "내 정보 수정을 위한 내 정보 조회")
     public ResponseEntity<BaseResponseDto<MemberDetailResponseDto>> getMemberDetail(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
@@ -55,6 +58,7 @@ public class MemberController {
     }
 
     @GetMapping("/my-page")
+    @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "마이페이지 - 홈")
     public ResponseEntity<BaseResponseDto<MemberMyPageHomeResponseDto>> myPageHome(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);

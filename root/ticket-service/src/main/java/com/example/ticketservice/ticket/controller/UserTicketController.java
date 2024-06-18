@@ -1,5 +1,6 @@
 package com.example.ticketservice.ticket.controller;
 
+import com.example.ticketservice.common.security.RoleAuthorization;
 import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
@@ -24,6 +25,7 @@ public class UserTicketController {
     private final UserTicketService userTicketService;
 
     @PostMapping("/{ticketId}/purchase")
+    @RoleAuthorization(roles = {"USER"})
     public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(@PathVariable(value = "ticketId") long ticketId,
                                                                 HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
@@ -32,6 +34,7 @@ public class UserTicketController {
     }
 
     @GetMapping("/recent-purchase")
+    @RoleAuthorization(roles = {"USER"})
     public ResponseEntity<BaseResponseDto<Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>>>> getMyRecentPurchaseUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -39,6 +42,7 @@ public class UserTicketController {
     }
 
     @GetMapping("/available")
+    @RoleAuthorization(roles = {"USER"})
     public ResponseEntity<BaseResponseDto<List<AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -46,6 +50,7 @@ public class UserTicketController {
     }
 
     @GetMapping("/using-histories")
+    @RoleAuthorization(roles = {"USER"})
     public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -53,6 +58,7 @@ public class UserTicketController {
     }
 
     @GetMapping("/expiring-histories")
+    @RoleAuthorization(roles = {"USER"})
     public ResponseEntity<BaseResponseDto<List<UserTicketExpiringHistoryResponseDto>>> getUserTicketExpiringHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)

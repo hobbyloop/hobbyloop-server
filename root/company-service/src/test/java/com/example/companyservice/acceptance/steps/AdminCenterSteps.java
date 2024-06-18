@@ -25,7 +25,7 @@ public class AdminCenterSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType(ContentType.MULTIPART.withCharset("UTF-8"))
-                .header("id", companyId)
+                .headers("id", companyId, "role", "COMPANY")
                 .multiPart(new MultiPartSpecBuilder(requestDto).controlName("requestDto").mimeType("application/json").charset(StandardCharsets.UTF_8).build())
                 .multiPart("logoImage", generateMockImageFile())
                 .multiPart("centerImageList", generateMockImageFile())
@@ -48,7 +48,7 @@ public class AdminCenterSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .contentType("application/json")
-                .header("id", companyId)
+                .headers("id", companyId, "role", "COMPANY")
                 .when()
                 .get("/api/v1/admin/centers")
                 .then().log().all()
