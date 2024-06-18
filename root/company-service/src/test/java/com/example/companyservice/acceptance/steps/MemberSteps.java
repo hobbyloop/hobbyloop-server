@@ -42,7 +42,7 @@ public class MemberSteps {
             .multiPart(new MultiPartSpecBuilder(request).controlName("requestDto").mimeType("application/json").charset(StandardCharsets.UTF_8).build())
             .multiPart("profileImage", generateMockImageFile(), "image/jpeg")
             .when()
-            .header("id", memberId)   // TODO: Replace with actual member ID
+            .headers("id", memberId, "role", "USER")
             .patch("/api/v1/members")
             .then().log().all()
             .statusCode(200)
@@ -55,7 +55,7 @@ public class MemberSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", memberId)
+                .headers("id", memberId, "role", "USER")
                 .get("/api/v1/members")
                 .then().log().all()
                 .statusCode(200)
