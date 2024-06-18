@@ -61,7 +61,6 @@ public class ExpiredPointBatchConfig {
                 .queryString("SELECT ph FROM PointHistory ph WHERE ph.type = :type AND ph.expirationDateTime <= :now AND ph.isProcessedByBatch = false")
                 .parameterValues(Map.of("type", PointTypeEnum.EARN.getValue(), "now", LocalDateTime.now()))
                 .build();
-
     }
 
     @Bean

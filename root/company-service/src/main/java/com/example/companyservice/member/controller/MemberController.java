@@ -12,11 +12,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
@@ -38,6 +40,7 @@ public class MemberController {
             @RequestPart(value = "profileImage") MultipartFile profileImage,
             HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
+
         memberService.updateMember(memberId, requestDto, profileImage);
         return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDto<>());
     }
