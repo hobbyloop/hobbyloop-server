@@ -29,7 +29,7 @@ public class ReviewSteps {
         String responseBody = RestAssured
             .given().log().all()
             .contentType(ContentType.MULTIPART.withCharset("UTF-8"))
-            .header("id", 1L)   // TODO: Replace with actual member ID
+            .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
             .multiPart(new MultiPartSpecBuilder(objectMapper.writeValueAsString(request)).controlName("requestDto").mimeType("application/json").charset(StandardCharsets.UTF_8).build())
             .multiPart("reviewImageList", generateMockImageFile(), "image/jpeg")
             .when()
@@ -45,7 +45,7 @@ public class ReviewSteps {
         RestAssured
             .given().log().all()
             .contentType(ContentType.JSON)
-            .header("id", 1L)   // TODO: Replace with actual member ID
+            .header("id", 1L, "role", "USER")   // TODO: Replace with actual member ID
             .body("{\"content\": \"test content\"}")
             .when()
             .post("/api/v1/comments/{reviewId}", reviewId)
@@ -58,6 +58,7 @@ public class ReviewSteps {
             .given().log().all()
             .header("id", 1L)   // TODO: Replace with actual member ID
             .when()
+            .header("id", 1L, "role", "USER")
             .get("/api/v1/reviews/{ticketId}/{pageNo}/{sortId}", ticketId, pageNo, sortId)
             .then().log().all()
             .statusCode(200)
@@ -77,7 +78,7 @@ public class ReviewSteps {
 
         String responseBody = RestAssured
                 .given().log().all()
-                .header("id", 1L)   // TODO: Replace with actual member ID
+                .header("id", 1L, "role", "USER")
                 .when()
                 .get("/api/v1/centers/{centerId}/reviews/{pageNo}/{sortId}", centerId, pageNo, sortId)
                 .then().log().all()

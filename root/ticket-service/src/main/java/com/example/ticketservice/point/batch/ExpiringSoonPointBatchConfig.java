@@ -65,6 +65,7 @@ public class ExpiringSoonPointBatchConfig {
     public ItemProcessor<PointHistory, PointHistory> expiringSoonPointHistoryProcessor() {
         return pointHistory -> {
             pointHistory.markExpiredSoon();
+            pointHistory.setUpdatedBy("batch");
             return pointHistory;
         };
     }

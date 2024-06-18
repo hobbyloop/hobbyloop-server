@@ -1,5 +1,6 @@
 package com.example.ticketservice.ticket.entity;
 
+import com.example.ticketservice.common.entity.TimeStamped;
 import com.example.ticketservice.ticket.dto.request.ReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.*;

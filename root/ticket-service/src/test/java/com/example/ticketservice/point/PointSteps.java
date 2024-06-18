@@ -34,7 +34,7 @@ public class PointSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", memberId)
+                .headers("id", memberId, "role", "USER")
                 .get("/api/v1/points/histories")
                 .then().log().all()
                 .statusCode(200)

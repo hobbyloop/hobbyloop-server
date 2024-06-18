@@ -4,7 +4,7 @@ import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.point.entity.enums.PointTypeEnum;
 import com.example.ticketservice.point.policy.PlatformPointPolicy;
-import com.example.ticketservice.ticket.entity.TimeStamped;
+import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
