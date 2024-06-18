@@ -2,7 +2,7 @@ package com.example.ticketservice.coupon.entity;
 
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
-import com.example.ticketservice.ticket.entity.TimeStamped;
+import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
