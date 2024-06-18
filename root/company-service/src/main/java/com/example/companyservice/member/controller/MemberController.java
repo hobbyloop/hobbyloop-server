@@ -1,10 +1,12 @@
 package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
+import com.example.companyservice.member.dto.response.MemberMyPageHomeResponseDto;
 import com.example.companyservice.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +26,7 @@ public class MemberController {
 
     @PostMapping("/join")
     @Operation(summary = "회원가입")
-    public ResponseEntity<BaseResponseDto<Long>> createMember(@RequestBody CreateMemberRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<TokenResponseDto>> createMember(@RequestBody CreateMemberRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(new BaseResponseDto<>(memberService.createMember(requestDto)));
     }
@@ -41,11 +43,20 @@ public class MemberController {
     }
 
     @GetMapping
-    @Operation(summary = "마이페이지 - 내 정보 조회", description = "내 정보 수정을 위한 내 정보 조회")
+    @Operation(summary = "마이페이지 - 내 정보 수정 화면에 필요한 정보 조회", description = "내 정보 수정을 위한 내 정보 조회")
     public ResponseEntity<BaseResponseDto<MemberDetailResponseDto>> getMemberDetail(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(memberService.getMemberDetail(memberId)));
+    }
+
+    @GetMapping("/my-page")
+    @Operation(summary = "마이페이지 - 홈")
+    public ResponseEntity<BaseResponseDto<MemberMyPageHomeResponseDto>> myPageHome(HttpServletRequest request) {
+        long memberId = Utils.parseAuthorizedId(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(memberService.myPageHome(memberId)));
     }
 }

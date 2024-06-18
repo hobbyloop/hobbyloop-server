@@ -1,5 +1,7 @@
 package com.example.companyservice.company.service;
 
+import com.example.companyservice.common.dto.TokenResponseDto;
+import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.company.client.dto.request.CompanyRatePlanRequestDto;
 import com.example.companyservice.common.exception.ApiException;
@@ -20,14 +22,18 @@ public class CompanyServiceImpl implements CompanyService{
 
     private final TicketServiceClient ticketServiceClient;
 
+    private final JwtUtils jwtUtils;
+
     @Override
     @Transactional
-    public Long createCompany(CompanyCreateRequestDto requestDto) {
+    public TokenResponseDto createCompany(CompanyCreateRequestDto requestDto) {
         CompanyRatePlanRequestDto companyRatePlanRequestDto = CompanyRatePlanRequestDto.from(requestDto);
         BaseResponseDto<Long> companyRatePlan = ticketServiceClient.createCompanyRatePlan(companyRatePlanRequestDto);
         Company company = Company.of(requestDto, companyRatePlan.getData());
-        Company saveCompany = companyRepository.save(company);
-        return saveCompany.getId();
+        companyRepository.save(company);
+        String accessToken = jwtUtils.createToken(company.getId(), company.getRole());
+        String refreshToken = jwtUtils.createRefreshToken(company.getId(), company.getRole());
+        return TokenResponseDto.of(accessToken, refreshToken);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket.dto.response;
+package com.example.ticketservice.ticket.dto.response.centermembership;
 
 import com.example.ticketservice.ticket.entity.CenterMembership;
 import com.example.ticketservice.ticket.entity.CenterMembershipStatusEnum;

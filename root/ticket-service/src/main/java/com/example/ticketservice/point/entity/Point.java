@@ -53,4 +53,8 @@ public class Point extends TimeStamped {
     public void use(Long amount) {
         balance -= amount;
     }
+
+    public void expire(Long amount) {
+        balance -= amount;
+    }
 }

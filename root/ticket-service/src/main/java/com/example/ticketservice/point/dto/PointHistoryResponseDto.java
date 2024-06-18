@@ -2,13 +2,17 @@ package com.example.ticketservice.point.dto;
 
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.entity.enums.PointTypeEnum;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PointHistoryResponseDto {
     private String type;
     private Long amount;

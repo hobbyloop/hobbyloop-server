@@ -1,9 +1,9 @@
 package com.example.companyservice.admin.controller;
 
 import com.example.companyservice.admin.dto.request.AdminRequestDto;
-import com.example.companyservice.admin.dto.response.LoginResponseDto;
 import com.example.companyservice.admin.service.AdminService;
 import com.example.companyservice.common.dto.BaseResponseDto;
+import com.example.companyservice.common.dto.TokenResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class AdminController {
     }
 
     @PostMapping("/login/admins")
-    public ResponseEntity<BaseResponseDto<LoginResponseDto>> login(@RequestBody @Valid AdminRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<TokenResponseDto>> login(@RequestBody @Valid AdminRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(adminService.login(requestDto)));
     }

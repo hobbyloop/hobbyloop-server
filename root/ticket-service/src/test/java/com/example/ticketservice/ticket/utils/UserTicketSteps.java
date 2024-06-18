@@ -1,9 +1,9 @@
 package com.example.ticketservice.ticket.utils;
 
-import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
+import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketExpiringHistoryResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingHistoryResponseDto;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -78,6 +78,18 @@ public class UserTicketSteps {
 
             TypeReference<List<AvailableUserTicketsWithCenterInfo>> typeRef = new TypeReference<List<AvailableUserTicketsWithCenterInfo>>() {};
             return objectMapper.readValue(dataNode.traverse(), typeRef);
+    }
+
+    public static Long getMyAvailableUserTicketCount() throws Exception {
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .get("/api/v1/client/tickets/my/count/{memberId}", 1L)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        return objectMapper.readTree(responseBody).get("data").asLong();
     }
 
     public static Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>> getMyRecentPurchaseUserTicketList() throws Exception {

@@ -1,13 +1,16 @@
 package com.example.companyservice.member.service;
 
+import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.service.AmazonS3Service;
+import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.member.dto.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.MemberInfoResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
+import com.example.companyservice.member.dto.response.MemberMyPageHomeResponseDto;
 import com.example.companyservice.member.entity.Member;
 import com.example.companyservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +25,19 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final AmazonS3Service amazonS3Service;
     private final TicketServiceClient ticketServiceClient;
+    private final JwtUtils jwtUtils;
 
     @Override
     @Transactional
-    public Long createMember(CreateMemberRequestDto requestDto) {
+    public TokenResponseDto createMember(CreateMemberRequestDto requestDto) {
         Member member = Member.of(requestDto);
         Member savedMember = memberRepository.save(member);
 
         ticketServiceClient.earnPointsWhenJoining(savedMember.getId()); // 회원가입 포인트 적립
 
-        return savedMember.getId();
+        String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
+        String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
+        return TokenResponseDto.of(accessToken, refreshToken);
     }
 
     @Override
@@ -67,5 +73,18 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         return MemberInfoResponseDto.from(member);
+    }
+
+    @Override
+    @Transactional
+    public MemberMyPageHomeResponseDto myPageHome(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
+
+        Long points = ticketServiceClient.getMyTotalPoints(memberId).getData();
+        Long ticketCount = ticketServiceClient.getMyTicketCount(memberId).getData();
+        Long couponCount = ticketServiceClient.getCountOfAvailableMemberCoupons(memberId).getData();
+
+        return MemberMyPageHomeResponseDto.of(member, points, ticketCount, couponCount);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ticketservice.ticket.dto.response;
+package com.example.ticketservice.ticket.dto.response.userticket;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

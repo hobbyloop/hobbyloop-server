@@ -2,6 +2,7 @@ package com.example.ticketservice.ticket.acceptance;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.centermembership.CenterMembershipSteps;
+import com.example.ticketservice.fixture.MemberFixture;
 import com.example.ticketservice.lecturereservation.LectureReservationSteps;
 import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.fixture.CenterFixture;
@@ -10,6 +11,9 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.*;
+import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingHistoryResponseDto;
 import com.example.ticketservice.ticket.entity.LectureReservation;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;
@@ -102,6 +106,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest());
 
         // when
+        mockForCreateReview();
         Long reviewId = ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         AdminReviewTicketResponseDto ticket = AdminTicketSteps.getTicketDetailWithReview(ticketId);
 
@@ -118,6 +123,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForCreateTicket();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
 
+        mockForCreateReview();
         ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.badReviewCreateRequest());
@@ -140,6 +146,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         mockForCreateTicket();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
 
+        mockForCreateReview();
         ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.badReviewCreateRequest());
@@ -160,6 +167,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         long centerId = 1L;
 
         mockForCreateTicket();
+        mockForCreateReview();
         long ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
         ReviewSteps.createReview(ticketId, ReviewFixture.normalReviewCreateRequest());
         ReviewSteps.createReview(ticketId, ReviewFixture.goodReviewCreateRequest());
@@ -218,9 +226,11 @@ public class TicketAcceptanceTest extends AcceptanceTest {
 
         // when
         List<AvailableUserTicketsWithCenterInfo> response = UserTicketSteps.getMyAvailableUserTicketList();
+        Long count = UserTicketSteps.getMyAvailableUserTicketCount();
 
         // then
         assertThat(response.size()).isEqualTo(2);
+        assertThat(count).isEqualTo(3);
         //assertThat(response.containsKey(CenterFixture.DEFAULT_CENTER_NAME)).isTrue();
         //assertThat(response.containsKey(CenterFixture.NON_REFUNDABLE_CENTER_NAME)).isTrue();
         //assertThat(response.get(CenterFixture.DEFAULT_CENTER_NAME).getAvailableUserTickets().size()).isEqualTo(2);
@@ -359,6 +369,10 @@ public class TicketAcceptanceTest extends AcceptanceTest {
         given(companyServiceClient.getCenterInfo(2L)).willReturn(new BaseResponseDto<>(CenterFixture.nonRefundableCenterInfoResponseDto()));
         given(amazonS3Service.saveS3Img(any(MultipartFile.class), anyString())).willReturn("test-image-key");
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
+    }
+
+    private void mockForCreateReview() {
+        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
     }
 
     private void mockForGetTicketDetail() {

@@ -15,8 +15,14 @@ public class PointClientController {
     private final PointService pointService;
 
     @PostMapping("/join/{memberId}")
-    public ResponseEntity<BaseResponseDto<PointEarnedResponseDto>> join(@PathVariable Long memberId) {
+    public ResponseEntity<BaseResponseDto<PointEarnedResponseDto>> join(@PathVariable(value = "memberId") Long memberId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(pointService.earnPointWhenJoining(memberId)));
+    }
+
+    @GetMapping("/my/{memberId}")
+    public ResponseEntity<BaseResponseDto<Long>> getMyTotalPoints(@PathVariable(value = "memberId") Long memberId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(pointService.getMemberTotalPoints(memberId)));
     }
 }

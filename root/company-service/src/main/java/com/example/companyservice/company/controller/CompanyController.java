@@ -1,5 +1,6 @@
 package com.example.companyservice.company.controller;
 
+import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
@@ -19,7 +20,7 @@ public class CompanyController {
     private final CompanyService companyService;
 
     @PostMapping("/join/companies")
-    public ResponseEntity<BaseResponseDto<Long>> createCompany(@RequestBody @Valid CompanyCreateRequestDto requestDto) {
+    public ResponseEntity<BaseResponseDto<TokenResponseDto>> createCompany(@RequestBody @Valid CompanyCreateRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(companyService.createCompany(requestDto)));
     }

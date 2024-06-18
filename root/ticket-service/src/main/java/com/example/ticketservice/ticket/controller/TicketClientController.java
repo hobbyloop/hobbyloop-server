@@ -6,6 +6,7 @@ import com.example.ticketservice.ticket.client.dto.response.TicketInfoClientResp
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.ticketservice.ticket.service.TicketClientService;
+import com.example.ticketservice.ticket.service.UserTicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class TicketClientController {
 
     private final TicketClientService ticketClientService;
+    private final UserTicketService userTicketService;
 
     @GetMapping("/{centerId}")
     public ResponseEntity<BaseResponseDto<TicketClientBaseResponseDto>> getTicketList(@PathVariable(value = "centerId") long centerId) {
@@ -55,5 +57,11 @@ public class TicketClientController {
     public ResponseEntity<BaseResponseDto<Boolean>> getHasTicket(@PathVariable(value = "centerId") long centerId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketClientService.getHasTicket(centerId)));
+    }
+
+    @GetMapping("/my/count/{memberId}")
+    public ResponseEntity<BaseResponseDto<Long>> getMyTicketCount(@PathVariable(value = "memberId") long memberId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(userTicketService.getAvailableUserTicketCount(memberId)));
     }
 }

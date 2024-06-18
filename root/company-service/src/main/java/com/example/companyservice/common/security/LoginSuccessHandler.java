@@ -61,8 +61,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
                 if (optionalCompany.isPresent()) {
                     Company company = optionalCompany.get();
-                    String accessToken = jwtUtils.createToken(company.getId());
-                    String refreshToken = jwtUtils.createRefreshToken(company.getId());
+                    String accessToken = jwtUtils.createToken(company.getId(), company.getRole());
+                    String refreshToken = jwtUtils.createRefreshToken(company.getId(), company.getRole());
                     sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
                 } else {
                     sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
@@ -73,8 +73,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 Optional<Member> optionalMember = memberRepository.findByProviderAndSubject(provider, subject);
                 if (optionalMember.isPresent()) {
                     Member member = optionalMember.get();
-                    String accessToken = jwtUtils.createToken(member.getId());
-                    String refreshToken = jwtUtils.createRefreshToken(member.getId());
+                    String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
+                    String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
                     sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
                 } else {
                     sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);

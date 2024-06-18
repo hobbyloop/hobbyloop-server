@@ -1,5 +1,6 @@
 package com.example.companyservice.member.entity;
 
+import com.example.companyservice.company.entity.Role;
 import com.example.companyservice.company.entity.TimeStamped;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
@@ -56,6 +57,8 @@ public class Member extends TimeStamped {
 
     private String oauth2AccessToken;
 
+    private Role role;
+
     public static Member of (CreateMemberRequestDto requestDto) {
         return Member.builder()
             .name(requestDto.getName())
@@ -71,6 +74,7 @@ public class Member extends TimeStamped {
             .oauth2AccessToken(requestDto.getOauth2AccessToken())
             .ci(requestDto.getCi())
             .di(requestDto.getDi())
+            .role(Role.USER)
             .isDeleted(false)
             .build();
     }

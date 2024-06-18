@@ -70,8 +70,8 @@ public class MemberLoginServiceImpl implements MemberLoginService {
             Optional<Member> memberOptional = memberRepository.findByProviderAndSubject(provider, subject);
             if (memberOptional.isPresent()) {
                 Member member = memberOptional.get();
-                String accessToken = jwtUtils.createToken(member.getId());
-                String refreshToken = jwtUtils.createRefreshToken(member.getId());
+                String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
+                String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
                 return MemberLoginResponseDto.of(accessToken, refreshToken, null, null, null, null);
             } else {
                 return MemberLoginResponseDto.of(null, null, email, provider, subject, oAuthAccessToken);

@@ -2,10 +2,10 @@ package com.example.ticketservice.ticket.controller;
 
 import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
-import com.example.ticketservice.ticket.dto.response.AvailableUserTicketsWithCenterInfo;
+import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketExpiringHistoryResponseDto;
-import com.example.ticketservice.ticket.dto.response.UserTicketUsingHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
+import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingHistoryResponseDto;
 import com.example.ticketservice.ticket.service.UserTicketService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

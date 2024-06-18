@@ -13,7 +13,7 @@ import java.util.Base64;
 import java.util.Objects;
 
 @Component
-public class JWTUtil {
+public class JwtUtils {
 
     @Value("${token.secret}")
     private String secretKey;
@@ -26,6 +26,10 @@ public class JWTUtil {
     // 토큰에서 UserPk 추출
     public String getUserPk(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getRole(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("role").toString();
     }
 
     // 헤더에서 토큰 추출

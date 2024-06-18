@@ -1,9 +1,9 @@
 package com.example.ticketservice.ticket.service;
 
 import com.example.ticketservice.ticket.dto.request.CenterMembershipJoinRequestDto;
-import com.example.ticketservice.ticket.dto.response.CenterMemberResponseDto;
-import com.example.ticketservice.ticket.dto.response.CenterMembershipDetailResponseDto;
-import com.example.ticketservice.ticket.dto.response.CenterMembershipJoinedResponseDto;
+import com.example.ticketservice.ticket.dto.response.centermembership.CenterMemberResponseDto;
+import com.example.ticketservice.ticket.dto.response.centermembership.CenterMembershipDetailResponseDto;
+import com.example.ticketservice.ticket.dto.response.centermembership.CenterMembershipJoinedResponseDto;
 
 import java.util.List;
 
