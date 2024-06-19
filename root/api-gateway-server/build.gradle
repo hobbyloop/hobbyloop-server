@@ -18,6 +18,9 @@ dependencies {
 
     // Jaxb-api
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
+
+    // swagger
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.2.0'
 }
 
 dependencyManagement {
