@@ -1,0 +1,11 @@
+openapi:
+  service:
+    title: ticket-service doc
+    version: 1.0.0
+    url: http://localhost:8000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
