@@ -19,36 +19,34 @@ import java.nio.charset.StandardCharsets;
 public class MemberSteps {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static long joinMember(CreateMemberRequestDto request) throws Exception {
+    public static void joinMember(CreateMemberRequestDto request) throws Exception {
         objectMapper.registerModule(new JavaTimeModule());
 
-        String responseBody = RestAssured
-                .given().log().all()
-                .contentType(ContentType.JSON.withCharset("UTF-8"))
-                .body(request)
-                .when()
-                .post("/api/v1/members/join")
-                .then().log().all()
-                .statusCode(200)
-                .extract().asString();
-
-        return objectMapper.readTree(responseBody).get("data").asLong();
+        RestAssured
+            .given().log().all()
+            .contentType(ContentType.JSON.withCharset("UTF-8"))
+            .body(request)
+            .when()
+            .post("/api/v1/members/join")
+            .then().log().all()
+            .statusCode(200)
+            .extract().asString();
     }
 
     public static void updateMember(long memberId, MemberUpdateRequestDto request) throws Exception {
         objectMapper.registerModule(new JavaTimeModule());
 
         RestAssured
-                .given().log().all()
-                .contentType(ContentType.MULTIPART.withCharset("UTF-8"))
-                .multiPart(new MultiPartSpecBuilder(request).controlName("requestDto").mimeType("application/json").charset(StandardCharsets.UTF_8).build())
-                .multiPart("profileImage", generateMockImageFile(), "image/jpeg")
-                .when()
-                .header("id", memberId)   // TODO: Replace with actual member ID
-                .patch("/api/v1/members")
-                .then().log().all()
-                .statusCode(200)
-                .extract().body();
+            .given().log().all()
+            .contentType(ContentType.MULTIPART.withCharset("UTF-8"))
+            .multiPart(new MultiPartSpecBuilder(request).controlName("requestDto").mimeType("application/json").charset(StandardCharsets.UTF_8).build())
+            .multiPart("profileImage", generateMockImageFile(), "image/jpeg")
+            .when()
+            .headers("id", memberId, "role", "USER")
+            .patch("/api/v1/members")
+            .then().log().all()
+            .statusCode(200)
+            .extract().body();
     }
 
     public static MemberDetailResponseDto getMemberDetail(long memberId) throws Exception {
@@ -57,7 +55,7 @@ public class MemberSteps {
         String responseBody = RestAssured
                 .given().log().all()
                 .when()
-                .header("id", memberId)
+                .headers("id", memberId, "role", "USER")
                 .get("/api/v1/members")
                 .then().log().all()
                 .statusCode(200)

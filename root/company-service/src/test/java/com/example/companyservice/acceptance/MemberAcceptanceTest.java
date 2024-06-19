@@ -41,16 +41,20 @@ public class MemberAcceptanceTest extends AcceptanceTest {
     @Test
     public void joinMemberSuccess() throws Exception {
         // given & when
-        long response = MemberSteps.joinMember(MemberFixture.defaultCreateMemberRequest());
+        MemberSteps.joinMember(MemberFixture.defaultCreateMemberRequest());
+        long memberId = 1L;
 
         // then
+        MemberDetailResponseDto response = MemberSteps.getMemberDetail(memberId);
         assertThat(response).isNotNull();
+
     }
 
     @Test
     public void updateMemberSuccess() throws Exception {
         // given
-        long memberId = MemberSteps.joinMember(MemberFixture.defaultCreateMemberRequest());
+        MemberSteps.joinMember(MemberFixture.defaultCreateMemberRequest());
+        long memberId = 1L;
 
         // when
         MemberSteps.updateMember(memberId, MemberFixture.defaultMemberUpdateRequest());

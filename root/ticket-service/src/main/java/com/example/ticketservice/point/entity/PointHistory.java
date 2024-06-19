@@ -1,6 +1,6 @@
 package com.example.ticketservice.point.entity;
 
-import com.example.ticketservice.ticket.entity.TimeStamped;
+import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,6 +37,9 @@ public class PointHistory extends TimeStamped {
     // type이 EARN이 아닐 시, NULL
     private Boolean isProcessedByBatch;
 
+    // type이 EARN이 아닐 시, NULL
+    private Boolean isExpiringSoon;
+
     private String description;
 
     public boolean isGeneralPoint() {
@@ -53,5 +56,9 @@ public class PointHistory extends TimeStamped {
 
     public void processByBatch() {
         isProcessedByBatch = true;
+    }
+
+    public void markExpiredSoon() {
+        isExpiringSoon = true;
     }
 }

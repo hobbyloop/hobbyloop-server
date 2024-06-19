@@ -121,7 +121,7 @@ public class CenterMembershipBatchTest extends AcceptanceTest {
         assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
         assertThat(activeCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.ACTIVE.getStatusType());
         assertThat(expiringSoonCenterMembership.getStatus()).isEqualTo(CenterMembershipStatusEnum.EXPIRING_SOON.getStatusType());
-
+        assertThat(expiringSoonCenterMembership.getUpdatedBy()).isEqualTo("batch");
     }
 
     @Test

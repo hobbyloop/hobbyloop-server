@@ -1,8 +1,7 @@
 package com.example.ticketservice.pay.entity;
 
-import com.example.ticketservice.ticket.client.dto.response.OriginalCenterResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
-import com.example.ticketservice.ticket.entity.TimeStamped;
+import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 

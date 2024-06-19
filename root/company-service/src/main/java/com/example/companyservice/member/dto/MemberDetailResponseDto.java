@@ -17,6 +17,7 @@ public class MemberDetailResponseDto {
     private String nickname;
     private LocalDate birthday;
     private String phoneNumber;
+    private String profileImageUrl;
 
     public static MemberDetailResponseDto from(Member member) {
         return MemberDetailResponseDto.builder()
@@ -24,6 +25,7 @@ public class MemberDetailResponseDto {
                 .nickname(member.getNickname())
                 .birthday(member.getBirthday())
                 .phoneNumber(member.getPhoneNumber())
+                .profileImageUrl(member.getProfileImageUrl())
                 .build();
     }
 }

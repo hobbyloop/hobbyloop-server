@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PointHistoryRepository extends JpaRepository<PointHistory, Integer> {
+public interface PointHistoryRepository extends JpaRepository<PointHistory, Long> {
     List<PointHistory> findByMemberId(Long memberId);
 
     List<PointHistory> findByMemberIdAndTypeNot(Long memberId, int type);
