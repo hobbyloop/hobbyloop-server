@@ -1,0 +1,36 @@
+{
+  "apps": [
+    {
+      "name": "discovery-server",
+      "script": "java",
+      "args": ["-jar", "/home/ubuntu/app/discovery-server/discovery-server.jar"],
+      "cwd": "/home/ubuntu/app/discovery-server",
+      "log_file": "/home/ubuntu/app/discovery-server/discovery-server.log",
+      "error_file": "/home/ubuntu/app/discovery-server/discovery-server-error.log"
+    },
+    {
+      "name": "api-gateway-server",
+      "script": "java",
+      "args": ["-jar", "/home/ubuntu/app/api-gateway-server/api-gateway-server.jar"],
+      "cwd": "/home/ubuntu/app/api-gateway-server",
+      "log_file": "/home/ubuntu/app/api-gateway-server/api-gateway-server.log",
+      "error_file": "/home/ubuntu/app/api-gateway-server/api-gateway-server-error.log"
+    },
+    {
+      "name": "company-service",
+      "script": "java",
+      "args": ["-jar", "/home/ubuntu/app/company-service/company-service.jar"],
+      "cwd": "/home/ubuntu/app/company-service",
+      "log_file": "/home/ubuntu/app/company-service/company-service.log",
+      "error_file": "/home/ubuntu/app/company-service/company-service-error.log"
+    },
+    {
+      "name": "ticket-service",
+      "script": "java",
+      "args": ["-jar", "/home/ubuntu/app/ticket-service/ticket-service.jar"],
+      "cwd": "/home/ubuntu/app/ticket-service",
+      "log_file": "/home/ubuntu/app/ticket-service/ticket-service.log",
+      "error_file": "/home/ubuntu/app/ticket-service/ticket-service-error.log"
+    }
+  ]
+}
