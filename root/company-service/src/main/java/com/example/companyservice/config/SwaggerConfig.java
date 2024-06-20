@@ -3,6 +3,8 @@ package com.example.companyservice.config;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,28 +17,21 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI api(@Value("${openapi.service.url}") String url) {
+        String jwtScheme = "jwtAuth";
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtScheme);
+        Components components = new Components()
+                .addSecuritySchemes(jwtScheme, new SecurityScheme()
+                        .name(jwtScheme)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT"));
+
         return new OpenAPI()
                 .servers(List.of(new Server().url(url)))
-                .components(new Components())
+                .addSecurityItem(securityRequirement)
+                .components(components)
                 .info(apiInfo());
     }
-
-    //도메인으로 그룹화
-//    @Bean
-//    public GroupedOpenApi companyApi() {
-//        return GroupedOpenApi.builder()
-//                .group("company-service")
-//                .pathsToMatch("/api/v1/**")
-//                .build();
-//    }
-//
-//    @Bean
-//    public GroupedOpenApi adminApi() {
-//        return GroupedOpenApi.builder()
-//                .group("어드민 페이지")
-//                .pathsToMatch("/api/v1/admin/**")
-//                .build();
-//    }
 
     private Info apiInfo() {
         return new Info()
