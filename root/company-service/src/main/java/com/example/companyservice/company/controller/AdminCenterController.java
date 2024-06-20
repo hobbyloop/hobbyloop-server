@@ -7,6 +7,8 @@ import com.example.companyservice.company.dto.response.*;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.company.service.CenterService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,11 +21,13 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/admin/centers")
+@Tag(name = "관리자용 시설 API")
 public class AdminCenterController {
 
     private final CenterService centerService;
 
     @PostMapping()
+    @Operation(summary = "시설 생성")
     public ResponseEntity<BaseResponseDto<CenterCreateResponseDto>> createCenter(HttpServletRequest request,
                                                                                  @RequestPart(value = "requestDto") CenterCreateRequestDto requestDto,
                                                                                  @RequestPart(value = "logoImage") MultipartFile logoImage,
