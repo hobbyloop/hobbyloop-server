@@ -12,10 +12,12 @@ import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.ticket.entity.CategoryEnum;
 import com.example.ticketservice.ticket.entity.Review;
 import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.ReviewImageRepository;
 import com.example.ticketservice.ticket.repository.review.ReviewRepository;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import com.example.ticketservice.ticket.dto.response.*;
+import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,8 @@ import java.util.stream.Collectors;
 public class TicketServiceImpl implements TicketService{
 
     private final TicketRepository ticketRepository;
+
+    private final UserTicketRepository userTicketRepository;
 
     private final CompanyServiceClient companyServiceClient;
 
@@ -129,6 +133,12 @@ public class TicketServiceImpl implements TicketService{
     public void cancelUploadTicket(long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+
+        List<UserTicket> userTickets = userTicketRepository.findAllByTicketId(ticketId);
+        if (!userTickets.isEmpty()) {
+            throw new ApiException(ExceptionEnum.TICKET_CANNOT_CANCEL_UPLOAD);
+        }
+
         ticket.cancelUpload();
     }
 
