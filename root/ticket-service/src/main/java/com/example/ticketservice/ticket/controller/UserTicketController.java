@@ -8,6 +8,9 @@ import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketLis
 import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
 import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingHistoryResponseDto;
 import com.example.ticketservice.ticket.service.UserTicketService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,13 +24,17 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user-tickets")
+@Tag(name = "사용자 이용권 API", description = "사용자가 구매한 이용권 관련 API")
 public class UserTicketController {
     private final UserTicketService userTicketService;
 
     @PostMapping("/{ticketId}/purchase")
     @RoleAuthorization(roles = {"USER"})
-    public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(@PathVariable(value = "ticketId") long ticketId,
-                                                                HttpServletRequest request) {
+    @Operation(summary = "이용권 구매")
+    public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(
+            @Parameter(description = "구매할 이용권 아이디", required = true)
+            @PathVariable(value = "ticketId") long ticketId,
+            HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(userTicketService.purchaseTicket(memberId, ticketId)));
@@ -35,6 +42,7 @@ public class UserTicketController {
 
     @GetMapping("/recent-purchase")
     @RoleAuthorization(roles = {"USER"})
+    @Operation(summary = "최근에 구매한 이용권 목록 조회")
     public ResponseEntity<BaseResponseDto<Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>>>> getMyRecentPurchaseUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -51,6 +59,7 @@ public class UserTicketController {
 
     @GetMapping("/using-histories")
     @RoleAuthorization(roles = {"USER"})
+    @Operation(summary = "사용자 마이페이지 - 이용권 사용 내역")
     public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -59,6 +68,7 @@ public class UserTicketController {
 
     @GetMapping("/expiring-histories")
     @RoleAuthorization(roles = {"USER"})
+    @Operation(summary = "사용자 마이페이지 - 이용권 소멸 내역")
     public ResponseEntity<BaseResponseDto<List<UserTicketExpiringHistoryResponseDto>>> getUserTicketExpiringHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)

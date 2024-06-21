@@ -16,6 +16,7 @@ public enum ExceptionEnum {
     TICKET_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "존재하지 않는 이용권입니다."),
     TICKET_NOT_UPLOAD_EXCEPTION(HttpStatus.BAD_REQUEST, "T002", "판매 중인 이용권이 아닙니다."),
     TICKET_SOLD_OUT_EXCEPTION(HttpStatus.BAD_REQUEST, "T002", "이용권이 모두 판매되었습니다."),
+    TICKET_CANNOT_CANCEL_UPLOAD(HttpStatus.BAD_REQUEST, "T003", "이미 구매한 사용자가 존재해 이용권 업로드를 취소할 수 없습니다."),
     REVIEW_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "R001", "존재하지 않는 리뷰입니다."),
     USER_TICKET_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "UT001", "존재하지 않는 이용권입니다."),
     NO_REMAINING_USER_TICKET_EXCEPTION(HttpStatus.BAD_REQUEST, "UT002", "이용권 잔여 횟수가 없습니다."),
