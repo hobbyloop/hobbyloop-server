@@ -2,6 +2,7 @@ package com.example.ticketservice.coupon.controller;
 
 import com.example.ticketservice.coupon.service.CouponService;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/coupons/client")
+@Hidden
 public class CouponClientController {
     private final CouponService couponService;
 
