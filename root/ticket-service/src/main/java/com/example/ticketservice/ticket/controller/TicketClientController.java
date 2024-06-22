@@ -7,6 +7,8 @@ import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.ticketservice.ticket.service.TicketClientService;
 import com.example.ticketservice.ticket.service.UserTicketService;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/client/tickets")
+@Hidden
 public class TicketClientController {
 
     private final TicketClientService ticketClientService;

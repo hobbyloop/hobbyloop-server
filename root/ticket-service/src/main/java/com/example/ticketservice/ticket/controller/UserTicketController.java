@@ -10,6 +10,10 @@ import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingH
 import com.example.ticketservice.ticket.service.UserTicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,12 @@ public class UserTicketController {
     @PostMapping("/{ticketId}/purchase")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "이용권 구매")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "구매 성공 시 사용자에게 발급된 이용권 아이디 반환", content = @Content(schema = @Schema(implementation = Long.class))),
+            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음"),
+            @ApiResponse(responseCode = "400", description = "판매 중인 이용권이 아님(업로드 먼저 해야됨)"),
+            @ApiResponse(responseCode = "400", description = "이용권이 모두 판매되었음")
+    })
     public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(
             @Parameter(description = "구매할 이용권 아이디", required = true)
             @PathVariable(value = "ticketId") long ticketId,
@@ -51,6 +61,8 @@ public class UserTicketController {
 
     @GetMapping("/available")
     @RoleAuthorization(roles = {"USER"})
+    @Operation(summary = "예약 가능한 이용권 목록 조회")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AvailableUserTicketsWithCenterInfo.class)))
     public ResponseEntity<BaseResponseDto<List<AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -60,6 +72,7 @@ public class UserTicketController {
     @GetMapping("/using-histories")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "사용자 마이페이지 - 이용권 사용 내역")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserTicketUsingHistoryResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -69,6 +82,7 @@ public class UserTicketController {
     @GetMapping("/expiring-histories")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "사용자 마이페이지 - 이용권 소멸 내역")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserTicketExpiringHistoryResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<UserTicketExpiringHistoryResponseDto>>> getUserTicketExpiringHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
