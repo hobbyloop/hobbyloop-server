@@ -1,5 +1,6 @@
 package com.example.ticketservice.ticket.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +14,10 @@ import java.util.List;
 @Builder
 public class ReviewListTicketResponseDto {
 
+    @Schema(description = "평균 별점", example = "4.8")
     private float score;
 
+    @Schema(type = "array", description = "전체 리뷰 이미지 모음")
     private List<String> totalImageUrlList;
 
     public static ReviewListTicketResponseDto of(float score,
