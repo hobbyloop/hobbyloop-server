@@ -35,19 +35,31 @@ public class TicketController {
                 .body(new BaseResponseDto<>(ticketService.getTicketListByCenter(centerId)));
     }
 
-    @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{pageNo}/{allow-location}/{latitude}/{longitude}")
+    @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{allow-location}/{latitude}/{longitude}/{distance}")
+    public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicketAroundMe(HttpServletRequest request,
+                                                                                              @PathVariable(value = "category") String category,
+                                                                                              @PathVariable(value = "sortId") int sortId,
+                                                                                              @PathVariable(value = "refundable") int refundable,
+                                                                                              @PathVariable(value = "score") double score,
+                                                                                              @PathVariable(value = "allow-location") int allowLocation,
+                                                                                              @PathVariable(value = "latitude") double latitude,
+                                                                                              @PathVariable(value = "longitude") double longitude,
+                                                                                              @PathVariable(value = "distance") int distance) {
+        long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getCategoryTicketAroundMe(memberId, category, sortId, refundable, score, allowLocation, latitude, longitude, distance)));
+    }
+
+    @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{pageNo}")
     public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicket(HttpServletRequest request,
                                                                                               @PathVariable(value = "category") String category,
                                                                                               @PathVariable(value = "sortId") int sortId,
                                                                                               @PathVariable(value = "refundable") int refundable,
                                                                                               @PathVariable(value = "score") double score,
                                                                                               @PathVariable(value = "pageNo") int pageNo,
-                                                                                              @PathVariable(value = "allow-location") int allowLocation,
-                                                                                              @PathVariable(value = "latitude") Double latitude,
-                                                                                              @PathVariable(value = "longitude") Double longitude,
                                                                                               @RequestParam(value = "location") List<String> locations) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(ticketService.getCategoryTicket(memberId, category, sortId, refundable, score, pageNo, allowLocation, latitude, longitude, locations)));
+                .body(new BaseResponseDto<>(ticketService.getCategoryTicket(memberId, category, sortId, refundable, score, pageNo, locations)));
     }
 }

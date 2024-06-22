@@ -30,5 +30,7 @@ public interface TicketService {
 
     List<AdminMyTicketResponseDto> getMyTicketList(long centerId);
 
-    List<CategoryTicketResponseDto> getCategoryTicket(long memberId, String category, int sortId, int refundable, double score, int pageNo, int allowLocation, Double latitude, Double longitude, List<String> locations);
+    List<CategoryTicketResponseDto> getCategoryTicketAroundMe(long memberId, String category, int sortId, int refundable, double score, int allowLocation, double latitude, double longitude, int distance);
+
+    List<CategoryTicketResponseDto> getCategoryTicket(long memberId, String category, int sortId, int refundable, double score, int pageNo, List<String> locations);
 }

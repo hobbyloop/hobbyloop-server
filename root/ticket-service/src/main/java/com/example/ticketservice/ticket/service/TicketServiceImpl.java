@@ -1,7 +1,7 @@
 package com.example.ticketservice.ticket.service;
 
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
-import com.example.ticketservice.ticket.client.dto.response.CenterDistanceInfoResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.IsBookmarkResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.OriginalBusinessResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
@@ -44,6 +44,8 @@ public class TicketServiceImpl implements TicketService{
 
     private final ReviewImageRepository reviewImageRepository;
 
+    private final LocationService locationService;
+
     @Override
     @Transactional(readOnly = true)
     public List<TicketResponseDto> getTicketList(long centerId, long ticketId) {
@@ -65,9 +67,9 @@ public class TicketServiceImpl implements TicketService{
     public TicketCreateResponseDto createTicket(long centerId, TicketCreateRequestDto requestDto, MultipartFile ticketImage) {
         String ticketImageKey = amazonS3Service.saveS3Img(ticketImage, "TicketImage");
         String ticketImageUrl = amazonS3Service.getFileUrl(ticketImageKey);
-        Ticket ticket = Ticket.of(centerId, ticketImageKey, ticketImageUrl, requestDto);
-        Ticket saveTicket = ticketRepository.save(ticket);
         CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
+        Ticket ticket = Ticket.of(centerId, ticketImageKey, ticketImageUrl, requestDto, centerInfo);
+        Ticket saveTicket = ticketRepository.save(ticket);
         return TicketCreateResponseDto.of(centerInfo, saveTicket);
     }
 
@@ -161,54 +163,66 @@ public class TicketServiceImpl implements TicketService{
 
     @Override
     @Transactional(readOnly = true)
+    public List<CategoryTicketResponseDto> getCategoryTicketAroundMe(long memberId,
+                                                                     String category,
+                                                                     int sortId,
+                                                                     int refundable,
+                                                                     double score,
+                                                                     int allowLocation,
+                                                                     double latitude,
+                                                                     double longitude,
+                                                                     int distance) {
+        Map<Long, IsBookmarkResponseDto> centerInfoMap = new HashMap<>();
+        List<CategoryTicketResponseDto> result = new ArrayList<>();
+        int categoryId = CategoryEnum.findByName(category).getCategoryType();
+        if (allowLocation == 0) throw new ApiException(ExceptionEnum.NOT_ALLOW_LOCATION_Exception);
+        List<Ticket> ticketListByCategoryAroundMe = ticketRepository.getTicketListByCategoryAroundMe(categoryId, sortId, refundable, score);
+        for (Ticket ticket : ticketListByCategoryAroundMe) {
+            Double dist = locationService.getDistance(ticket.getLatitude(), ticket.getLongitude(), latitude, longitude);
+            if (dist <= distance) {
+                IsBookmarkResponseDto isBookmark;
+                if (centerInfoMap.containsKey(ticket.getCenterId())) {
+                    isBookmark = centerInfoMap.get(ticket.getCenterId());
+                } else {
+                    isBookmark = companyServiceClient.getIsBookmark(ticket.getCenterId(), memberId).getData();
+                    centerInfoMap.put(ticket.getCenterId(), isBookmark);
+                }
+                List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
+                float reviewScore = getScore(reviewList);
+                result.add(CategoryTicketResponseDto.of(ticket, isBookmark.isBookmark(), reviewScore, reviewList.size()));
+            }
+        }
+        return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<CategoryTicketResponseDto> getCategoryTicket(long memberId,
                                                              String category,
                                                              int sortId,
                                                              int refundable,
                                                              double score,
                                                              int pageNo,
-                                                             int allowLocation,
-                                                             Double latitude,
-                                                             Double longitude,
                                                              List<String> locations) {
-        Map<Long, CenterDistanceInfoResponseDto> centerInfoMap = new HashMap<>();
+        Map<Long, IsBookmarkResponseDto> centerInfoMap = new HashMap<>();
         int categoryId = CategoryEnum.findByName(category).getCategoryType();
         List<CategoryTicketResponseDto> result = new ArrayList<>();
-        while (true) {
-            List<Ticket> ticketList = ticketRepository.getTicketListByCategory(categoryId, sortId, score, pageNo);
-            boolean isResultSizeGoe20 = false;
 
-            for (Ticket ticket : ticketList) {
-                CenterDistanceInfoResponseDto centerInfo;
-                if (centerInfoMap.containsKey(ticket.getCenterId())) {
-                    centerInfo = centerInfoMap.get(ticket.getCenterId());
-                } else {
-                    centerInfo = companyServiceClient.getCenterDistanceInfo(
-                            ticket.getCenterId(),
-                            memberId,
-                            refundable,
-                            allowLocation,
-                            latitude,
-                            longitude,
-                            locations
-                    ).getData();
-                    centerInfoMap.put(ticket.getCenterId(), centerInfo);
-                }
-
-                if (!centerInfo.isSatisfied()) continue;
-
-                List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
-                float reviewScore = getScore(reviewList);
-
-                result.add(CategoryTicketResponseDto.of(centerInfo, ticket.getCalculatedPrice(), reviewScore, reviewList.size()));
-                if (result.size() >= 20) {
-                    isResultSizeGoe20 = true;
-                    break;
-                }
+        List<Ticket> ticketList = ticketRepository.getTicketListByCategory(categoryId, sortId, refundable, score, pageNo, locations);
+        for (Ticket ticket : ticketList) {
+            IsBookmarkResponseDto isBookmark;
+            if (centerInfoMap.containsKey(ticket.getCenterId())) {
+                isBookmark = centerInfoMap.get(ticket.getCenterId());
+            } else {
+                isBookmark = companyServiceClient.getIsBookmark(ticket.getCenterId(), memberId).getData();
+                centerInfoMap.put(ticket.getCenterId(), isBookmark);
             }
 
-            if (isResultSizeGoe20) break;
+            List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
+            float reviewScore = getScore(reviewList);
+            result.add(CategoryTicketResponseDto.of(ticket, isBookmark.isBookmark(), reviewScore, reviewList.size()));
         }
+
         return result;
     }
 

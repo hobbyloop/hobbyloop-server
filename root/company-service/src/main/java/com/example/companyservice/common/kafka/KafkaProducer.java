@@ -1,6 +1,6 @@
 package com.example.companyservice.common.kafka;
 
-import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
+import com.example.companyservice.company.client.dto.request.CenterLocationDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ public class KafkaProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void send(String topic, CenterUpdateRequestDto requestDto) {
+    public void send(String topic, CenterLocationDto requestDto) {
         ObjectMapper mapper = new ObjectMapper();
         String jsonInString = "";
         try {

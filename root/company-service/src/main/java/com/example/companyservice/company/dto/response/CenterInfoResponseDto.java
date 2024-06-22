@@ -34,6 +34,10 @@ public class CenterInfoResponseDto {
 
     private List<HourResponseDto> breakHourList;
 
+    private double latitude;
+
+    private double longitude;
+
     public static CenterInfoResponseDto of(Center center,
                                            List<HourResponseDto> operatingHourList,
                                            List<HourResponseDto> breakHourList) {
@@ -48,6 +52,8 @@ public class CenterInfoResponseDto {
                 .isRefundable(center.getCompany().getIsRefundable())
                 .operatingHourList(operatingHourList)
                 .breakHourList(breakHourList)
+                .latitude(center.getLatitude())
+                .longitude(center.getLongitude())
                 .build();
     }
 }

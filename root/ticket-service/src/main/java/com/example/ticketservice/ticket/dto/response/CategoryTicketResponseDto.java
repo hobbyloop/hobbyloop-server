@@ -1,6 +1,6 @@
 package com.example.ticketservice.ticket.dto.response;
 
-import com.example.ticketservice.ticket.client.dto.response.CenterDistanceInfoResponseDto;
+import com.example.ticketservice.ticket.entity.Ticket;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,18 +30,18 @@ public class CategoryTicketResponseDto {
 
     private int reviewCount;
 
-    public static CategoryTicketResponseDto of(CenterDistanceInfoResponseDto responseDto,
-                                               int calculatedPrice,
+    public static CategoryTicketResponseDto of(Ticket ticket,
+                                               boolean isBookmark,
                                                float score,
                                                int reviewCount) {
         return CategoryTicketResponseDto.builder()
-                .centerId(responseDto.getCenterId())
-                .isRefundable(responseDto.isRefundable())
-                .isBookmark(responseDto.isBookmark())
-                .logoImageUrl(responseDto.getLogoImageUrl())
-                .centerName(responseDto.getCenterName())
-                .address(responseDto.getAddress())
-                .calculatedPrice(calculatedPrice)
+                .centerId(ticket.getCenterId())
+                .isRefundable(ticket.isRefundable())
+                .isBookmark(isBookmark)
+                .logoImageUrl(ticket.getLogoImageUrl())
+                .centerName(ticket.getCenterName())
+                .address(ticket.getAddress())
+                .calculatedPrice(ticket.getCalculatedPrice())
                 .score(score)
                 .reviewCount(reviewCount)
                 .build();

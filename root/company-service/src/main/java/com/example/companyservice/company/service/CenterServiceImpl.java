@@ -1,7 +1,9 @@
 package com.example.companyservice.company.service;
 
+import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
+import com.example.companyservice.company.client.dto.request.CenterLocationDto;
 import com.example.companyservice.company.client.dto.response.*;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
@@ -49,6 +51,8 @@ public class CenterServiceImpl implements CenterService {
     private final AdvertisementRepository advertisementRepository;
 
     private final LocationService locationService;
+
+    private final KafkaProducer kafkaProducer;
 
     @Override
     @Transactional
@@ -124,6 +128,9 @@ public class CenterServiceImpl implements CenterService {
 
         saveOperatingHour(requestDto.getOperatingHourList(), center);
         saveBreakHour(requestDto.getBreakHourList(), center);
+
+        kafkaProducer.send("update-address-info", CenterLocationDto.of(centerId, requestDto, logoImageUrl));
+
         return center.getId();
     }
 
@@ -239,27 +246,9 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public CenterDistanceInfoResponseDto getCenterDistanceInfo(long centerId, long memberId, int refundable, int allowLocation, Double latitude, Double longitude, List<String> locations) {
-        Center center = centerRepository.findById(centerId)
-                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+    public IsBookmarkResponseDto getIsBookmark(long centerId, long memberId) {
         boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(centerId, memberId);
-        boolean isSatisfied = refundable != 1 || center.getCompany().getIsRefundable();
-
-        if (allowLocation == 1) {
-            Double distance = locationService.getDistance(center.getLatitude(), center.getLongitude(), latitude, longitude);
-            if (distance > 3) isSatisfied = false;
-        }
-
-        boolean isContain = false;
-        for (String location : locations) {
-            if (center.getAddress().contains(location)) {
-                isContain = true;
-                break;
-            }
-        }
-        if (!isContain) isSatisfied = false;
-
-        return CenterDistanceInfoResponseDto.of(center, isBookmark, isSatisfied);
+        return IsBookmarkResponseDto.of(isBookmark);
     }
 
     @Override
