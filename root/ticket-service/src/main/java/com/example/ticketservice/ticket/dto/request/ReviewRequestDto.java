@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(title = "리뷰 생성 요청", description = "JSON 형식")
 public class ReviewRequestDto {
 
     @Schema(description = "리뷰 별점", example = "3.5")

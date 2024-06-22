@@ -20,13 +20,13 @@ public class CenterMembershipJoinedResponseDto {
     @Schema(description = "회원 전화번호", example = "010-1234-5678")
     private String phoneNumber;
 
-    @Schema(description = "회원 성별", example = "남 or 여")
+    @Schema(description = "회원 성별(남, 여)", example = "여")
     private String gender;
 
     @Schema(description = "회원 이메일", example = "hobbyloop@gmail.com")
     private String email;
 
-    @Schema(description = "회원 생일", example = "yyyy-MM-dd")
+    @Schema(description = "회원 생일", example = "2000-01-02")
     private String birthday;
 
     @Schema(description = "회원이 구매한 이용권 이름", example = "6:1 필라테스 15회 이용권")
