@@ -30,13 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemberController {
     private final MemberService memberService;
 
-    @PostMapping("/join")
-    @Operation(summary = "회원가입", description = "회원가입 후 바로 토큰 리턴")
-    public ResponseEntity<BaseResponseDto<TokenResponseDto>> createMember(@RequestBody CreateMemberRequestDto requestDto) {
-        return ResponseEntity.status(HttpStatus.OK)
-            .body(new BaseResponseDto<>(memberService.createMember(requestDto)));
-    }
-
     @PatchMapping
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "마이페이지 - 내 정보 수정", description = "내 정보 조회 호출 후 호출 가능")
