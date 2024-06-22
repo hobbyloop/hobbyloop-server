@@ -1,8 +1,11 @@
 package com.example.ticketservice.ticket.controller;
 
+import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.common.security.RoleAuthorization;
+import com.example.ticketservice.common.swagger.ApiExceptionResponse;
 import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
+import com.example.ticketservice.ticket.dto.response.ReviewResponseDto;
 import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.RecentPurchaseUserTicketListResponseDto;
 import com.example.ticketservice.ticket.dto.response.userticket.UserTicketExpiringHistoryResponseDto;
@@ -10,6 +13,7 @@ import com.example.ticketservice.ticket.dto.response.userticket.UserTicketUsingH
 import com.example.ticketservice.ticket.service.UserTicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,11 +39,11 @@ public class UserTicketController {
     @PostMapping("/{ticketId}/purchase")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "이용권 구매")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "구매 성공 시 사용자에게 발급된 이용권 아이디 반환", content = @Content(schema = @Schema(implementation = Long.class))),
-            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음"),
-            @ApiResponse(responseCode = "400", description = "판매 중인 이용권이 아님(업로드 먼저 해야됨)"),
-            @ApiResponse(responseCode = "400", description = "이용권이 모두 판매되었음")
+    @ApiResponse(responseCode = "201", description = "구매 성공 시 사용자에게 발급된 이용권 아이디 반환", content = @Content(schema = @Schema(implementation = Long.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION,
+            ExceptionEnum.TICKET_NOT_UPLOAD_EXCEPTION,
+            ExceptionEnum.TICKET_SOLD_OUT_EXCEPTION
     })
     public ResponseEntity<BaseResponseDto<Long>> purchaseTicket(
             @Parameter(description = "구매할 이용권 아이디", required = true)
@@ -62,7 +66,7 @@ public class UserTicketController {
     @GetMapping("/available")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "예약 가능한 이용권 목록 조회")
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AvailableUserTicketsWithCenterInfo.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AvailableUserTicketsWithCenterInfo.class))))
     public ResponseEntity<BaseResponseDto<List<AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -72,7 +76,7 @@ public class UserTicketController {
     @GetMapping("/using-histories")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "사용자 마이페이지 - 이용권 사용 내역")
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserTicketUsingHistoryResponseDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserTicketUsingHistoryResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -82,7 +86,7 @@ public class UserTicketController {
     @GetMapping("/expiring-histories")
     @RoleAuthorization(roles = {"USER"})
     @Operation(summary = "사용자 마이페이지 - 이용권 소멸 내역")
-    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UserTicketExpiringHistoryResponseDto.class)))
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserTicketExpiringHistoryResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<UserTicketExpiringHistoryResponseDto>>> getUserTicketExpiringHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
