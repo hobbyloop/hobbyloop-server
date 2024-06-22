@@ -6,6 +6,7 @@ import com.example.ticketservice.ticket.service.TicketService;
 import com.example.ticketservice.ticket.dto.response.CategoryTicketResponseDto;
 import com.example.ticketservice.ticket.dto.response.ReviewListTicketResponseDto;
 import com.example.ticketservice.ticket.dto.response.TicketByCenterResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tickets")
+@Tag(name = "이용권 조회 관련 API")
 public class TicketController {
 
     private final TicketService ticketService;

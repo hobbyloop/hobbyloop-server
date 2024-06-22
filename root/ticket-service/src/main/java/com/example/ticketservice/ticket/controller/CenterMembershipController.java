@@ -10,6 +10,10 @@ import com.example.ticketservice.ticket.service.CenterMembershipService;
 import com.example.ticketservice.ticket.service.UserTicketService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,6 +32,11 @@ public class CenterMembershipController {
 
     @PostMapping("/{centerId}/{memberId}")
     @Operation(summary = "시설 회원 직접 등록", description = "관리자가 현장에서 시설 회원 정보를 직접 등록함")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = CenterMembershipJoinedResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "이미 등록된 회원임"),
+            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음")
+    })
     public ResponseEntity<BaseResponseDto<CenterMembershipJoinedResponseDto>> joinCenterMembershipByAdmin(
             @Parameter(description = "업체 아이디", required = true)
             @PathVariable Long centerId,
@@ -41,10 +50,11 @@ public class CenterMembershipController {
 
     @GetMapping("/{centerId}/{pageNo}/{sortId}")
     @Operation(summary = "시설 회원 목록 조회")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = CenterMemberResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<CenterMemberResponseDto>>> getCenterMemberList(
             @Parameter(description = "업체 아이디", required = true)
             @PathVariable long centerId,
-            @Parameter(description = "페이지 번호, 1페이지 크기: 20", example = "1", required = true)
+            @Parameter(description = "페이지 번호(1페이지 크기: 20)", example = "1", required = true)
             @PathVariable int pageNo,
             @Parameter(description = "정렬 기준, 0: 이름순, 1: 이용권별(미구현), 2: 만료회원 필터", example = "0", required = true)
             @PathVariable int sortId
@@ -55,6 +65,10 @@ public class CenterMembershipController {
 
     @GetMapping("/{centerMembershipId}")
     @Operation(summary = "시설 회원 상세 정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = CenterMembershipDetailResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "시설 회원을 찾을 수 없음")
+    })
     public ResponseEntity<BaseResponseDto<CenterMembershipDetailResponseDto>> getCenterMembershipDetail(
             @Parameter(description = "시설 회원 아이디", required = true)
             @PathVariable long centerMembershipId
@@ -65,6 +79,7 @@ public class CenterMembershipController {
 
     @GetMapping("/unapproved/{centerId}")
     @Operation(summary = "이용권 신청 목록 조회", description = "사용자가 이용권을 구매했으나 관리자가 승인하지 않은 상태의 이용권 목록")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = UnapprovedUserTicketListResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<UnapprovedUserTicketListResponseDto>>> getUnapprovedUserTicketList(
             @Parameter(description = "업체 아이디", required = true)
             @PathVariable long centerId) {
@@ -74,6 +89,10 @@ public class CenterMembershipController {
 
     @PatchMapping("/{userTicketId}/approve")
     @Operation(summary = "이용권 승인")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "사용자 이용권을 찾을 수 없음")
+    })
     public ResponseEntity<BaseResponseDto<Void>> approveUserTicket(
             @Parameter(description = "사용자 이용권 아이디", required = true)
             @PathVariable long userTicketId) {
