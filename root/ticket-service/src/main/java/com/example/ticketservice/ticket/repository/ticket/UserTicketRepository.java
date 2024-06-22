@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserTicketRepository extends JpaRepository<UserTicket, Long>, UserTicketRepositoryCustom {
+    List<UserTicket> findAllByTicketId(Long ticketId);
 
     List<UserTicket> findAllByTicketIdAndIsApproveFalse(long ticketId);
 

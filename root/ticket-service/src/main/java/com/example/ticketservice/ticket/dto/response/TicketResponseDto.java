@@ -4,6 +4,7 @@ import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDt
 import com.example.ticketservice.ticket.client.dto.response.HourResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,30 +22,43 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Schema(title = "이용권 목록 응답 바디")
 public class TicketResponseDto {
 
+    @Schema(description = "이용권 아이디", example = "1")
     private Long ticketId;
 
+    @Schema(description = "이용권 이름", example = "6:1 필라테스 15회")
     private String ticketName;
 
+    @Schema(description = "이용권 이미지 URL")
     private String ticketImageUrl;
 
+    @Schema(description = "시설 주소", example = "서울시 동작구 동작로 12-1")
     private String address;
 
+    @Schema(description = "시설 이름", example = "필라피티 스튜디오")
     private String centerName;
 
+    @Schema(description = "운영시간", example = "월,화,수,목,금,토,일 / 09:00~18:00")
     private String operatingHour;
 
+    @Schema(description = "휴무시간", example = "휴무 없음")
     private String breakHour;
 
+    @Schema(description = "이용권 신청 마감기한 - 시작일", example = "2024-06-20")
     private LocalDate expirationStartDate;
 
+    @Schema(description = "이용권 신청 마감기한 - 종료일", example = "2024-06-20")
     private LocalDate expirationEndDate;
 
+    @Schema(description = "이용권 총 수량(최대 판매가능 수량)", example = "100")
     private int totalCount;
 
+    @Schema(description = "이용권 발급 수량(사용자가 구매한 횟수)", example = "14")
     private int issueCount;
 
+    @Schema(description = "업로드 여부", example = "false")
     @JsonProperty("isUpload")
     private boolean isUpload;
 
