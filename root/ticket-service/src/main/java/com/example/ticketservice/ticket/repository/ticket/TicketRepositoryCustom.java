@@ -12,7 +12,9 @@ public interface TicketRepositoryCustom {
 
     Optional<Ticket> getMinimumPriceTicket(long centerId);
 
-    List<Ticket> getTicketListByCategory(int category, int sortId, double score, int PgeNo);
+    List<Ticket> getTicketListByCategoryAroundMe(int category, int sortId, int refundable, double score);
+
+    List<Ticket> getTicketListByCategory(int category, int sortId, int refundable, double score, int PgeNo, List<String> locations);
 
     PurchaseHistoryInOneWeekResponseDto getTicketHighestIssueCount(long centerId);
 }

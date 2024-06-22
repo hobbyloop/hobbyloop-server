@@ -2,7 +2,6 @@ package com.example.ticketservice.centermembership;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
-import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.entity.CenterMembership;
 import com.example.ticketservice.ticket.entity.CenterMembershipStatusEnum;
@@ -28,7 +27,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -55,9 +53,6 @@ public class CenterMembershipBatchTest extends AcceptanceTest {
 
     @MockBean
     private CompanyServiceClient companyServiceClient;
-
-    @MockBean
-    private MemberServiceClient memberServiceClient;
 
     @MockBean
     private AmazonS3Service amazonS3Service;
@@ -201,6 +196,6 @@ public class CenterMembershipBatchTest extends AcceptanceTest {
     }
 
     private void mockForPurchaseTicket() {
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        given(companyServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
     }
 }

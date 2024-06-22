@@ -3,6 +3,7 @@ package com.example.ticketservice.ticket.entity;
 import com.example.ticketservice.common.entity.TimeStamped;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
+import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
 import jakarta.persistence.*;
@@ -56,13 +57,7 @@ public class Ticket extends TimeStamped {
 
     private int refundPercentage;
 
-    private int periodAfterPurchase; // 확인필요
-
     private int issueCount; // 확인필요
-
-    private int purchaseCount; // 확인필요
-
-    private boolean isAvailable; // 확인필요
 
     private float score;
 
@@ -72,10 +67,23 @@ public class Ticket extends TimeStamped {
 
     private Long centerId;
 
+    private String centerName;
+
+    private String logoImageUrl;
+
+    private String address;
+
+    private double latitude;
+
+    private double longitude;
+
+    private boolean isRefundable;
+
     public static Ticket of(long centerId,
                             String ticketImageKey,
                             String ticketImageUrl,
-                            TicketCreateRequestDto requestDto) {
+                            TicketCreateRequestDto requestDto,
+                            CenterInfoResponseDto centerInfo) {
         return Ticket.builder()
                 .category(CategoryEnum.findByName(requestDto.getCategory()).getCategoryType())
                 .name(requestDto.getName())
@@ -95,6 +103,10 @@ public class Ticket extends TimeStamped {
                 .refundRegulation(requestDto.getRefundRegulation())
                 .refundPercentage(requestDto.getRefundPercentage())
                 .centerId(centerId)
+                .address(centerInfo.getAddress())
+                .latitude(centerInfo.getLatitude())
+                .longitude(centerInfo.getLongitude())
+                .isRefundable(centerInfo.isRefundable())
                 .build();
     }
 

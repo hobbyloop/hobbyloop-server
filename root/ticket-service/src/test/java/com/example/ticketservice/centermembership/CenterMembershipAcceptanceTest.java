@@ -2,7 +2,6 @@ package com.example.ticketservice.centermembership;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
-import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.response.*;
 import com.example.ticketservice.fixture.CenterFixture;
@@ -31,9 +30,6 @@ import static org.mockito.BDDMockito.given;
 public class CenterMembershipAcceptanceTest extends AcceptanceTest {
     @MockBean
     private CompanyServiceClient companyServiceClient;
-
-    @MockBean
-    private MemberServiceClient memberServiceClient;
 
     @MockBean
     private AmazonS3Service amazonS3Service;
@@ -82,7 +78,7 @@ public class CenterMembershipAcceptanceTest extends AcceptanceTest {
         mockForPurchaseTicket();
         UserTicketSteps.purchaseTicket(ticketId1);
 
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        given(companyServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
         Long userTicketId = CenterMembershipSteps.getUnapprovedUserTicketList(centerId).get(0).getUserTicketId();
 
         // when
@@ -97,7 +93,7 @@ public class CenterMembershipAcceptanceTest extends AcceptanceTest {
     @Test
     public void getUnapprovedUserTicketListSuccess() throws Exception {
         // given
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        given(companyServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
 
         mockForPurchaseTicket();
         Long unapprovedUserTicketId = UserTicketSteps.purchaseTicket(ticketId1);
@@ -115,7 +111,7 @@ public class CenterMembershipAcceptanceTest extends AcceptanceTest {
     @Test
     public void getCenterMemberListSuccess() throws Exception {
         // given
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        given(companyServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
 
         mockForPurchaseTicket();
         Long oldTicketId = UserTicketSteps.purchaseTicket(ticketId1);
@@ -133,7 +129,7 @@ public class CenterMembershipAcceptanceTest extends AcceptanceTest {
     @Test
     public void getCenterMembershipDetailSuccess() throws Exception {
         // given
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        given(companyServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
         mockForPurchaseTicket();
 
         Long userTicketId = UserTicketSteps.purchaseTicket(ticketId1);

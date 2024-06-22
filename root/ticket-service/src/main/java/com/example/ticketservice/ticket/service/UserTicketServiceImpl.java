@@ -1,7 +1,6 @@
 package com.example.ticketservice.ticket.service;
 
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
-import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
@@ -38,7 +37,6 @@ public class UserTicketServiceImpl implements UserTicketService {
     private final TicketRepository ticketRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final CompanyServiceClient companyServiceClient;
-    private final MemberServiceClient memberServiceClient;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final LectureReservationRepository lectureReservationRepository;
 
@@ -83,7 +81,7 @@ public class UserTicketServiceImpl implements UserTicketService {
                 .collect(Collectors.toList());
         return userTicketList.stream()
                 .map(userTicket -> {
-                    MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(userTicket.getMemberId()).getData();
+                    MemberInfoResponseDto memberInfo = companyServiceClient.getMemberInfo(userTicket.getMemberId()).getData();
                     return UnapprovedUserTicketListResponseDto.of(userTicket, memberInfo);
                 })
                 .sorted(Comparator.comparing(UnapprovedUserTicketListResponseDto::getCreatedAt).reversed())

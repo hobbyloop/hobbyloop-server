@@ -4,7 +4,6 @@ import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.centermembership.CenterMembershipSteps;
 import com.example.ticketservice.fixture.MemberFixture;
 import com.example.ticketservice.lecturereservation.LectureReservationSteps;
-import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.ReviewFixture;
 import com.example.ticketservice.fixture.TicketFixture;
@@ -45,9 +44,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class TicketAcceptanceTest extends AcceptanceTest {
     @MockBean
     private CompanyServiceClient companyServiceClient;
-
-    @MockBean
-    private MemberServiceClient memberServiceClient;
 
     @MockBean
     private AmazonS3Service amazonS3Service;
@@ -373,7 +369,7 @@ public class TicketAcceptanceTest extends AcceptanceTest {
     }
 
     private void mockForCreateReview() {
-        given(memberServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
+        given(companyServiceClient.getMemberInfo(anyLong())).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
     }
 
     private void mockForGetTicketDetail() {
