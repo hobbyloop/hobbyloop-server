@@ -55,7 +55,7 @@ public class ReviewController {
     }
 
     @GetMapping("/admin/reviews/{ticketId}/{reviewId}")
-    @Operation(summary = "관리자 - 이용권별 리뷰 조회")
+    @Operation(summary = "관리자 예약/리뷰 - 이용권별 리뷰 조회", description = "[피그마 링크](https://www.figma.com/design/ShgCuih6scznAlHzHNz8Jo/2024-%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_dev?node-id=1687-64381&t=da28ryPWiX4Q2W9O-4)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReviewCommentResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<ReviewCommentResponseDto>>> getAdminReviewList(
             @PathVariable long ticketId,
@@ -74,7 +74,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{ticketId}/{pageNo}/{sortId}")
-    @Operation(summary = "이용권별 리뷰 목록 조회", description = "한 페이지 당 20개")
+    @Operation(summary = "이용권별 리뷰 목록 조회", description = "한 페이지 당 20개\n[피그마 링크](https://www.figma.com/file/nYEBH6aqCI37ZX0X6w7Ena?embed_host=notion&kind=file&mode=design&node-id=11916-22888&t=6ekkLRISaKQTqVa6-0&type=design&viewer=1)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ReviewResponseDto.class))))
     @ApiExceptionResponse({
             ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
@@ -92,7 +92,7 @@ public class ReviewController {
     }
 
     @GetMapping("/centers/{centerId}/reviews/{pageNo}/{sortId}")
-    @Operation(summary = "특정 시설 정보 상세 조회 - 리뷰 탭", description = "한 페이지 당 20개")
+    @Operation(summary = "특정 시설 정보 상세 조회 - 리뷰 탭", description = "한 페이지 당 20개\n[피그마 링크](https://www.figma.com/design/ShgCuih6scznAlHzHNz8Jo/2024-%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_dev?node-id=1687-54022&t=da28ryPWiX4Q2W9O-4)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = TicketReviewListByCenterResponseDto.class)))
     public ResponseEntity<BaseResponseDto<TicketReviewListByCenterResponseDto>> getTicketReviewListByCenter(
             @PathVariable long centerId,
