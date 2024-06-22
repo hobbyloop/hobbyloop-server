@@ -9,19 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CenterDistanceInfoResponseDto {
-
-    private Long centerId;
-
-    private boolean isRefundable;
+public class IsBookmarkResponseDto {
 
     private boolean isBookmark;
-
-    private String logoImageUrl;
-
-    private String centerName;
-
-    private String address;
-
-    private boolean isSatisfied;
 }

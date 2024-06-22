@@ -42,11 +42,24 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
     }
 
     @Override
-    public List<Ticket> getTicketListByCategory(int category, int sortId, double score, int pageNo) {
+    public List<Ticket> getTicketListByCategoryAroundMe(int category, int sortId, int refundable, double score) {
         return queryFactory
                 .selectFrom(ticket)
                 .where(ticket.category.eq(category)
-                        .and(ticket.score.goe(score)))
+                        .and(ticket.score.goe(score))
+                        .and(isRefundableTicket(refundable)))
+                .orderBy(createOrderSpecifier(sortId))
+                .fetch();
+    }
+
+    @Override
+    public List<Ticket> getTicketListByCategory(int category, int sortId, int refundable, double score, int pageNo, List<String> locations) {
+        return queryFactory
+                .selectFrom(ticket)
+                .where(ticket.category.eq(category)
+                        .and(ticket.score.goe(score))
+                        .and(isRefundableTicket(refundable))
+                        .and(isIncludedLocation(locations)))
                 .limit(20)
                 .offset(pageNo * 20L)
                 .orderBy(createOrderSpecifier(sortId))
@@ -70,8 +83,28 @@ public class TicketRepositoryImpl implements TicketRepositoryCustom {
                 .fetchOne();
     }
 
+    private BooleanExpression isRefundableTicket(int refundable) {
+        return refundable == 1 ? ticket.isRefundable.eq(true) : null;
+    }
+
     private BooleanExpression ltTicketId(long ticketId) {
         return ticketId != -1 ? ticket.id.lt(ticketId) : null;
+    }
+
+    private BooleanExpression isIncludedLocation(List<String> locations) {
+        if (locations == null || locations.isEmpty()) {
+            return null;
+        } else {
+            BooleanExpression predicate = null;
+            for (String location : locations) {
+                if (predicate == null) {
+                    predicate = ticket.address.contains(location);
+                } else {
+                    predicate = predicate.or(ticket.address.contains(location));
+                }
+            }
+            return predicate;
+        }
     }
 
     private OrderSpecifier[] createOrderSpecifier(int sortId) {

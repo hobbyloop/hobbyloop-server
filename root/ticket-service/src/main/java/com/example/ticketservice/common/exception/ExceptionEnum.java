@@ -28,7 +28,8 @@ public enum ExceptionEnum {
     COUPON_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "CP001", "존재하지 않는 쿠폰입니다."),
     COUPON_OUT_OF_DATE_EXCEPTION(HttpStatus.BAD_REQUEST, "CP002", "쿠폰 사용 기한 범위를 벗어났습니다."),
     COUPON_ALREADY_ISSUED_EXCEPTION(HttpStatus.BAD_REQUEST, "CP003", "이미 발급된 쿠폰입니다."),
-    COUPON_SOLD_OUT_EXCEPTION(HttpStatus.BAD_REQUEST, "CP004", "쿠폰을 더이상 발급받을 수 없습니다.");
+    COUPON_SOLD_OUT_EXCEPTION(HttpStatus.BAD_REQUEST, "CP004", "쿠폰을 더이상 발급받을 수 없습니다."),
+    NOT_ALLOW_LOCATION_Exception(HttpStatus.BAD_REQUEST, "L001", "사용자가 위치 정보를 허용하지 않았습니다.");
 
     private final HttpStatus status;
     private final String code;

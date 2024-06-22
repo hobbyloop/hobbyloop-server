@@ -1,7 +1,6 @@
 package com.example.ticketservice.ticket.service;
 
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
-import com.example.ticketservice.ticket.client.MemberServiceClient;
 import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
@@ -33,7 +32,6 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
     private final CenterMembershipRepository centerMembershipRepository;
     private final UserTicketRepository userTicketRepository;
     private final TicketRepository ticketRepository;
-    private final MemberServiceClient memberServiceClient;
     private final CompanyServiceClient companyServiceClient;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -48,7 +46,7 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
             return;
         }
 
-        MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(memberId).getData();
+        MemberInfoResponseDto memberInfo = companyServiceClient.getMemberInfo(memberId).getData();
 
         CenterMembership centerMembership = CenterMembership.builder()
                 .centerId(centerId)
@@ -92,7 +90,7 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
     public CenterMembershipDetailResponseDto getCenterMembershipDetail(long centerMembershipId) {
         CenterMembership centerMembership = centerMembershipRepository.findById(centerMembershipId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_MEMBERSHIP_NOT_EXIST_EXCEPTION));
-        MemberInfoResponseDto memberInfo = memberServiceClient.getMemberInfo(centerMembershipId).getData();
+        MemberInfoResponseDto memberInfo = companyServiceClient.getMemberInfo(centerMembershipId).getData();
 
         centerMembership.updateMemberInfo(memberInfo.getMemberName(), memberInfo.getPhoneNumber());
 

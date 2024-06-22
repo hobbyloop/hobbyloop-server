@@ -45,4 +45,10 @@ public class CenterInfoResponseDto {
 
     @Schema(description = "휴무시간 정보")
     private List<HourResponseDto> breakHourList;
+
+    @Schema(description = "위도")
+    private double latitude;
+
+    @Schema(description = "경도")
+    private double longitude;
 }
