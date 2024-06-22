@@ -56,7 +56,7 @@ public class UserTicketController {
 
     @GetMapping("/recent-purchase")
     @RoleAuthorization(roles = {"USER"})
-    @Operation(summary = "최근에 구매한 이용권 목록 조회")
+    @Operation(summary = "최근에 구매한 이용권 목록 조회", description = "[피그마 링크](https://www.figma.com/file/ShgCuih6scznAlHzHNz8Jo?embed_host=notion&kind=file&node-id=1687-57997&t=fhlLN5QWfjir2eZa-4&viewer=1)")
     public ResponseEntity<BaseResponseDto<Map<YearMonth, List<RecentPurchaseUserTicketListResponseDto>>>> getMyRecentPurchaseUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
@@ -65,7 +65,7 @@ public class UserTicketController {
 
     @GetMapping("/available")
     @RoleAuthorization(roles = {"USER"})
-    @Operation(summary = "예약 가능한 이용권 목록 조회")
+    @Operation(summary = "예약 가능한 이용권 목록 조회", description = "[피그마 링크](https://www.figma.com/file/nYEBH6aqCI37ZX0X6w7Ena?embed_host=notion&kind=file&mode=dev&node-id=13428-22479&type=design&viewer=1)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = AvailableUserTicketsWithCenterInfo.class))))
     public ResponseEntity<BaseResponseDto<List<AvailableUserTicketsWithCenterInfo>>> getMyAvailableUserTicketList(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
@@ -75,7 +75,7 @@ public class UserTicketController {
 
     @GetMapping("/using-histories")
     @RoleAuthorization(roles = {"USER"})
-    @Operation(summary = "사용자 마이페이지 - 이용권 사용 내역")
+    @Operation(summary = "사용자 마이페이지 - 이용권 사용 내역", description = "[피그마 링크](https://www.figma.com/file/ShgCuih6scznAlHzHNz8Jo?embed_host=notion&kind=file&node-id=1687-57997&t=fhlLN5QWfjir2eZa-4&viewer=1)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserTicketUsingHistoryResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<UserTicketUsingHistoryResponseDto>>> getUserTicketsUsingHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
@@ -85,7 +85,7 @@ public class UserTicketController {
 
     @GetMapping("/expiring-histories")
     @RoleAuthorization(roles = {"USER"})
-    @Operation(summary = "사용자 마이페이지 - 이용권 소멸 내역")
+    @Operation(summary = "사용자 마이페이지 - 이용권 소멸 내역", description = "[피그마 링크](https://www.figma.com/file/ShgCuih6scznAlHzHNz8Jo?embed_host=notion&kind=file&node-id=1687-57762&t=fhlLN5QWfjir2eZa-4&viewer=1)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UserTicketExpiringHistoryResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<UserTicketExpiringHistoryResponseDto>>> getUserTicketExpiringHistories(HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
