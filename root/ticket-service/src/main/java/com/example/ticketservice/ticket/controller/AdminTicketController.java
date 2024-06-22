@@ -1,5 +1,7 @@
 package com.example.ticketservice.ticket.controller;
 
+import com.example.ticketservice.common.exception.ExceptionEnum;
+import com.example.ticketservice.common.swagger.ApiExceptionResponse;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
@@ -42,11 +44,7 @@ public class AdminTicketController {
 
     @PostMapping("/management/{centerId}")
     @Operation(summary = "이용권 등록")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = TicketCreateResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "시설을 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "AWS S3 이미지 업로드 실패")
-    })
+    @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = TicketCreateResponseDto.class)))
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(
             @Parameter(description = "업체 아이디", required = true)
             @PathVariable(value = "centerId") long centerId,
@@ -60,9 +58,9 @@ public class AdminTicketController {
 
     @GetMapping("/management/{ticketId}")
     @Operation(summary = "이용권 상세")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = TicketDetailResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = TicketDetailResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
     })
     public ResponseEntity<BaseResponseDto<TicketDetailResponseDto>> getTicketDetail(
             @Parameter(description = "이용권 아이디", required = true)
@@ -73,9 +71,9 @@ public class AdminTicketController {
 
     @PatchMapping("/management/{ticketId}")
     @Operation(summary = "이용권 수정", description = "수정하지 않은 필드도 세팅해서 보내주세요")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
     })
     public ResponseEntity<BaseResponseDto<Void>> updateTicket(
             @Parameter(description = "이용권 아이디", required = true)
@@ -92,9 +90,9 @@ public class AdminTicketController {
 
     @PatchMapping("/management/{ticketId}/upload")
     @Operation(summary = "이용권 업로드", description = "업로드 후 판매 가능")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
     })
     public ResponseEntity<BaseResponseDto<Void>> uploadTicket(
             @Parameter(description = "이용권 아이디", required = true)
@@ -106,10 +104,10 @@ public class AdminTicketController {
 
     @PatchMapping("/management/{ticketId}/cancel-upload")
     @Operation(summary = "이용권 업로드 취소")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음"),
-            @ApiResponse(responseCode = "400", description = "이미 판매된 이용권은 업로드 취소 불가능함")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION,
+            ExceptionEnum.TICKET_CANNOT_CANCEL_UPLOAD
     })
     public ResponseEntity<BaseResponseDto<Void>> cancelUploadTicket(
             @Parameter(description = "이용권 아이디", required = true)
@@ -136,9 +134,9 @@ public class AdminTicketController {
 
     @GetMapping("/review/{ticketId}")
     @Operation(summary = "시설 관리자 페이지 리뷰 조회 시 이용권 정보 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AdminReviewTicketResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "이용권을 찾을 수 없음")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AdminReviewTicketResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
     })
     public ResponseEntity<BaseResponseDto<AdminReviewTicketResponseDto>> getTicketInfo(
             @Parameter(description = "이용권 아이디", required = true)
