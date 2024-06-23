@@ -1,11 +1,10 @@
 package com.example.companyservice.acceptance.steps;
 
-import com.example.companyservice.member.dto.MemberDetailResponseDto;
+import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.RestAssured;
 import io.restassured.builder.MultiPartSpecBuilder;

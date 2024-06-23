@@ -90,9 +90,6 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
     public CenterMembershipDetailResponseDto getCenterMembershipDetail(long centerMembershipId) {
         CenterMembership centerMembership = centerMembershipRepository.findById(centerMembershipId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_MEMBERSHIP_NOT_EXIST_EXCEPTION));
-        MemberInfoResponseDto memberInfo = companyServiceClient.getMemberInfo(centerMembershipId).getData();
-
-        centerMembership.updateMemberInfo(memberInfo.getMemberName(), memberInfo.getPhoneNumber());
 
         List<UserTicket> userTicketList = userTicketRepository.findAllByMemberId(centerMembership.getMemberId());
         List<TicketResponseDto> ticketList = userTicketList.stream()
@@ -104,7 +101,7 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
                 })
                 .toList();
 
-        return CenterMembershipDetailResponseDto.of(centerMembershipId, memberInfo, ticketList);
+        return CenterMembershipDetailResponseDto.of(centerMembership, ticketList);
     }
 
     @Override
