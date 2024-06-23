@@ -3,10 +3,14 @@ package com.example.ticketservice.coupon.entity;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.common.entity.TimeStamped;
+import com.example.ticketservice.coupon.entity.vo.CenterInfo;
+import com.example.ticketservice.coupon.entity.vo.CompanyInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +33,14 @@ public class Coupon extends TimeStamped {
     private Long companyId;
 
     private Long centerId;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "excluded_companies", joinColumns = @JoinColumn(name = "coupon_id"))
+    private List<CompanyInfo> excludedCompanies = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "excluded_centers", joinColumns = @JoinColumn(name = "coupon_id"))
+    private List<CenterInfo> excludedCenters = new ArrayList<>();
 
     private LocalDateTime startDateTime;
 
