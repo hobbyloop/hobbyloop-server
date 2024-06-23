@@ -1,6 +1,7 @@
 package com.example.ticketservice.coupon.dto;
 
 import com.example.ticketservice.coupon.repository.projection.CouponProjection;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,24 +12,34 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CouponResponseDto {
+    @Schema(description = "쿠폰 아이디", example = "1")
     private Long couponId;
 
+    @Schema(description = "이미 해당 회원에게 발급되었는지 여부", example = "false")
     private boolean alreadyIssued;
 
+    @Schema(description = "최소 구매 금액", example = "75000")
     private Long minimumPurchaseAmount;
 
+    @Schema(description = "최대 할인 가능 금액", example = "25000")
     private Long maximumDiscountAmount;
 
+    @Schema(description = "사용 가능 범위(1: GENERAL, 2: SPECIFIC_COMPANY, 3: SPECIFIC_CENTER)", example = "1")
     private int usableScope;
 
+    @Schema(description = "만료 기한 일(쿠폰 발급 일자 + expirationPeriodDays = expirationDateTime)", example = "30")
     private int expirationPeriodDays;
 
+    @Schema(description = "할인 유형(1: 원, 2: 퍼센트)", example = "1")
     private int discountType;
 
+    @Schema(description = "할인금액(discountType이 1일 때만 필수, 2면 Null)", example = "20000")
     private Long discountAmount;
 
+    @Schema(description = "할인율(discountType이 2일 때만 필수, 1이면 Null)", example = "15")
     private Long discountPercentage;
 
+    @Schema(description = "설명", example = "첫구매 할인 쿠폰")
     private String description;
 
     public static CouponResponseDto from(CouponProjection couponProjection) {
