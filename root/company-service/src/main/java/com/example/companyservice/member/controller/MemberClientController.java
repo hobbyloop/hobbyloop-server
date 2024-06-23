@@ -1,7 +1,7 @@
 package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
-import com.example.companyservice.member.dto.MemberInfoResponseDto;
+import com.example.companyservice.member.dto.response.MemberInfoResponseDto;
 import com.example.companyservice.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

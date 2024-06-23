@@ -1,7 +1,7 @@
 package com.example.companyservice.member.service;
 
 import com.example.companyservice.common.util.JwtUtils;
-import com.example.companyservice.member.dto.MemberLoginResponseDto;
+import com.example.companyservice.member.dto.response.MemberLoginResponseDto;
 import com.example.companyservice.member.dto.request.MemberLoginRequestDto;
 import com.example.companyservice.member.entity.Member;
 import com.example.companyservice.member.repository.MemberRepository;

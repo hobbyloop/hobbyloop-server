@@ -4,6 +4,8 @@ import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -22,6 +24,10 @@ public class CenterMembership extends TimeStamped {
     private String memberName;
 
     private String phoneNumber;
+
+    private LocalDate birthday;
+
+    private String gender;
 
     @Setter
     private int status;

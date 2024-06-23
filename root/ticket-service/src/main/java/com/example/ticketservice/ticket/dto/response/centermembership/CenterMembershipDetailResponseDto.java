@@ -2,6 +2,7 @@ package com.example.ticketservice.ticket.dto.response.centermembership;
 
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.dto.response.TicketResponseDto;
+import com.example.ticketservice.ticket.entity.CenterMembership;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,13 +36,13 @@ public class CenterMembershipDetailResponseDto {
     @Schema(description = "시설 회원 소유 이용권 목록")
     private List<TicketResponseDto> tickets;
 
-    public static CenterMembershipDetailResponseDto of(long id, MemberInfoResponseDto memberInfo, List<TicketResponseDto> tickets) {
+    public static CenterMembershipDetailResponseDto of(CenterMembership centerMembership, List<TicketResponseDto> tickets) {
         return CenterMembershipDetailResponseDto.builder()
-                .centerMembershipId(id)
-                .memberName(memberInfo.getMemberName())
-                .birthday(memberInfo.getBirthday())
-                .gender(memberInfo.getGender())
-                .phoneNumber(memberInfo.getPhoneNumber())
+                .centerMembershipId(centerMembership.getId())
+                .memberName(centerMembership.getMemberName())
+                .birthday(centerMembership.getBirthday())
+                .gender(centerMembership.getGender())
+                .phoneNumber(centerMembership.getPhoneNumber())
                 .tickets(tickets)
                 .build();
     }

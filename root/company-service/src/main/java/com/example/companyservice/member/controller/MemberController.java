@@ -1,11 +1,9 @@
 package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
-import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.security.RoleAuthorization;
 import com.example.companyservice.common.util.Utils;
-import com.example.companyservice.member.dto.MemberDetailResponseDto;
-import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
+import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
 import com.example.companyservice.member.dto.response.MemberMyPageHomeResponseDto;
 import com.example.companyservice.member.service.MemberService;
@@ -35,7 +33,7 @@ public class MemberController {
     @Operation(summary = "마이페이지 - 내 정보 수정", description = "내 정보 조회 호출 후 호출 가능")
     public ResponseEntity<BaseResponseDto<Void>> updateMember(
             @RequestPart(value = "requestDto") MemberUpdateRequestDto requestDto,
-            @RequestPart(value = "profileImage") @Parameter(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)) MultipartFile profileImage,
+            @RequestPart(value = "profileImage", required = false) @Parameter(content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE)) MultipartFile profileImage,
             HttpServletRequest request) {
         long memberId = Utils.parseAuthorizedId(request);
 
