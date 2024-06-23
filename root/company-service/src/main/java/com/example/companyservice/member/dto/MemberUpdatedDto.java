@@ -1,6 +1,7 @@
 package com.example.companyservice.member.dto;
 
 import com.example.companyservice.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,14 +16,14 @@ public class MemberUpdatedDto {
 
     private String phoneNumber;
 
-    private LocalDate birthday;
+    private String birthday;
 
     public static MemberUpdatedDto from(Member member) {
         return MemberUpdatedDto.builder()
                 .memberId(member.getId())
                 .name(member.getName())
                 .phoneNumber(member.getPhoneNumber())
-                .birthday(member.getBirthday())
+                .birthday(member.getBirthday().toString())
                 .build();
     }
 }

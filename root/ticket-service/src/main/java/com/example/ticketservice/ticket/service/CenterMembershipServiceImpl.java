@@ -77,16 +77,16 @@ public class CenterMembershipServiceImpl implements CenterMembershipService {
 
         centerMembershipRepository.save(centerMembership);
 
-        eventPublisher.publishEvent(new CenterMemberJoinedEvent(memberId, request.getTicketId()));
-
         Ticket ticket = ticketRepository.findById(request.getTicketId())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+
+        eventPublisher.publishEvent(new CenterMemberJoinedEvent(memberId, request.getTicketId()));
 
         return CenterMembershipJoinedResponseDto.of(request, ticket.getName());
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public CenterMembershipDetailResponseDto getCenterMembershipDetail(long centerMembershipId) {
         CenterMembership centerMembership = centerMembershipRepository.findById(centerMembershipId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_MEMBERSHIP_NOT_EXIST_EXCEPTION));

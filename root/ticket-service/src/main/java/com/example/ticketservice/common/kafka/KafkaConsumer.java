@@ -53,25 +53,28 @@ public class KafkaConsumer {
     @Transactional
     @KafkaListener(topics = "update-centermembership-info")
     public void updateCenterMembershipInfo(String kafkaMessage) {
-        log.info("Kafka Message ->" + kafkaMessage);
-
-        // 역직렬화
-        Map<Object, Object> map = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
         try {
-            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {});
-        } catch (JsonProcessingException ex) {
+            log.info("Kafka Message ->" + kafkaMessage);
+
+            // 역직렬화
+            Map<Object, Object> map = new HashMap<>();
+            ObjectMapper mapper = new ObjectMapper();
+
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
+            });
+
+
+            Object memberIdObj = map.get("memberId");
+            if (memberIdObj instanceof Integer memberIdInt) {
+                Long memberId = Long.valueOf(memberIdInt);
+                String name = (String) map.get("name");
+                String phoneNumber = (String) map.get("phoneNumber");
+                LocalDate birthday = LocalDate.parse((String) map.get("birthday"), DateTimeFormatter.ISO_LOCAL_DATE);
+
+                centerMembershipRepository.updateMemberInfo(memberId, name, phoneNumber, birthday);
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
-        }
-
-        Object memberIdObj = map.get("memberId");
-        if (memberIdObj instanceof Integer memberIdInt) {
-            Long memberId = Long.valueOf(memberIdInt);
-            String name = (String) map.get("name");
-            String phoneNumber = (String) map.get("phoneNumber");
-            LocalDate birthday = LocalDate.parse((String) map.get("birthday"), DateTimeFormatter.ISO_LOCAL_DATE);
-
-            centerMembershipRepository.updateMemberInfo(memberId, name, phoneNumber, birthday);
         }
     }
 }
