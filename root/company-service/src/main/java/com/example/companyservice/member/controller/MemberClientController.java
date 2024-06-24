@@ -3,6 +3,7 @@ package com.example.companyservice.member.controller;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.member.dto.response.MemberInfoResponseDto;
 import com.example.companyservice.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members/client")
+@Hidden
 public class MemberClientController {
     private final MemberService memberService;
 
