@@ -61,6 +61,7 @@ public class AdminTicketResponseDto {
     @JsonProperty("isUpload")
     private boolean isUpload;
 
+    @Schema(description = "무시해주세요")
     private boolean upload;
 
     @Schema(description = "평균 리뷰 점수", example = "4.5")

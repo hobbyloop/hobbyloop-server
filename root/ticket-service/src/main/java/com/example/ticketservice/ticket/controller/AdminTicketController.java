@@ -32,7 +32,7 @@ public class AdminTicketController {
     private final TicketService ticketService;
 
     @GetMapping("/management/{centerId}/{ticketId}")
-    @Operation(summary = "이용권 목록", description = "한 페이지 당 20개")
+    @Operation(summary = "이용권 목록", description = "한 페이지 당 20개\n[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=13786-23800&m=dev)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = TicketResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<TicketResponseDto>>> getTicketList(
             @Parameter(description = "업체 아이디", required = true)
@@ -44,7 +44,7 @@ public class AdminTicketController {
     }
 
     @PostMapping(value = "/management/{centerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "이용권 등록")
+    @Operation(summary = "이용권 등록", description = "[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=13781-23634&m=dev)")
     @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = TicketCreateResponseDto.class)))
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(
             @Parameter(description = "업체 아이디", required = true)
@@ -58,7 +58,7 @@ public class AdminTicketController {
     }
 
     @GetMapping("/management/{ticketId}")
-    @Operation(summary = "이용권 상세")
+    @Operation(summary = "이용권 상세", description = "[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=13791-23938&m=dev)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = TicketDetailResponseDto.class)))
     @ApiExceptionResponse({
             ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
@@ -71,7 +71,7 @@ public class AdminTicketController {
     }
 
     @PatchMapping(value = "/management/{ticketId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "이용권 수정", description = "수정하지 않은 필드도 세팅해서 보내주세요")
+    @Operation(summary = "이용권 수정", description = "수정하지 않은 필드도 세팅해서 보내주세요\n[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=13786-23881&m=dev)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class)))
     @ApiExceptionResponse({
             ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
@@ -119,11 +119,8 @@ public class AdminTicketController {
     }
 
     @GetMapping("/review/{centerId}/{ticketId}")
-    @Operation(summary = "시설 관리 예약 리뷰 페이지 - 이용권 목록", description = "한 페이지 당 20개")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AdminTicketResponseDto.class))),
-            @ApiResponse(responseCode = "404", description = "시설을 찾을 수 없음")
-    })
+    @Operation(summary = "시설 관리 예약 리뷰 페이지 - 이용권 목록", description = "한 페이지 당 20개\n[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=14001-28093&m=dev)")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AdminTicketResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<AdminTicketResponseDto>>> getAdminTicketList(
             @Parameter(description = "시설 아이디", required = true)
             @PathVariable(value = "centerId") long centerId,
@@ -134,7 +131,7 @@ public class AdminTicketController {
     }
 
     @GetMapping("/review/{ticketId}")
-    @Operation(summary = "시설 관리자 페이지 리뷰 조회 시 이용권 정보 조회")
+    @Operation(summary = "시설 관리자 페이지 리뷰 조회 시 이용권 정보 조회", description = "[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=14001-28285&m=dev)")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AdminReviewTicketResponseDto.class)))
     @ApiExceptionResponse({
             ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION
@@ -147,7 +144,7 @@ public class AdminTicketController {
     }
 
     @GetMapping("/my/{centerId}")
-    @Operation(summary = "관리자 내 정보 - 이용권 목록")
+    @Operation(summary = "관리자 내 정보 - 이용권 목록", description = "[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=13967-26954&m=dev)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = AdminMyTicketResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "시설을 찾을 수 없음")
