@@ -28,10 +28,10 @@ public class CouponCreateRequestDto {
     @Schema(description = "시설 아이디(usableScope이 3일 때만 필수, 아니면 Null)", example = "1")
     private Long centerId;
 
-    @Schema(description = "사용 가능 범위에서 제외할 업체 아이디 목록")
+    @Schema(description = "사용 가능 범위에서 제외할 일부 업체 아이디 목록")
     private List<Long> excludedCompanyIds;
 
-    @Schema(description = "사용 가능 범위에서 제외할 시설 아이디 목록")
+    @Schema(description = "사용 가능 범위에서 제외할 일부 시설 아이디 목록")
     private List<Long> excludedCenterIds;
 
     @Schema(description = "쿠폰 사용 가능 일(쿠폰발급일자 + expirationPeriodDays = expirationDateTime)", example = "30")
@@ -58,7 +58,7 @@ public class CouponCreateRequestDto {
     @Schema(description = "쿠폰 유효기간 - 시작일(해당 기한 내에만 회원이 쿠폰을 발급받을 수 있음을 나타냄)")
     private LocalDateTime startDateTime;
 
-    @Schema(description = "쿠폰 유효기간 - 종료일")
+    @Schema(description = "쿠폰 유효기간 - 종료일(해당 기한 내에만 회원이 쿠폰을 발급받을 수 있음을 나타냄)")
     private LocalDateTime endDateTime;
 
     public Coupon toEntity(List<CompanyInfo> excludedCompanies, List<CenterInfo> excludedCenters) {

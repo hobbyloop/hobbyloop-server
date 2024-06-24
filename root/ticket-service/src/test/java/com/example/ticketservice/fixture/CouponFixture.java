@@ -5,6 +5,7 @@ import com.example.ticketservice.coupon.entity.CouponDiscountTypeEnum;
 import com.example.ticketservice.coupon.entity.CouponUsableScope;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class CouponFixture {
 
@@ -15,6 +16,29 @@ public class CouponFixture {
                 CouponUsableScope.GENERAL.getValue(),
                 null,
                 null,
+                List.of(),
+                List.of(),
+                30,
+                CouponDiscountTypeEnum.PERCENTAGE.getValue(),
+                null,
+                10L,
+                "[하비루프] 첫 구매 할인 쿠폰",
+                9999L,
+                1,
+                LocalDateTime.now().minusDays(1),
+                LocalDateTime.of(9999, 12, 31, 23, 59, 59)
+        );
+    }
+
+    public static CouponCreateRequestDto generalPercentageDiscountCouponExcludingCompaniesCreateRequest(List<Long> excludedCompanies) {
+        return new CouponCreateRequestDto(
+                70000L,
+                25000L,
+                CouponUsableScope.GENERAL.getValue(),
+                null,
+                null,
+                excludedCompanies,
+                List.of(),
                 30,
                 CouponDiscountTypeEnum.PERCENTAGE.getValue(),
                 null,
@@ -34,6 +58,8 @@ public class CouponFixture {
                 CouponUsableScope.GENERAL.getValue(),
                 null,
                 null,
+                List.of(),
+                List.of(),
                 30,
                 CouponDiscountTypeEnum.AMOUNT.getValue(),
                 25000L,
@@ -53,6 +79,8 @@ public class CouponFixture {
                 CouponUsableScope.GENERAL.getValue(),
                 null,
                 null,
+                List.of(),
+                List.of(),
                 30,
                 CouponDiscountTypeEnum.AMOUNT.getValue(),
                 25000L,
@@ -72,6 +100,8 @@ public class CouponFixture {
                 CouponUsableScope.GENERAL.getValue(),
                 companyId,
                 null,
+                List.of(),
+                List.of(),
                 30,
                 CouponDiscountTypeEnum.PERCENTAGE.getValue(),
                 null,
@@ -91,6 +121,8 @@ public class CouponFixture {
                 CouponUsableScope.SPECIFIC_CENTER.getValue(),
                 null,
                 centerId,
+                List.of(),
+                List.of(),
                 30,
                 CouponDiscountTypeEnum.PERCENTAGE.getValue(),
                 null,
