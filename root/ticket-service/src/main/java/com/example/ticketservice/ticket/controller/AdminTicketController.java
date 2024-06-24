@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +43,7 @@ public class AdminTicketController {
                 .body(new BaseResponseDto<>(ticketService.getTicketList(centerId, ticketId)));
     }
 
-    @PostMapping("/management/{centerId}")
+    @PostMapping(value = "/management/{centerId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "이용권 등록")
     @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = TicketCreateResponseDto.class)))
     public ResponseEntity<BaseResponseDto<TicketCreateResponseDto>> createTicket(
@@ -69,7 +70,7 @@ public class AdminTicketController {
                 .body(new BaseResponseDto<>(ticketService.getTicketDetail(ticketId)));
     }
 
-    @PatchMapping("/management/{ticketId}")
+    @PatchMapping(value = "/management/{ticketId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "이용권 수정", description = "수정하지 않은 필드도 세팅해서 보내주세요")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class)))
     @ApiExceptionResponse({
