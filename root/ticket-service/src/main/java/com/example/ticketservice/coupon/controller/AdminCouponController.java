@@ -28,7 +28,7 @@ public class AdminCouponController {
     // TODO: 쿠폰 등록 주체를 명확하게 구분해야 하는데...
     // 플랫폼 쪽 관리자? 업체 관리자? 어쩌구... 어떡하지. 그걸 어케 알지.
     @PostMapping
-    @Operation(summary = "쿠폰 등록")
+    @Operation(summary = "쿠폰 등록", description = "아직 디자인 없음")
     @ApiResponse(responseCode = "201", description = "성공 시 등록된 쿠폰의 아이디 반환", content = @Content(schema = @Schema(implementation = Long.class)))
     public ResponseEntity<BaseResponseDto<Long>> createCoupon(
             @RequestBody CouponCreateRequestDto requestDto,

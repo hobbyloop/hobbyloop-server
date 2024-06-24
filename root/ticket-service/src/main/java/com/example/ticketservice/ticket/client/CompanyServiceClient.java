@@ -12,6 +12,10 @@ public interface CompanyServiceClient {
     @GetMapping("/api/v1/centers/info/{centerId}")
     BaseResponseDto<CenterInfoResponseDto> getCenterInfo(@PathVariable(value = "centerId") long centerId);
 
+    @GetMapping("/api/v1/companies/client/name/{companyId}")
+    BaseResponseDto<String> getCompanyName(@PathVariable(value = "companyId") long companyId);
+
+
     @GetMapping("/api/v1/admin/centers/original/{centerId}")
     BaseResponseDto<OriginalCenterResponseDto> getOriginalCenterInfo(@PathVariable(value = "centerId") long centerId);
 
