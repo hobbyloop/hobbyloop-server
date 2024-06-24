@@ -1,8 +1,7 @@
-package com.example.companyservice.member.controller;
+package com.example.companyservice.company.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
-import com.example.companyservice.member.dto.response.MemberInfoResponseDto;
-import com.example.companyservice.member.service.MemberService;
+import com.example.companyservice.company.service.CompanyService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,14 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/members/client")
+@RequestMapping("/api/v1/companies/client")
 @Hidden
-public class MemberClientController {
-    private final MemberService memberService;
+public class CompanyClientController {
+    private final CompanyService companyService;
 
-    @GetMapping("/{memberId}")
-    public ResponseEntity<BaseResponseDto<MemberInfoResponseDto>> getMemberInfo(@PathVariable("memberId") Long memberId) {
+    @GetMapping("/name/{companyId}")
+    public ResponseEntity<BaseResponseDto<String>> getCompanyName(@PathVariable(value = "companyId") long companyId) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(memberService.getMemberInfo(memberId)));
+                .body(new BaseResponseDto<>(companyService.getCompanyName(companyId)));
     }
 }

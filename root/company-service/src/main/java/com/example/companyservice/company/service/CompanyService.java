@@ -8,4 +8,6 @@ public interface CompanyService {
     TokenResponseDto createCompany(CompanyCreateRequestDto requestDto);
 
     Boolean checkTaxFree(long companyId);
+
+    String getCompanyName(long companyId);
 }

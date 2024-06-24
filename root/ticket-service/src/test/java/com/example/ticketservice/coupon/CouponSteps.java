@@ -49,7 +49,7 @@ public class CouponSteps {
         return objectMapper.readValue(dataNode.toString(), Long.class);
     }
 
-    public static void issueAllCoupons(Long memberId, List<CouponResponseDto> coupons) throws Exception {
+    public static void issueAllCoupons(Long memberId, List<CouponResponseDto> coupons) {
         List<Long> couponIds = coupons.stream()
                         .map(CouponResponseDto::getCouponId)
                         .toList();

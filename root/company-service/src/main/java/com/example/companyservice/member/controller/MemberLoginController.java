@@ -2,7 +2,7 @@ package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.common.dto.TokenResponseDto;
-import com.example.companyservice.member.dto.MemberLoginResponseDto;
+import com.example.companyservice.member.dto.response.MemberLoginResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberLoginRequestDto;
 import com.example.companyservice.member.service.MemberLoginService;

@@ -7,6 +7,8 @@ import com.example.ticketservice.coupon.dto.CouponResponseDto;
 import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.example.ticketservice.coupon.entity.Coupon;
 import com.example.ticketservice.coupon.entity.MemberCoupon;
+import com.example.ticketservice.coupon.entity.vo.CenterInfo;
+import com.example.ticketservice.coupon.entity.vo.CompanyInfo;
 import com.example.ticketservice.coupon.repository.CouponRepository;
 import com.example.ticketservice.coupon.repository.MemberCouponRepository;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +32,25 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public Long createCoupon(CouponCreateRequestDto request) {
-        Coupon coupon = request.toEntity();
+
+        List<CompanyInfo> excludedCompanies = new ArrayList<>();
+        if (!request.getExcludedCompanyIds().isEmpty()) {
+            for (Long companyId: request.getExcludedCompanyIds()) {
+                String companyName = companyServiceClient.getCompanyName(companyId).getData();
+                excludedCompanies.add(new CompanyInfo(companyId, companyName));
+            }
+        }
+
+        List<CenterInfo> excludedCenters = new ArrayList<>();
+        if (!request.getExcludedCenterIds().isEmpty()) {
+            for (Long centerId : request.getExcludedCenterIds()) {
+                String centerName = companyServiceClient.getCenterInfo(centerId).getData().getCenterName();
+                excludedCenters.add(new CenterInfo(centerId, centerName));
+            }
+        }
+
+        Coupon coupon = request.toEntity(excludedCompanies, excludedCenters);
+
         return couponRepository.save(coupon).getId();
     }
 

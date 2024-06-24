@@ -6,7 +6,7 @@ import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.fixture.MemberFixture;
 import com.example.companyservice.member.client.dto.PointEarnedResponseDto;
-import com.example.companyservice.member.dto.MemberDetailResponseDto;
+import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;

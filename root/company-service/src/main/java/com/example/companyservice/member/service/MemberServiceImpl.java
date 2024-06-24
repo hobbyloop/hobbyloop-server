@@ -3,11 +3,13 @@ package com.example.companyservice.member.service;
 import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
-import com.example.companyservice.member.dto.MemberDetailResponseDto;
-import com.example.companyservice.member.dto.MemberInfoResponseDto;
+import com.example.companyservice.member.dto.MemberUpdatedDto;
+import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
+import com.example.companyservice.member.dto.response.MemberInfoResponseDto;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
 import com.example.companyservice.member.dto.response.MemberMyPageHomeResponseDto;
@@ -26,6 +28,7 @@ public class MemberServiceImpl implements MemberService {
     private final AmazonS3Service amazonS3Service;
     private final TicketServiceClient ticketServiceClient;
     private final JwtUtils jwtUtils;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     @Transactional
@@ -46,7 +49,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
-        if (!profileImage.isEmpty()) {
+        if (profileImage != null) {
             String profileImageKey = amazonS3Service.saveS3Img(profileImage, "MemberProfileImage");
             String profileImageUrl = amazonS3Service.getFileUrl(profileImageKey);
 
@@ -55,6 +58,8 @@ public class MemberServiceImpl implements MemberService {
         }
 
         member.update(request, member.getProfileImageKey(), member.getProfileImageUrl());
+
+        kafkaProducer.send("update-centermembership-info", MemberUpdatedDto.from(member));
     }
 
     @Override
