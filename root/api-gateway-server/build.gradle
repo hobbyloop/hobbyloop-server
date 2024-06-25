@@ -21,6 +21,10 @@ dependencies {
 
     // swagger
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webflux-ui', version: '2.2.0'
+
+    // Logging
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
 }
 
 dependencyManagement {
