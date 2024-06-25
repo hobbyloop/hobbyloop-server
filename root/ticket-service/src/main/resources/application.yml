@@ -40,3 +40,9 @@ eureka:
 logging:
   level:
     com.example.ticketservice.client: DEBUG
+
+# 로그에 traceId 추가
+management:
+  tracing:
+    propagation:
+      type: b3

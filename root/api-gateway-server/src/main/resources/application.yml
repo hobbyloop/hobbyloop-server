@@ -133,3 +133,9 @@ spring:
 
   profiles:
     include: secret, swagger
+
+# 로그에 traceId 추가
+management:
+  tracing:
+    propagation:
+      type: b3
