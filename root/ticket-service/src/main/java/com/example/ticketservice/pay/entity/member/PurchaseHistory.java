@@ -1,4 +1,4 @@
-package com.example.ticketservice.pay.entity;
+package com.example.ticketservice.pay.entity.member;
 
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.common.entity.TimeStamped;
