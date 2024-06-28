@@ -32,3 +32,8 @@ eureka:
 logging:
   level:
     com.example.companyservice.client: DEBUG
+
+management:
+  tracing:
+    propagation:
+      type: b3
