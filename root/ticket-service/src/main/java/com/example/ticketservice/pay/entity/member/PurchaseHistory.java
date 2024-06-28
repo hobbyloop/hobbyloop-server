@@ -19,11 +19,14 @@ public class PurchaseHistory extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private Payment payment;
+
     private int type;
 
     private LocalDateTime date;
 
-    private int price;
+    private int amount;
 
     private int usePoint;
 
@@ -39,18 +42,28 @@ public class PurchaseHistory extends TimeStamped {
 
     private Long looppassId;
 
+    private int previousStatus;
+
+    private int newStatus;
+
+    private String updateReason;
+
     public static PurchaseHistory of(Long memberId,
                                      Ticket ticket,
                                      Long memberCouponId) {
         return PurchaseHistory.builder()
                 .type(1)
                 .date(LocalDateTime.now())
-                .price(10000)
+                .amount(10000)
                 .usePoint(1000)
                 .isRefund(false)
                 .memberId(memberId)
                 .ticket(ticket)
                 .memberCouponId(memberCouponId)
                 .build();
+    }
+
+    public static PurchaseHistory record() {
+
     }
 }

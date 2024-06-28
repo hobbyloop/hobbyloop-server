@@ -1,6 +1,8 @@
 package com.example.ticketservice.pay.entity.member;
 
 import com.example.ticketservice.common.entity.TimeStamped;
+import com.example.ticketservice.pay.dto.request.CheckoutRequestDto;
+import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.ticket.entity.Ticket;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +24,8 @@ public class Checkout extends TimeStamped {
 
     private Long memberId; // buyerId
 
+    private Long ticketId;
+
     private boolean isPaymentDone;
 
     private String idempotencyKey;
@@ -31,8 +35,6 @@ public class Checkout extends TimeStamped {
     private int type; // 결제 유형?
 
     private int method; // card, ...
-
-    private String pspRawData;
 
     private Long memberCouponId;
 
@@ -53,11 +55,22 @@ public class Checkout extends TimeStamped {
     private LocalDateTime approvedAt;
 
     public static Checkout prepare(Long memberId, Ticket ticket) {
+
         return Checkout.builder()
                 .memberId(memberId)
                 .isPaymentDone(false)
                 .idempotencyKey(UUID.randomUUID().toString())
                 .originalAmount(Long.valueOf(ticket.getCalculatedPrice()))
                 .build();
+    }
+
+    public void checkout(CheckoutRequestDto response, List<PointUsage> pointUsages) {
+        this.type = response.getType();
+        this.method = response.getMethod();
+        this.memberCouponId = response.getMemberCouponId();
+        this.pointUsages = pointUsages;
+        this.totalDiscountAmount = response.getTotalDiscountAmount();
+        this.finalAmount = response.getFinalAmount();
+        this.couponDiscountAmount = response.getCouponDiscountAmount();
     }
 }
