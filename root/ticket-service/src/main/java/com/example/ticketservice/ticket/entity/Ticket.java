@@ -65,6 +65,8 @@ public class Ticket extends TimeStamped {
 
     private boolean isUpload;
 
+    private Long companyId;
+
     private Long centerId;
 
     private String centerName;

@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.example.ticketservice.pay.entity.member.QPurchaseHistory.purchaseHistory;
 import static com.example.ticketservice.ticket.entity.QTicket.ticket;
-import static com.example.ticketservice.pay.entity.QPurchaseHistory.purchaseHistory;
 
 @RequiredArgsConstructor
 public class PurchaseHistoryRepositoryImpl implements PurchaseHistoryRepositoryCustom {

@@ -1,6 +1,7 @@
 package com.example.ticketservice.point.entity;
 
 import com.example.ticketservice.common.entity.TimeStamped;
+import com.example.ticketservice.point.entity.enums.PointTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +32,7 @@ public class PointHistory extends TimeStamped {
     // 기록된 당시의 잔액
     private Long balance;
 
-    // type이 EXPIRE일 시, NULL
+    // type이 USE, EXPIRE일 시, NULL
     private LocalDateTime expirationDateTime;
 
     // type이 EARN이 아닐 시, NULL
@@ -60,5 +61,17 @@ public class PointHistory extends TimeStamped {
 
     public void markExpiredSoon() {
         isExpiringSoon = true;
+    }
+
+    public static PointHistory use(Point point, Long amount, String description) {
+        return PointHistory.builder()
+                .memberId(point.getMemberId())
+                .companyId(point.getCompanyId())
+                .centerId(point.getCenterId())
+                .type(PointTypeEnum.USE.getValue())
+                .amount(amount)
+                .balance(point.getBalance())
+                .description(description + " 구매")
+                .build();
     }
 }

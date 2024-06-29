@@ -1,6 +1,7 @@
 package com.example.ticketservice.point;
 
 import com.example.ticketservice.AcceptanceTest;
+import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.repository.PointHistoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,10 @@ public class PointBatchTest extends AcceptanceTest {
     private Job expiredPointJob;
 
     @Autowired
+    @Qualifier("expiringSoonPointJob")
+    private Job expiringSoonPointJob;
+
+    @Autowired
     private PointHistoryRepository pointHistoryRepository;
 
     Long memberId = 1L;
@@ -39,10 +44,12 @@ public class PointBatchTest extends AcceptanceTest {
         super.setUp();
 
         PointSteps.earnPointWhenJoining(memberId);
+        // TODO: 추후 결제로 적립 포인트 추가해서 더 테스트하기
     }
 
     @Test
     public void expiredPointJobSuccess() throws Exception {
+        // given
         Long memberPoints = PointSteps.getMyTotalPoints(memberId);
         assertThat(memberPoints).isEqualTo(3000L);
 
@@ -63,5 +70,26 @@ public class PointBatchTest extends AcceptanceTest {
         expiredHistory = pointHistoryRepository.findById(expiredHistory.getId()).orElseThrow();
         assertThat(expiredHistory.getIsProcessedByBatch()).isTrue();
         assertThat(expiredHistory.getUpdatedBy()).isEqualTo("batch");
+    }
+
+    @Test
+    public void expiringSoonPointJobSuccess() throws Exception {
+        // given
+        Long memberPoints = PointSteps.getMyTotalPoints(memberId);
+        assertThat(memberPoints).isEqualTo(3000L);
+
+        PointHistory expiringSoonHistory = pointHistoryRepository.findByMemberId(memberId).get(0);
+        ReflectionTestUtils.setField(expiringSoonHistory, "expirationDateTime", LocalDateTime.now().plusDays(29));
+        pointHistoryRepository.save(expiringSoonHistory);
+
+        // when
+        jobLauncherTestUtils.setJob(expiringSoonPointJob);
+        JobExecution execution = jobLauncherTestUtils.launchJob();
+
+        // then
+        assertThat(execution.getStatus()).isEqualTo(BatchStatus.COMPLETED);
+        PointHistoryListResponseDto response = PointSteps.getExpiringSoonPointHistory(memberId);
+        assertThat(response.getTotalPoints()).isEqualTo(3000L);
+        assertThat(response.getPointHistories().size()).isEqualTo(1);
     }
 }

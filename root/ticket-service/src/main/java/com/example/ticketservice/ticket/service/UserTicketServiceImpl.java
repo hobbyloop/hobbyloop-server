@@ -11,7 +11,7 @@ import com.example.ticketservice.ticket.entity.LectureReservation;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.event.UserTicketApprovedEvent;
-import com.example.ticketservice.pay.entity.PurchaseHistory;
+import com.example.ticketservice.pay.entity.member.PurchaseHistory;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
 import com.example.ticketservice.ticket.repository.reservation.LectureReservationRepository;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;

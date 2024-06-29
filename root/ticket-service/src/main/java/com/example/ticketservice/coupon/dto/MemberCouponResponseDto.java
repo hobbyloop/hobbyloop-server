@@ -1,5 +1,6 @@
 package com.example.ticketservice.coupon.dto;
 
+import com.example.ticketservice.coupon.entity.CouponDiscountTypeEnum;
 import com.example.ticketservice.coupon.entity.MemberCoupon;
 import com.example.ticketservice.coupon.entity.vo.CenterInfo;
 import com.example.ticketservice.coupon.entity.vo.CompanyInfo;
@@ -37,7 +38,7 @@ public class MemberCouponResponseDto {
     private LocalDateTime expirationDateTime;
 
     @Schema(description = "할인 유형(1: 원, 2: 퍼센트)", example = "1")
-    private int discountType;
+    private String discountType;
 
     @Schema(description = "할인금액(discountType이 1일 때만 필수, 2면 Null)", example = "20000")
     private Long discountAmount;
@@ -62,7 +63,7 @@ public class MemberCouponResponseDto {
                 .usableScope(memberCoupon.getCoupon().getUsableScope())
                 .excludedCompaniesAndCenters(excludedCompaniesAndCenters)
                 .expirationDateTime(memberCoupon.getExpirationDateTime())
-                .discountType(memberCoupon.getCoupon().getDiscountType())
+                .discountType(CouponDiscountTypeEnum.findByValue(memberCoupon.getCoupon().getDiscountType()).name())
                 .discountAmount(memberCoupon.getCoupon().getDiscountAmount())
                 .discountPercentage(memberCoupon.getCoupon().getDiscountPercentage())
                 .description(memberCoupon.getCoupon().getDescription())
