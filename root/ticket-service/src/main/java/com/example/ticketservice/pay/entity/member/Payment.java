@@ -3,7 +3,7 @@ package com.example.ticketservice.pay.entity.member;
 import com.example.ticketservice.common.entity.TimeStamped;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
 import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
-import com.example.ticketservice.pay.toss.PSPConfirmationException;
+import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.ticket.entity.Ticket;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,6 +19,8 @@ public class Payment extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long memberId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Checkout checkout;
 
@@ -26,7 +28,8 @@ public class Payment extends TimeStamped {
 
     private Long centerId; //sellerId
 
-    private Long ticketId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Ticket ticket;
 
     private Long looppassId;
 
@@ -50,9 +53,10 @@ public class Payment extends TimeStamped {
     public static Payment checkout(Checkout checkout, Ticket ticket) {
         return Payment.builder()
                 .checkout(checkout)
+                .memberId(checkout.getMemberId())
                 .idempotencyKey(checkout.getIdempotencyKey())
                 .centerId(ticket.getCenterId())
-                .ticketId(ticket.getId())
+                .ticket(ticket)
                 .amount(checkout.getFinalAmount())
                 .status(1)
                 .isLedgerUpdated(false)
@@ -62,13 +66,28 @@ public class Payment extends TimeStamped {
     }
 
     public void confirm(PaymentConfirmExecuteResponseDto responseDto) {
-        this.status = responseDto.getPspConfirmationStatus();
+        this.status = PaymentStatusEnum.SUCCESS.getValue();
         this.pspRawData = responseDto.getPspRawData();
     }
 
-    public void fail(PSPConfirmationException ex) {
-        this.failedCount++;
-        this.status = PaymentStatusEnum.FAILURE.getValue();
-        this.pspRawData = ex
+    public void failOrUnknown(PaymentStatusEnum status, String errorCode, String errorMessage) {
+        if (status == PaymentStatusEnum.FAILURE) {
+            this.status = PaymentStatusEnum.FAILURE.getValue();
+        } else if (status == PaymentStatusEnum.UNKNOWN) {
+            this.status = PaymentStatusEnum.UNKNOWN.getValue();
+            failedCount++;
+        }
+
+        this.pspRawData = errorCode + "_" + errorMessage;
+    }
+
+    public void execute() {
+        if (this.status == PaymentStatusEnum.SUCCESS.getValue()) {
+            throw new PaymentAlreadyProcessedException(PaymentStatusEnum.SUCCESS, "이미 성공한 결제입니다.");
+        } else if (this.status == PaymentStatusEnum.FAILURE.getValue()) {
+            throw new PaymentAlreadyProcessedException(PaymentStatusEnum.FAILURE, "이미 실패한 결제입니다.");
+        }
+
+        this.status = PaymentStatusEnum.EXECUTING.getValue();
     }
 }

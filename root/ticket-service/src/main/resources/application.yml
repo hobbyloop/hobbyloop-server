@@ -24,7 +24,7 @@ spring:
       initialize-schema: always
 
   profiles:
-    include: s3, db, swagger
+    include: s3, db, swagger, payment
 
 
 eureka:

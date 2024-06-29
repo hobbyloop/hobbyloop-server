@@ -1,5 +1,7 @@
 package com.example.ticketservice.pay.entity.member;
 
+import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
+import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
@@ -26,16 +28,15 @@ public class PurchaseHistory extends TimeStamped {
 
     private LocalDateTime date;
 
-    private int amount;
+    private Long amount;
 
-    private int usePoint;
+    private Long usePoint;
 
     private boolean isRefund;
 
     private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
     private Ticket ticket;
 
     private Long memberCouponId;
@@ -48,14 +49,15 @@ public class PurchaseHistory extends TimeStamped {
 
     private String updateReason;
 
+    // test
     public static PurchaseHistory of(Long memberId,
                                      Ticket ticket,
                                      Long memberCouponId) {
         return PurchaseHistory.builder()
                 .type(1)
                 .date(LocalDateTime.now())
-                .amount(10000)
-                .usePoint(1000)
+                .amount(10000L)
+                .usePoint(1000L)
                 .isRefund(false)
                 .memberId(memberId)
                 .ticket(ticket)
@@ -63,7 +65,20 @@ public class PurchaseHistory extends TimeStamped {
                 .build();
     }
 
-    public static PurchaseHistory record() {
-
+    public static PurchaseHistory record(Payment payment,
+                                         PaymentStatusEnum previousStatus,
+                                         PaymentStatusEnum newStatus,
+                                         String updateReason) {
+        return PurchaseHistory.builder()
+                .payment(payment)
+                .type(1)
+                .amount(payment.getAmount())
+                .isRefund(false)
+                .memberId(payment.getMemberId())
+                .ticket(payment.getTicket())
+                .previousStatus(previousStatus.getValue())
+                .newStatus(newStatus.getValue())
+                .updateReason(updateReason)
+                .build();
     }
 }

@@ -1,10 +1,12 @@
 package com.example.ticketservice.pay.dto.response;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
+@ToString
 public class TossPaymentConfirmResponseDto {
     private String version;
     private String paymentKey;
@@ -42,6 +44,7 @@ public class TossPaymentConfirmResponseDto {
     private Discount discount;
 
     @Getter
+    @ToString
     public static class Cancel {
         private Integer cancelAmount;
         private String cancelReason;
@@ -56,6 +59,7 @@ public class TossPaymentConfirmResponseDto {
     }
 
     @Getter
+    @ToString
     public static class Card {
         private Integer amount;
         private String issuerCode;
@@ -72,6 +76,7 @@ public class TossPaymentConfirmResponseDto {
     }
 
     @Getter
+    @ToString
     public static class VirtualAccount {
         private String accountType;
         private String accountNumber;
@@ -86,6 +91,7 @@ public class TossPaymentConfirmResponseDto {
     }
 
     @Getter
+    @ToString
     public static class MobilePhone {
         private String customerMobilePhone;
         private String settlementStatus;
@@ -93,28 +99,33 @@ public class TossPaymentConfirmResponseDto {
     }
 
     @Getter
+    @ToString
     public static class GiftCertificate {
         private String approveNo;
         private String settlementStatus;
     }
 
     @Getter
+    @ToString
     public static class Transfer {
         private String bankCode;
         private String settlementStatus;
     }
 
     @Getter
+    @ToString
     public static class Receipt {
         private String url;
     }
 
     @Getter
+    @ToString
     public static class Checkout {
         private String url;
     }
 
     @Getter
+    @ToString
     public static class EasyPay {
         private String provider;
         private Integer amount;
@@ -122,12 +133,14 @@ public class TossPaymentConfirmResponseDto {
     }
 
     @Getter
+    @ToString
     public static class TossFailureResponseDto {
         private String code;
         private String message;
     }
 
     @Getter
+    @ToString
     public static class CashReceipt {
         private String type;
         private String receiptKey;
@@ -138,11 +151,13 @@ public class TossPaymentConfirmResponseDto {
     }
 
     @Getter
+    @ToString
     public static class Discount {
         private Integer amount;
     }
 
     @Getter
+    @ToString
     public static class RefundReceiveAccount {
         private String bankCode;
         private String accountNumber;

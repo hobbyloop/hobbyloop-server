@@ -17,4 +17,13 @@ public enum PSPConfirmationStatusEnum {
 
     private final int value;
     private final String description;
+
+    public static PSPConfirmationStatusEnum get(String status) {
+        for (PSPConfirmationStatusEnum pspStatus : values()) {
+            if (pspStatus.name().equals(status)) {
+                return pspStatus;
+            }
+        }
+        throw new IllegalArgumentException("PSP 승인 상태 (status: " + status + ") 는 올바르지 않은 상태입니다.");
+    }
 }

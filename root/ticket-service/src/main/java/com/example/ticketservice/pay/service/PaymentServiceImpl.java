@@ -12,10 +12,13 @@ import com.example.ticketservice.pay.dto.request.PaymentConfirmRequestDto;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
+import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
 import com.example.ticketservice.pay.entity.member.Checkout;
 import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.entity.member.PurchaseHistory;
+import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import com.example.ticketservice.pay.entity.member.vo.PointUsage;
+import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
 import com.example.ticketservice.pay.repository.PaymentRepository;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
@@ -31,7 +34,6 @@ import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @Service
@@ -191,25 +194,65 @@ public class PaymentServiceImpl implements PaymentService {
         return CheckoutResponseDto.of(checkout, payment);
     }
 
+    @Transactional
     public PaymentConfirmResponseDto confirm(Long memberId, PaymentConfirmRequestDto requestDto) {
         Payment payment = paymentRepository.findByIdAndIdempotencyKey(requestDto.getPaymentId(), requestDto.getIdempotencyKey())
                 .orElseThrow();
 
         // validation
+        if (!payment.getMemberId().equals(memberId)) {
+            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION); // TODO: 바꿔라 예외추가
+        }
         if (!Objects.equals(payment.getAmount(), requestDto.getAmount())) {
-            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION);
+            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION); // TODO: 예외추가
         }
 
         PaymentConfirmExecuteResponseDto response;
         try {
+            // e두 번째 인자가 previousStatus, 세번째 인자가 NewStatus, 마지막 인자가 updateReason
+            PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.NOT_STARTED, PaymentStatusEnum.EXECUTING, "결제 승인 시작");
+            purchaseHistoryRepository.save(executingHistory);
+            payment.execute();
+
             response = tossPaymentClient.executeConfirm(requestDto)
                     .blockOptional()
-                    .orElse();
-        } catch (PSPConfirmationException ex) {
+                    .orElse(null);
 
+            PurchaseHistory confirmedHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.SUCCESS, "결제 승인 완료");
+            purchaseHistoryRepository.save(confirmedHistory);
+            payment.confirm(response);
+        } catch (Exception ex) {
+            PaymentStatusEnum paymentStatus;
+            String errorCode;
+            String errorMessage;
+            if (ex instanceof PSPConfirmationException) {
+                PSPConfirmationException exception = (PSPConfirmationException) ex;
+                paymentStatus = exception.paymentStatus();
+                errorCode = exception.getErrorCode();
+                errorMessage = exception.getErrorMessage();
+            } else if (ex instanceof PaymentAlreadyProcessedException) {
+                PaymentAlreadyProcessedException exception = (PaymentAlreadyProcessedException) ex;
+                paymentStatus = exception.getStatus();
+                errorCode = exception.getClass().getSimpleName();
+                errorMessage = exception.getMessage();
+            } else if (ex instanceof TimeoutException) {
+                paymentStatus = PaymentStatusEnum.UNKNOWN;
+                errorCode = ex.getClass().getSimpleName();
+                errorMessage = ex.getMessage();
+            } else {
+                paymentStatus = PaymentStatusEnum.UNKNOWN;
+                errorCode = ex.getClass().getSimpleName();
+                errorMessage = ex.getMessage();
+            }
+
+            PurchaseHistory failedHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), paymentStatus, errorMessage);
+            purchaseHistoryRepository.save(failedHistory);
+            payment.failOrUnknown(paymentStatus, errorCode, errorMessage);
+
+            return new PaymentConfirmResponseDto(paymentStatus.name(), errorCode, errorMessage);
         }
 
-        payment.confirm(response);
+        return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), null, null);
     }
 
 }

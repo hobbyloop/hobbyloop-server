@@ -1,6 +1,6 @@
 package com.example.ticketservice.pay.dto.response;
 
-import com.example.ticketservice.pay.entity.member.Payment;
+import com.example.ticketservice.pay.entity.member.enums.PSPConfirmationStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,8 +33,8 @@ public class PaymentConfirmExecuteResponseDto {
                 .approvedAt(LocalDateTime.parse(responseDto.getApprovedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .pspRawData(responseDto.toString())
                 .orderName(responseDto.getOrderName())
-                .pspConfirmationStatus(responseDto.getStatus())
-                .totalAmount(responseDto.getTotalAmount())
+                .pspConfirmationStatus(PSPConfirmationStatusEnum.get(responseDto.getStatus()).getValue())
+                .totalAmount(Long.valueOf(responseDto.getTotalAmount()))
                 .isSuccess(true)
                 .isFailure(false)
                 .isUnknown(false)
