@@ -1,5 +1,6 @@
 package com.example.ticketservice.point.service;
 
+import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.point.dto.PointEarnedResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryByMonthResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
@@ -96,6 +97,44 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public PointHistoryListResponseDto getExpiringSoonPointHistory(Long memberId) {
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByMemberIdAndTypeIsAndIsExpiringSoonIs(memberId, PointTypeEnum.EARN.getValue(), true);
+
+        Map<String, List<PointHistoryResponseDto>> pointHistoriesByMonth = new HashMap<>();
+        for (PointHistory pointHistory : pointHistoryList) {
+
+            String yearMonth = pointHistory.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+
+            if (!pointHistoriesByMonth.containsKey(yearMonth)) {
+                pointHistoriesByMonth.put(yearMonth, new ArrayList<>());
+            }
+
+            pointHistoriesByMonth.get(yearMonth).add(PointHistoryResponseDto.from(pointHistory));
+        }
+
+        List<PointHistoryByMonthResponseDto> pointHistoryByMonthList = new ArrayList<>();
+
+        for (Map.Entry<String, List<PointHistoryResponseDto>> entry : pointHistoriesByMonth.entrySet()) {
+            String yearMonth = entry.getKey();
+            List<PointHistoryResponseDto> pointHistories = entry.getValue();
+
+            pointHistories.sort(Comparator.comparing(PointHistoryResponseDto::getCreatedAt).reversed());
+
+            PointHistoryByMonthResponseDto pointHistoryByMonth = new PointHistoryByMonthResponseDto(yearMonth, pointHistories);
+            pointHistoryByMonthList.add(pointHistoryByMonth);
+        }
+
+        pointHistoryByMonthList.sort(Comparator.comparing((PointHistoryByMonthResponseDto history) -> YearMonth.parse(history.getYearMonth(), DateTimeFormatter.ofPattern("yyyy/MM"))).reversed());
+
+        Long totalPoints = pointHistoryList.stream()
+                .mapToLong(PointHistory::getAmount)
+                .sum();
+
+        return new PointHistoryListResponseDto(totalPoints, pointHistoryByMonthList);
+    }
+
+    @Override
     @Transactional
     public PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy) {
         // 모든 Member는 회원가입 때 포인트를 지급받아 scope이 GENERAL인 Point를 반드시 가지고 있음
@@ -142,8 +181,8 @@ public class PointServiceImpl implements PointService {
         pointHistoryRepository.save(pointHistory);
         return new PointEarnedResponseDto(pointHistory.getAmount(), point.getBalance(), pointHistory.getExpirationDateTime());
     }
-
-    // TODO: 추후 결제 완료 화면 디자인에 따라 응답 객체 바뀔 수도 있음
+    
+    @Override
     @Transactional
     public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount) {
         // 기본 적립 정책인 PurchasePointPolicy에 대한 적립 메소드 호출 (무조건 General)
@@ -183,6 +222,20 @@ public class PointServiceImpl implements PointService {
 
         if (!pointEventPolicies.isEmpty()) {
             // TODO: 이 부분은 아직 구체적으로 구현 안 해도 될 듯...
+        }
+    }
+
+    @Override
+    @Transactional
+    public void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName) {
+        for (PointUsage pointUsage : pointUsages) {
+            Point point = pointRepository.findById(pointUsage.getPointId())
+                    .orElseThrow(); // TODO: 어떡하지;;
+
+            point.use(pointUsage.getUsedAmount());
+            
+            PointHistory pointHistory = PointHistory.use(point, pointUsage.getUsedAmount(), orderName);
+            pointHistoryRepository.save(pointHistory);
         }
     }
 }

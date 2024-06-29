@@ -18,6 +18,7 @@ import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.entity.member.PurchaseHistory;
 import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import com.example.ticketservice.pay.entity.member.vo.PointUsage;
+import com.example.ticketservice.pay.event.PaymentCompletedEvent;
 import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
 import com.example.ticketservice.pay.repository.PaymentRepository;
@@ -32,6 +33,7 @@ import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,8 +57,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final MemberCouponRepository memberCouponRepository;
     private final PointRepository pointRepository;
     private final CompanyServiceClient companyServiceClient;
-
     private final TossPaymentClient tossPaymentClient;
+    private final ApplicationEventPublisher eventPublisher;
 
     private String generateIdempotencyKey(Long memberId, Long ticketId) {
         LocalDateTime now = LocalDateTime.now();
@@ -127,11 +129,9 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CHECKOUT_NOT_EXIST_EXCEPTION));
         Ticket ticket = ticketRepository.findById(checkout.getTicketId())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
-        log.info("외않되0");
 
         Long usingPoints = requestDto.getPoints();
         List<PointUsage> pointUsages = new ArrayList<>();
-        log.info("외않되1");
 
         // 포인트 계산
         List<Point> points = pointRepository.findByMemberId(memberId);
@@ -182,11 +182,10 @@ public class PaymentServiceImpl implements PaymentService {
                 usingPoints -= generalPoint.getBalance();
             }
         }
-        log.info("외않되2");
 
         // usingPoints가 계산을 마친 후에도 0이 아니면 사용 가능한 포인트보다 더 많은 포인트를 요청한 것.
         if (usingPoints > 0L) {
-            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION);
+            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION); // TODO: Exception 정의
         }
 
         if (!memberCouponRepository.existsById(requestDto.getMemberCouponId())) {
@@ -260,7 +259,9 @@ public class PaymentServiceImpl implements PaymentService {
             return new PaymentConfirmResponseDto(paymentStatus.name(), errorCode, errorMessage);
         }
 
-        return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), null, null);
+        eventPublisher.publishEvent(new PaymentCompletedEvent(payment));
+
+        return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), "", "");
     }
 
 }

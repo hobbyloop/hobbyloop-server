@@ -35,4 +35,15 @@ public class PointController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(pointService.getPointHistory(memberId)));
     }
+
+    @GetMapping("/histories/expiring-soon")
+    @RoleAuthorization(roles = {"USER"})
+    @Operation(summary = "소멸 예정 포인트 내역 조회", description = "[피그마 링크](https://www.figma.com/design/ShgCuih6scznAlHzHNz8Jo/2024-%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_dev?node-id=1687-51042&t=1EB92ckN0ZN5Jm46-4)")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = PointHistoryListResponseDto.class)))
+    public ResponseEntity<BaseResponseDto<PointHistoryListResponseDto>> getExpiringSoonPointHistories(HttpServletRequest request) {
+        Long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(pointService.getExpiringSoonPointHistory(memberId)));
+    }
+
 }

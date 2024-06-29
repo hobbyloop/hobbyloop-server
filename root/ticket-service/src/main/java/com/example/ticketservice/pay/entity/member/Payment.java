@@ -31,7 +31,7 @@ public class Payment extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket ticket;
 
-    private Long looppassId;
+    private Long looppassId; // TODO: Looppass로 바꾸기
 
     private Long amount;
 
@@ -45,12 +45,23 @@ public class Payment extends TimeStamped {
 
     private boolean isWalletUpdated;
 
+    private Boolean isPointUpdated;
+
+    private Boolean isCouponUpdated;
+
     private int failedCount;
 
     @Builder.Default
     private int threshold = 3;
 
     public static Payment checkout(Checkout checkout, Ticket ticket) {
+        Boolean isPointUpdated = null;
+        Boolean isCouponUpdated = null;
+        if (checkout.getPointDiscountAmount() > 0)
+            isPointUpdated = false;
+        if (checkout.getCouponDiscountAmount() > 0)
+            isCouponUpdated = false;
+
         return Payment.builder()
                 .checkout(checkout)
                 .memberId(checkout.getMemberId())
@@ -61,6 +72,8 @@ public class Payment extends TimeStamped {
                 .status(1)
                 .isLedgerUpdated(false)
                 .isWalletUpdated(false)
+                .isPointUpdated(isPointUpdated)
+                .isCouponUpdated(isCouponUpdated)
                 .failedCount(0)
                 .build();
     }
@@ -89,5 +102,13 @@ public class Payment extends TimeStamped {
         }
 
         this.status = PaymentStatusEnum.EXECUTING.getValue();
+    }
+
+    public void markPointUpdated() {
+        this.isPointUpdated = true;
+    }
+
+    public void markCouponUpdated() {
+        this.isCouponUpdated = true;
     }
 }

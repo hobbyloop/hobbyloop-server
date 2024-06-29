@@ -37,4 +37,9 @@ public class MemberCoupon extends TimeStamped {
                 .build();
     }
 
+    public void use() {
+        this.isUsed = true;
+        this.usedAt = LocalDateTime.now();
+    }
+
 }
