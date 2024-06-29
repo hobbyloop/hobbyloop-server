@@ -42,6 +42,9 @@ dependencies {
     // Logging
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+
+    implementation 'org.springframework:spring-webflux:6.1.8'
+
 }
 
 def querydslSrcDir = 'src/main/generated'
