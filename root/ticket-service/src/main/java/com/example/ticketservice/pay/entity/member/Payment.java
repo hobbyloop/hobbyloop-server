@@ -31,7 +31,7 @@ public class Payment extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket ticket;
 
-    private Long looppassId;
+    private Long looppassId; // TODO: Looppass로 바꾸기
 
     private Long amount;
 
@@ -106,5 +106,9 @@ public class Payment extends TimeStamped {
 
     public void markPointUpdated() {
         this.isPointUpdated = true;
+    }
+
+    public void markCouponUpdated() {
+        this.isCouponUpdated = true;
     }
 }

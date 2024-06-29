@@ -63,7 +63,7 @@ public class PointHistory extends TimeStamped {
         isExpiringSoon = true;
     }
 
-    public static PointHistory use(Point point, Long amount) {
+    public static PointHistory use(Point point, Long amount, String description) {
         return PointHistory.builder()
                 .memberId(point.getMemberId())
                 .companyId(point.getCompanyId())
@@ -71,7 +71,7 @@ public class PointHistory extends TimeStamped {
                 .type(PointTypeEnum.USE.getValue())
                 .amount(amount)
                 .balance(point.getBalance())
-                .description("구매에 포인트 사용")
+                .description(description + " 구매")
                 .build();
     }
 }

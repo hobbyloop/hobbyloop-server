@@ -181,8 +181,7 @@ public class PointServiceImpl implements PointService {
         pointHistoryRepository.save(pointHistory);
         return new PointEarnedResponseDto(pointHistory.getAmount(), point.getBalance(), pointHistory.getExpirationDateTime());
     }
-
-    // TODO: 추후 결제 완료 화면 디자인에 따라 응답 객체 바뀔 수도 있음
+    
     @Override
     @Transactional
     public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount) {
@@ -228,14 +227,14 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
-    public void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages) {
+    public void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName) {
         for (PointUsage pointUsage : pointUsages) {
             Point point = pointRepository.findById(pointUsage.getPointId())
                     .orElseThrow(); // TODO: 어떡하지;;
 
             point.use(pointUsage.getUsedAmount());
             
-            PointHistory pointHistory = PointHistory.use(point, pointUsage.getUsedAmount());
+            PointHistory pointHistory = PointHistory.use(point, pointUsage.getUsedAmount(), orderName);
             pointHistoryRepository.save(pointHistory);
         }
     }

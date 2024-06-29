@@ -22,5 +22,5 @@ public interface PointService {
 
     void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount);
 
-    void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages);
+    void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName);
 }
