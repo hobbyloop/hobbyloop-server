@@ -58,6 +58,7 @@ public class Checkout extends TimeStamped {
 
         return Checkout.builder()
                 .memberId(memberId)
+                .ticketId(ticket.getId())
                 .isPaymentDone(false)
                 .idempotencyKey(UUID.randomUUID().toString())
                 .originalAmount(Long.valueOf(ticket.getCalculatedPrice()))

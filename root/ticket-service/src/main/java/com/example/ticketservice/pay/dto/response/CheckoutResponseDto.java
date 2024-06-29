@@ -3,11 +3,15 @@ package com.example.ticketservice.pay.dto.response;
 import com.example.ticketservice.pay.entity.member.Checkout;
 import com.example.ticketservice.pay.entity.member.Payment;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CheckoutResponseDto {
     @Schema(description = "체크아웃 아이디", example = "1")
     private Long checkoutId;

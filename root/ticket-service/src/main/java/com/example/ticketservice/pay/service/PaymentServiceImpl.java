@@ -27,11 +27,11 @@ import com.example.ticketservice.pay.toss.TossPaymentClient;
 import com.example.ticketservice.point.entity.Point;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
 import com.example.ticketservice.point.repository.PointRepository;
-import com.example.ticketservice.point.service.PointService;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +44,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -126,9 +127,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CHECKOUT_NOT_EXIST_EXCEPTION));
         Ticket ticket = ticketRepository.findById(checkout.getTicketId())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+        log.info("외않되0");
 
         Long usingPoints = requestDto.getPoints();
         List<PointUsage> pointUsages = new ArrayList<>();
+        log.info("외않되1");
 
         // 포인트 계산
         List<Point> points = pointRepository.findByMemberId(memberId);
@@ -179,6 +182,7 @@ public class PaymentServiceImpl implements PaymentService {
                 usingPoints -= generalPoint.getBalance();
             }
         }
+        log.info("외않되2");
 
         // usingPoints가 계산을 마친 후에도 0이 아니면 사용 가능한 포인트보다 더 많은 포인트를 요청한 것.
         if (usingPoints > 0L) {
@@ -196,6 +200,7 @@ public class PaymentServiceImpl implements PaymentService {
         return CheckoutResponseDto.of(checkout, payment);
     }
 
+    // TODO: 결제 완료 이후 할일: Ledger, Wallet에 기록, 포인트 차감, 쿠폰 상태 변경
     @Override
     @Transactional
     public PaymentConfirmResponseDto confirm(Long memberId, PaymentConfirmRequestDto requestDto) {

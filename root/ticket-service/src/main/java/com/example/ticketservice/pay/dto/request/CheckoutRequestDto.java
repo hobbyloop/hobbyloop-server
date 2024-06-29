@@ -1,9 +1,11 @@
 package com.example.ticketservice.pay.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class CheckoutRequestDto {
     @Schema(description = "생성된 체크아웃 아이디(이 아이디로 체크아웃 요청)", example = "1")
     private Long checkoutId;

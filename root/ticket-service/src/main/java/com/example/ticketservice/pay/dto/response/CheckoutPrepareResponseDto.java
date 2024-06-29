@@ -4,14 +4,18 @@ import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.example.ticketservice.pay.entity.member.Checkout;
 import com.example.ticketservice.ticket.entity.Ticket;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CheckoutPrepareResponseDto {
     @Schema(description = "생성된 체크아웃 아이디(이 아이디로 체크아웃 요청)", example = "1")
     private Long checkoutId;
