@@ -14,4 +14,6 @@ public interface PointService {
     Long getMemberTotalPoints(Long memberId);
 
     PointHistoryListResponseDto getPointHistory(Long memberId);
+
+    PointHistoryListResponseDto getExpiringSoonPointHistory(Long memberId);
 }

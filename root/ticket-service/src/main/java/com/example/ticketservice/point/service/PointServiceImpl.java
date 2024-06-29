@@ -97,6 +97,44 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
+    public PointHistoryListResponseDto getExpiringSoonPointHistory(Long memberId) {
+        List<PointHistory> pointHistoryList = pointHistoryRepository.findByMemberIdAndTypeIsAndIsExpiringSoonIs(memberId, PointTypeEnum.EARN.getValue(), true);
+
+        Map<String, List<PointHistoryResponseDto>> pointHistoriesByMonth = new HashMap<>();
+        for (PointHistory pointHistory : pointHistoryList) {
+
+            String yearMonth = pointHistory.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy/MM"));
+
+            if (!pointHistoriesByMonth.containsKey(yearMonth)) {
+                pointHistoriesByMonth.put(yearMonth, new ArrayList<>());
+            }
+
+            pointHistoriesByMonth.get(yearMonth).add(PointHistoryResponseDto.from(pointHistory));
+        }
+
+        List<PointHistoryByMonthResponseDto> pointHistoryByMonthList = new ArrayList<>();
+
+        for (Map.Entry<String, List<PointHistoryResponseDto>> entry : pointHistoriesByMonth.entrySet()) {
+            String yearMonth = entry.getKey();
+            List<PointHistoryResponseDto> pointHistories = entry.getValue();
+
+            pointHistories.sort(Comparator.comparing(PointHistoryResponseDto::getCreatedAt).reversed());
+
+            PointHistoryByMonthResponseDto pointHistoryByMonth = new PointHistoryByMonthResponseDto(yearMonth, pointHistories);
+            pointHistoryByMonthList.add(pointHistoryByMonth);
+        }
+
+        pointHistoryByMonthList.sort(Comparator.comparing((PointHistoryByMonthResponseDto history) -> YearMonth.parse(history.getYearMonth(), DateTimeFormatter.ofPattern("yyyy/MM"))).reversed());
+
+        Long totalPoints = pointHistoryList.stream()
+                .mapToLong(PointHistory::getAmount)
+                .sum();
+
+        return new PointHistoryListResponseDto(totalPoints, pointHistoryByMonthList);
+    }
+
+    @Override
+    @Transactional
     public PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy) {
         // 모든 Member는 회원가입 때 포인트를 지급받아 scope이 GENERAL인 Point를 반드시 가지고 있음
         Point point = pointRepository.findByMemberIdAndUsableScopeIs(memberId, PointUsableScopeEnum.GENERAL.getValue())

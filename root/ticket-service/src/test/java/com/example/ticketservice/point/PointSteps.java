@@ -47,6 +47,25 @@ public class PointSteps {
         return objectMapper.readValue(dataNode.traverse(), typeRef);
     }
 
+    public static PointHistoryListResponseDto getExpiringSoonPointHistory(Long memberId) throws Exception {
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .when()
+                .headers("id", memberId, "role", "USER")
+                .get("/api/v1/points/histories/expiring-soon")
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        TypeReference<PointHistoryListResponseDto> typeRef = new TypeReference<PointHistoryListResponseDto>() {};
+        return objectMapper.readValue(dataNode.traverse(), typeRef);
+    }
+
     public static Long getMyTotalPoints(Long memberId) throws Exception {
         String responseBody = RestAssured
                 .given().log().all()
