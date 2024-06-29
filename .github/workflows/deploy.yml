@@ -59,6 +59,7 @@ jobs:
         aws ssm get-parameter --name "/ticket-service/db" --with-decryption --query "Parameter.Value" --output text > ./ticket-service/src/main/resources/application-db.yml
         aws ssm get-parameter --name "/ticket-service/s3" --with-decryption --query "Parameter.Value" --output text > ./ticket-service/src/main/resources/application-s3.yml
         aws ssm get-parameter --name "/ticket-service/swagger" --with-decryption --query "Parameter.Value" --output text > ./ticket-service/src/main/resources/application-swagger.yml
+        aws ssm get-parameter --name "/ticket-service/payment" --with-decryption --query "Parameter.Value" --output text > ./ticket-service/src/main/resources/application-payment.yml
       working-directory: ./root
       
     - name: Build with Gradle Wrapper
