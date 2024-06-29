@@ -1,5 +1,6 @@
 package com.example.ticketservice.point.service;
 
+import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.point.dto.PointEarnedResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryByMonthResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
@@ -96,7 +97,7 @@ public class PointServiceImpl implements PointService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public PointHistoryListResponseDto getExpiringSoonPointHistory(Long memberId) {
         List<PointHistory> pointHistoryList = pointHistoryRepository.findByMemberIdAndTypeIsAndIsExpiringSoonIs(memberId, PointTypeEnum.EARN.getValue(), true);
 
@@ -182,6 +183,7 @@ public class PointServiceImpl implements PointService {
     }
 
     // TODO: 추후 결제 완료 화면 디자인에 따라 응답 객체 바뀔 수도 있음
+    @Override
     @Transactional
     public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount) {
         // 기본 적립 정책인 PurchasePointPolicy에 대한 적립 메소드 호출 (무조건 General)
@@ -221,6 +223,20 @@ public class PointServiceImpl implements PointService {
 
         if (!pointEventPolicies.isEmpty()) {
             // TODO: 이 부분은 아직 구체적으로 구현 안 해도 될 듯...
+        }
+    }
+
+    @Override
+    @Transactional
+    public void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages) {
+        for (PointUsage pointUsage : pointUsages) {
+            Point point = pointRepository.findById(pointUsage.getPointId())
+                    .orElseThrow(); // TODO: 어떡하지;;
+
+            point.use(pointUsage.getUsedAmount());
+            
+            PointHistory pointHistory = PointHistory.use(point, pointUsage.getUsedAmount());
+            pointHistoryRepository.save(pointHistory);
         }
     }
 }
