@@ -122,8 +122,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public CheckoutResponseDto checkout(Long memberId, CheckoutRequestDto requestDto) {
-        Checkout checkout = checkoutRepository.findById(requestDto.getCheckoutId()).orElseThrow();
-        Ticket ticket = ticketRepository.findById(checkout.getTicketId()).orElseThrow();
+        Checkout checkout = checkoutRepository.findById(requestDto.getCheckoutId())
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CHECKOUT_NOT_EXIST_EXCEPTION));
+        Ticket ticket = ticketRepository.findById(checkout.getTicketId())
+                .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
 
         Long usingPoints = requestDto.getPoints();
         List<PointUsage> pointUsages = new ArrayList<>();
@@ -194,17 +196,18 @@ public class PaymentServiceImpl implements PaymentService {
         return CheckoutResponseDto.of(checkout, payment);
     }
 
+    @Override
     @Transactional
     public PaymentConfirmResponseDto confirm(Long memberId, PaymentConfirmRequestDto requestDto) {
         Payment payment = paymentRepository.findByIdAndIdempotencyKey(requestDto.getPaymentId(), requestDto.getIdempotencyKey())
-                .orElseThrow();
+                .orElseThrow(() -> new ApiException(ExceptionEnum.PAYMENT_NOT_EXIST_EXCEPTION));
 
         // validation
         if (!payment.getMemberId().equals(memberId)) {
-            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION); // TODO: 바꿔라 예외추가
+            throw new ApiException(ExceptionEnum.UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION);
         }
         if (!Objects.equals(payment.getAmount(), requestDto.getAmount())) {
-            throw new ApiException(ExceptionEnum.API_PARAMETER_EXCEPTION); // TODO: 예외추가
+            throw new ApiException(ExceptionEnum.PAYMENT_AMOUNT_MISMATCH_EXCEPTION);
         }
 
         PaymentConfirmExecuteResponseDto response;
