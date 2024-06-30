@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -47,6 +48,8 @@ public class Member extends TimeStamped {
 
     private boolean isDeleted;
 
+    private LocalDateTime deletedAt;
+
     private String provider;
 
     private String subject;
@@ -79,8 +82,9 @@ public class Member extends TimeStamped {
             .build();
     }
 
-    public void deleteMember() {
-        this.isDeleted = false;
+    public void delete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 
     public void update(MemberUpdateRequestDto request, String profileImageKey, String profileImageUrl) {
