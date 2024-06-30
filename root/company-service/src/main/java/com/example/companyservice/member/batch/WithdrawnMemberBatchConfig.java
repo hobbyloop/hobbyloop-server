@@ -59,7 +59,7 @@ public class WithdrawnMemberBatchConfig {
                 .name("withdrawnMemberReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(100)
-                .queryString("SELECT m FROM Member WHERE m.isDeleted = true AND deletedAt < :threeMonthsAgo")
+                .queryString("SELECT m FROM Member m WHERE m.isDeleted = true AND deletedAt < :threeMonthsAgo")
                 .parameterValues(Collections.singletonMap("threeMonthsAgo", threeMonthsAgo))
                 .build();
     }
@@ -68,7 +68,7 @@ public class WithdrawnMemberBatchConfig {
     public ItemProcessor<Member, Member> withdrawnMemberProcessor() {
         return member -> {
             MemberArchive archive = MemberArchive.from(member);
-            // TODO: createdAt 설정
+            // TODO: createdBy 설정
             memberArchiveRepository.save(archive);
 
             return member;
