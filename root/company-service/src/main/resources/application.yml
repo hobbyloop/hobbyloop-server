@@ -16,6 +16,11 @@ spring:
       hibernate:
         default_batch_fetch_size: 500
     open-in-view: false
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
   profiles:
     include: s3, db, secret, oauth, swagger
 

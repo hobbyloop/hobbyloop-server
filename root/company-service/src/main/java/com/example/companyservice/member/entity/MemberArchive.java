@@ -17,4 +17,11 @@ public class MemberArchive extends TimeStamped {
     private String phoneNumber;
 
     private String di;
+
+    public static MemberArchive from(Member member) {
+        return MemberArchive.builder()
+                .phoneNumber(member.getPhoneNumber())
+                .di(member.getDi())
+                .build();
+    }
 }
