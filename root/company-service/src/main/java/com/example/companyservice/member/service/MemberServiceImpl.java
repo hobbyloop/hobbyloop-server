@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-
     private final MemberRepository memberRepository;
     private final AmazonS3Service amazonS3Service;
     private final TicketServiceClient ticketServiceClient;
@@ -60,6 +59,17 @@ public class MemberServiceImpl implements MemberService {
         member.update(request, member.getProfileImageKey(), member.getProfileImageUrl());
 
         kafkaProducer.send("update-centermembership-info", MemberUpdatedDto.from(member));
+    }
+
+    @Override
+    @Transactional
+    public void deleteMember(long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
+
+        member.delete();
+
+        // TODO: CenterMembership에서도 지워야 되나?
     }
 
     @Override

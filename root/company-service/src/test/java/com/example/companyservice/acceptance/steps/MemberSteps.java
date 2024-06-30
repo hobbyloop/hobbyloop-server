@@ -26,7 +26,7 @@ public class MemberSteps {
             .contentType(ContentType.JSON.withCharset("UTF-8"))
             .body(request)
             .when()
-            .post("/api/v1/members/join")
+            .post("/api/v1/join")
             .then().log().all()
             .statusCode(200)
             .extract().asString();
@@ -46,6 +46,18 @@ public class MemberSteps {
             .then().log().all()
             .statusCode(200)
             .extract().body();
+    }
+
+    public static void deleteMember(long memberId) {
+        RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON.withCharset("UTF-8"))
+                .when()
+                .headers("id", memberId, "role", "USER")
+                .delete("/api/v1/members")
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
     }
 
     public static MemberDetailResponseDto getMemberDetail(long memberId) throws Exception {

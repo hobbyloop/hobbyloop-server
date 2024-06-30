@@ -1,7 +1,9 @@
 package com.example.companyservice.member.controller;
 
 import com.example.companyservice.common.dto.BaseResponseDto;
+import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.security.RoleAuthorization;
+import com.example.companyservice.common.swagger.ApiExceptionResponse;
 import com.example.companyservice.common.util.Utils;
 import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
@@ -64,5 +66,21 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(memberService.myPageHome(memberId)));
+    }
+
+    @DeleteMapping
+    @RoleAuthorization(roles = {"USER"})
+    @Operation(summary = "회원 탈퇴")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BaseResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION
+    })
+    public ResponseEntity<BaseResponseDto<Void>> deleteMember(HttpServletRequest request) {
+        long memberId = Utils.parseAuthorizedId(request);
+
+        memberService.deleteMember(memberId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>());
     }
 }
