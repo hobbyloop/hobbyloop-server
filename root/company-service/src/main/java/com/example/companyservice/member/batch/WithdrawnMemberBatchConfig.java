@@ -68,7 +68,7 @@ public class WithdrawnMemberBatchConfig {
     public ItemProcessor<Member, Member> withdrawnMemberProcessor() {
         return member -> {
             MemberArchive archive = MemberArchive.from(member);
-            // TODO: createdBy 설정
+            archive.setCreatedBy("batch");
             memberArchiveRepository.save(archive);
 
             return member;

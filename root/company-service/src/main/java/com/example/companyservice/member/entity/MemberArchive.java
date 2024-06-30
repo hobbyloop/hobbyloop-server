@@ -1,5 +1,6 @@
 package com.example.companyservice.member.entity;
 
+import com.example.companyservice.company.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
