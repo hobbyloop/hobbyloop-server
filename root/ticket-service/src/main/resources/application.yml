@@ -46,3 +46,11 @@ management:
   tracing:
     propagation:
       type: b3
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
