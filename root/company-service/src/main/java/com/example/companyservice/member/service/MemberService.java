@@ -13,6 +13,8 @@ public interface MemberService {
 
     void updateMember(long memberId, MemberUpdateRequestDto requestDto, MultipartFile profileImage);
 
+    void deleteMember(long memberId);
+
     MemberDetailResponseDto getMemberDetail(long memberId);
 
     MemberInfoResponseDto getMemberInfo(long memberId);

@@ -61,6 +61,14 @@ dependencies {
     // Logging
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+
+    // Batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+
+    // Monitoring
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.12.4'
+    implementation 'io.micrometer:micrometer-core:1.12.4'
 }
 
 def querydslSrcDir = 'src/main/generated'
