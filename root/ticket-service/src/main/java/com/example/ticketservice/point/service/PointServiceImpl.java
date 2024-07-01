@@ -206,7 +206,9 @@ public class PointServiceImpl implements PointService {
     @Transactional
     public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount) {
         // 기본 적립 정책인 PurchasePointPolicy에 대한 적립 메소드 호출 (무조건 General)
-        PointEarnedResponseDto basicEarnedPoint = earnPointGeneral(memberId, new PurchasePointPolicy());
+        PurchasePointPolicy purchasePointPolicy = new PurchasePointPolicy();
+        purchasePointPolicy.calculate(totalAmount);
+        PointEarnedResponseDto basicEarnedPoint = earnPointGeneral(memberId, purchasePointPolicy);
 
         // CompanyPointPolicy, CenterPointPolicy를 가져와서 usableScope 조회하여 그에 따라 적립 메소드 호출
         Optional<CompanyPointPolicy> optionalCompanyPointPolicy = companyPointPolicyRepository.findByCompanyId(companyId);
@@ -255,6 +257,7 @@ public class PointServiceImpl implements PointService {
                     .orElseThrow(); // TODO: 어떡하지;;
 
             points.use(pointUsage.getUsedAmount());
+            pointsRepository.save(points);
 
             balance += points.getBalance();
             amount += pointUsage.getUsedAmount();

@@ -3,11 +3,13 @@ package com.example.ticketservice.pay;
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.coupon.AdminCouponSteps;
 import com.example.ticketservice.coupon.CouponSteps;
+import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.CouponFixture;
 import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
+import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
 import com.example.ticketservice.pay.toss.TossPaymentClient;
 import com.example.ticketservice.point.PointSteps;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
@@ -18,6 +20,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -83,11 +88,32 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         assertThat(response).isNotNull();
     }
 
+    @Test
+    public void paymentConfirmationSuccess() throws Exception {
+        // given
+        mockForPrepareCheckout();
+        CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
+        CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
+
+        // when
+        mockForConfirm(checkoutResponse);
+        PaymentConfirmResponseDto response = PaymentSteps.confirm(memberId, PaymentFixture.defaultPaymentConfirmRequest(checkoutResponse));
+
+        // then
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+
+        // 포인트 차감, 쿠폰도 확인..
+        Long points = PointSteps.getMyTotalPoints(memberId);
+        assertThat(points).isNotEqualTo(3000L);
+        List<MemberCouponResponseDto> coupons = CouponSteps.getAvailableMemberCoupons(memberId);
+        assertThat(coupons.size()).isEqualTo(0);
+    }
+
     private void mockForPrepareCheckout() {
         given(companyServiceClient.getCompanyIdOfCenter(centerId)).willReturn(new BaseResponseDto<>(1L));
     }
 
-    private void mockForConfirm() {
-        //given(tossPaymentClient.executeConfirm())
+    private void mockForConfirm(CheckoutResponseDto response) {
+        given(tossPaymentClient.executeConfirm(any())).willReturn(Mono.just(PaymentFixture.defaultPaymentConfirmExecuteSuccessResponse(response)));
     }
 }

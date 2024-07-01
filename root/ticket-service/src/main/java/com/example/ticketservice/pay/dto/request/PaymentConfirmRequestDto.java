@@ -1,14 +1,16 @@
 package com.example.ticketservice.pay.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class PaymentConfirmRequestDto {
     @Schema(description = "결제 아이디", example = "1")
     private Long paymentId;
 
-    @Schema(description = "결제 고유 키 이거 뭐였더라 ")
+    @Schema(description = "PSP가 반환하는 결제 식별 고유 키")
     private String paymentKey;
 
     @Schema(description = "멱등성 키")
