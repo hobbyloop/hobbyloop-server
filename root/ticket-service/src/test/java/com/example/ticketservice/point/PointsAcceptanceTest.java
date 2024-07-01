@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-public class PointAcceptanceTest extends AcceptanceTest {
+public class PointsAcceptanceTest extends AcceptanceTest {
 
     Long memberId = 1L;
 

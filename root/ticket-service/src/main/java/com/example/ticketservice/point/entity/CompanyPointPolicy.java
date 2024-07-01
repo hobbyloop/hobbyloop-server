@@ -6,6 +6,7 @@ import com.example.ticketservice.point.policy.PlatformPointPolicy;
 import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDateTime;
 
@@ -37,18 +38,27 @@ public class CompanyPointPolicy extends TimeStamped implements PlatformPointPoli
     }
 
     @Override
-    public PointHistory earnOrUse(Point point) {
-        point.earn(earnAmount);
+    public Pair<Point, PointHistory> earn(Points points) {
+        points.earn(earnAmount);
 
-        return PointHistory.builder()
-                .memberId(point.getMemberId())
+        Point point = Point.builder()
+                .memberId(points.getMemberId())
+                .centerId(points.getCenterId())
+                .usableScope(points.getUsableScope())
+                .amount(earnAmount)
+                .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
+                .isExpiringSoon(false)
+                .build();
+
+        PointHistory pointHistory = PointHistory.builder()
+                .memberId(points.getMemberId())
                 .type(PointTypeEnum.EARN.getValue())
                 .amount(earnAmount)
-                .balance(point.getBalance())
-                .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
+                .balance(points.getBalance())
                 .description("업체 추가 적립") // TODO: 문구 고쳐야함
-                .isProcessedByBatch(false)
                 .build();
+
+        return Pair.of(point, pointHistory);
     }
 
     public boolean isGeneralScope() {

@@ -32,15 +32,6 @@ public class PointHistory extends TimeStamped {
     // 기록된 당시의 잔액
     private Long balance;
 
-    // type이 USE, EXPIRE일 시, NULL
-    private LocalDateTime expirationDateTime;
-
-    // type이 EARN이 아닐 시, NULL
-    private Boolean isProcessedByBatch;
-
-    // type이 EARN이 아닐 시, NULL
-    private Boolean isExpiringSoon;
-
     private String description;
 
     public boolean isGeneralPoint() {
@@ -55,22 +46,12 @@ public class PointHistory extends TimeStamped {
         return companyId == null && centerId != null;
     }
 
-    public void processByBatch() {
-        isProcessedByBatch = true;
-    }
-
-    public void markExpiredSoon() {
-        isExpiringSoon = true;
-    }
-
-    public static PointHistory use(Point point, Long amount, String description) {
+    public static PointHistory use(Long memberId, Long amount, Long balance, String description) {
         return PointHistory.builder()
-                .memberId(point.getMemberId())
-                .companyId(point.getCompanyId())
-                .centerId(point.getCenterId())
+                .memberId(memberId)
                 .type(PointTypeEnum.USE.getValue())
                 .amount(amount)
-                .balance(point.getBalance())
+                .balance(balance)
                 .description(description + " 구매")
                 .build();
     }

@@ -1,7 +1,7 @@
 package com.example.ticketservice.point.batch;
 
+import com.example.ticketservice.point.entity.Point;
 import com.example.ticketservice.point.entity.PointHistory;
-import com.example.ticketservice.point.entity.enums.PointTypeEnum;
 import com.example.ticketservice.point.repository.PointHistoryRepository;
 import com.example.ticketservice.point.repository.PointRepository;
 import jakarta.persistence.EntityManagerFactory;
@@ -26,7 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ExpiringSoonPointBatchConfig {
     private final EntityManagerFactory entityManagerFactory;
-    private final PointHistoryRepository pointHistoryRepository;
+    private final PointRepository pointRepository;
 
     @Bean
     public Job expiringSoonPointJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
@@ -41,40 +41,39 @@ public class ExpiringSoonPointBatchConfig {
             PlatformTransactionManager transactionManager
     ) {
         return new StepBuilder("expiringSoonPointStep", jobRepository)
-                .<PointHistory, PointHistory>chunk(100, transactionManager)
-                .reader(expiringSoonPointHistoryReader())
-                .processor(expiringSoonPointHistoryProcessor())
-                .writer(expiringSoonPointHistoryWriter())
+                .<Point, Point>chunk(100, transactionManager)
+                .reader(expiringSoonPointReader())
+                .processor(expiringSoonPointProcessor())
+                .writer(expiringSoonPointWriter())
                 .build();
     }
 
     @Bean
-    public JpaPagingItemReader<PointHistory> expiringSoonPointHistoryReader() {
-        return new JpaPagingItemReaderBuilder<PointHistory>()
-                .name("expiringSoonPointHistoryReader")
+    public JpaPagingItemReader<Point> expiringSoonPointReader() {
+        return new JpaPagingItemReaderBuilder<Point>()
+                .name("expiringSoonPointReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(100)
-                .queryString("SELECT ph FROM PointHistory ph WHERE ph.type = :type AND ph.expirationDateTime BETWEEN :now AND :thirtyDaysLater AND ph.isProcessedByBatch = false")
-                .parameterValues(Map.of("type", PointTypeEnum.EARN.getValue(),
-                                        "now", LocalDateTime.now(),
+                .queryString("SELECT p FROM Point p WHERE p.expirationDateTime BETWEEN :now AND :thirtyDaysLater")
+                .parameterValues(Map.of("now", LocalDateTime.now(),
                                         "thirtyDaysLater", LocalDateTime.now().plusDays(30)))
                 .build();
     }
 
     @Bean
-    public ItemProcessor<PointHistory, PointHistory> expiringSoonPointHistoryProcessor() {
-        return pointHistory -> {
-            pointHistory.markExpiredSoon();
-            pointHistory.setUpdatedBy("batch");
-            return pointHistory;
+    public ItemProcessor<Point, Point> expiringSoonPointProcessor() {
+        return point -> {
+            point.markExpiredSoon();
+            point.setUpdatedBy("batch");
+            return point;
         };
     }
 
     @Bean
-    public ItemWriter<PointHistory> expiringSoonPointHistoryWriter() {
+    public ItemWriter<Point> expiringSoonPointWriter() {
         return items -> {
-            for (PointHistory history : items) {
-                pointHistoryRepository.save(history);
+            for (Point point : items) {
+                pointRepository.save(point);
             }
         };
     }
