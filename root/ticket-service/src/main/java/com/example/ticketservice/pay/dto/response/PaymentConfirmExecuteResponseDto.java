@@ -1,14 +1,18 @@
 package com.example.ticketservice.pay.dto.response;
 
 import com.example.ticketservice.pay.entity.member.enums.PSPConfirmationStatusEnum;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentConfirmExecuteResponseDto {
     private String paymentKey;
     private String IdempotencyKey;

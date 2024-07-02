@@ -1,11 +1,13 @@
 package com.example.ticketservice.point.batch;
 
 import com.example.ticketservice.point.entity.Point;
+import com.example.ticketservice.point.entity.Points;
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.entity.enums.PointTypeEnum;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
 import com.example.ticketservice.point.repository.PointHistoryRepository;
 import com.example.ticketservice.point.repository.PointRepository;
+import com.example.ticketservice.point.repository.PointsRepository;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -28,6 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ExpiredPointBatchConfig {
     private final EntityManagerFactory entityManagerFactory;
+    private final PointsRepository pointsRepository;
     private final PointRepository pointRepository;
     private final PointHistoryRepository pointHistoryRepository;
 
@@ -44,106 +47,43 @@ public class ExpiredPointBatchConfig {
             PlatformTransactionManager transactionManager
     ) {
         return new StepBuilder("expiredPointStep", jobRepository)
-                .<PointHistory, PointHistory>chunk(100, transactionManager)
-                .reader(expiredPointHistoryReader())
+                .<Point, PointHistory>chunk(100, transactionManager)
+                .reader(expiredPointReader())
                 .processor(expiredPointProcessor())
                 .writer(expiredPointHistoryWriter())
                 .build();
     }
 
     @Bean
-    public JpaPagingItemReader<PointHistory> expiredPointHistoryReader() {
-        // PointHistory의 type이 EARN이고, expirationStartDate가 된 데이터만 조회
-        return new JpaPagingItemReaderBuilder<PointHistory>()
-                .name("expiredPointHistoryReader")
+    public JpaPagingItemReader<Point> expiredPointReader() {
+        return new JpaPagingItemReaderBuilder<Point>()
+                .name("expiredPointReader")
                 .entityManagerFactory(entityManagerFactory)
                 .pageSize(100)
-                .queryString("SELECT ph FROM PointHistory ph WHERE ph.type = :type AND ph.expirationDateTime <= :now AND ph.isProcessedByBatch = false")
-                .parameterValues(Map.of("type", PointTypeEnum.EARN.getValue(), "now", LocalDateTime.now()))
+                .queryString("SELECT p FROM Point p WHERE p.expirationDateTime <= :now")
+                .parameterValues(Map.of("now", LocalDateTime.now()))
                 .build();
     }
 
     @Bean
-    public ItemProcessor<PointHistory, PointHistory> expiredPointProcessor() {
-        return pointHistory -> {
-            Point point;
-            if (pointHistory.isGeneralPoint()) {
-                point = pointRepository.findByMemberIdAndUsableScopeIs(pointHistory.getMemberId(), PointUsableScopeEnum.GENERAL.getValue()).orElseThrow();
-                Long expiredAmount = pointHistory.getAmount();
-                point.expire(expiredAmount);
+    public ItemProcessor<Point, PointHistory> expiredPointProcessor() {
+        return point -> {
+            Points points = point.getPoints();
 
-                // 포인트 소멸 내역 저장
-                PointHistory expiredHistory = PointHistory.builder()
-                        .memberId(pointHistory.getMemberId())
-                        .type(PointTypeEnum.EXPIRE.getValue())
-                        .amount(expiredAmount)
-                        .balance(point.getBalance())
-                        .description(pointHistory.getDescription() +" 소멸")
-                        .build();
+            points.expire(point.getAmount());
+            pointsRepository.save(points);
 
-                pointHistory.processByBatch();
-                pointHistory.setCreatedBy("batch");
-                pointHistory.setUpdatedBy("batch");
+            pointRepository.delete(point);
 
-                pointHistoryRepository.save(pointHistory);
-                pointRepository.save(point);
+            PointHistory expiredHistory = PointHistory.builder()
+                    .memberId(points.getMemberId())
+                    .type(PointTypeEnum.EXPIRE.getValue())
+                    .amount(point.getAmount())
+                    .balance(points.getBalance())
+                    .description("소멸")
+                    .build();
 
-                return expiredHistory;
-            } else if (pointHistory.isCompanyPoint()) {
-                point = pointRepository.findByMemberIdAndCompanyId(
-                        pointHistory.getMemberId(), pointHistory.getCompanyId()
-                ).orElseThrow();
-
-                Long expiredAmount = pointHistory.getAmount();
-                point.expire(expiredAmount);
-
-                // 포인트 소멸 내역 저장
-                PointHistory expiredHistory = PointHistory.builder()
-                        .memberId(pointHistory.getMemberId())
-                        .type(PointTypeEnum.EXPIRE.getValue())
-                        .companyId(pointHistory.getCompanyId())
-                        .amount(expiredAmount)
-                        .balance(point.getBalance())
-                        .description(pointHistory.getDescription() +" 소멸")
-                        .build();
-
-                pointHistory.processByBatch();
-                pointHistory.setCreatedBy("batch");
-                pointHistory.setUpdatedBy("batch");
-
-                pointHistoryRepository.save(pointHistory);
-                pointRepository.save(point);
-
-                return expiredHistory;
-            } else if (pointHistory.isCenterPoint()) {
-                point = pointRepository.findByMemberIdAndCenterId(
-                        pointHistory.getMemberId(), pointHistory.getCenterId()
-                ).orElseThrow();
-
-                Long expiredAmount = pointHistory.getAmount();
-                point.expire(expiredAmount);
-
-                // 포인트 소멸 내역 저장
-                PointHistory expiredHistory = PointHistory.builder()
-                        .memberId(pointHistory.getMemberId())
-                        .type(PointTypeEnum.EXPIRE.getValue())
-                        .centerId(pointHistory.getCenterId())
-                        .amount(expiredAmount)
-                        .balance(point.getBalance())
-                        .description(pointHistory.getDescription() +" 소멸")
-                        .build();
-
-                pointHistory.processByBatch();
-                pointHistory.setCreatedBy("batch");
-                pointHistory.setUpdatedBy("batch");
-
-                pointHistoryRepository.save(pointHistory);
-                pointRepository.save(point);
-
-                return expiredHistory;
-            }
-
-            return null;
+            return expiredHistory;
         };
     }
 

@@ -73,5 +73,10 @@ public class Checkout extends TimeStamped {
         this.totalDiscountAmount = response.getTotalDiscountAmount();
         this.finalAmount = response.getFinalAmount();
         this.couponDiscountAmount = response.getCouponDiscountAmount();
+        this.pointDiscountAmount = response.getPoints();
+    }
+
+    public void done() {
+        this.isPaymentDone = true;
     }
 }

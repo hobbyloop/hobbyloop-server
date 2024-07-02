@@ -1,8 +1,11 @@
 package com.example.ticketservice.point.policy;
 
 import com.example.ticketservice.point.entity.Point;
+import com.example.ticketservice.point.entity.Points;
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.entity.enums.PointTypeEnum;
+import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDateTime;
 
@@ -17,17 +20,28 @@ public class SignupPointPolicy implements PlatformPointPolicy {
     }
 
     @Override
-    public PointHistory earnOrUse(Point point) {
-        point.earn(EARN_AMOUNT);
+    public Pair<Point, PointHistory> earn(Points points) {
+        points.earn(EARN_AMOUNT);
 
-        return PointHistory.builder()
-                .memberId(point.getMemberId())
+        LocalDateTime expirationDateTime = LocalDateTime.now().plusDays(EXPIRATION_PERIOD_DAYS);
+
+        Point point = Point.builder()
+                .memberId(points.getMemberId())
+                .points(points)
+                .amount(EARN_AMOUNT)
+                .usableScope(PointUsableScopeEnum.GENERAL.getValue())
+                .isExpiringSoon(false)
+                .expirationDateTime(expirationDateTime)
+                .build();
+
+        PointHistory pointHistory = PointHistory.builder()
+                .memberId(points.getMemberId())
                 .type(PointTypeEnum.EARN.getValue())
                 .amount(EARN_AMOUNT)
-                .balance(point.getBalance())
-                .expirationDateTime(LocalDateTime.now().plusDays(EXPIRATION_PERIOD_DAYS))
+                .balance(points.getBalance())
                 .description(DESCRIPTION)
-                .isProcessedByBatch(false)
                 .build();
+
+        return Pair.of(point, pointHistory);
     }
 }

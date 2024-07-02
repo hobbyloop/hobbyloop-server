@@ -111,4 +111,10 @@ public class Payment extends TimeStamped {
     public void markCouponUpdated() {
         this.isCouponUpdated = true;
     }
+
+    public void complete() {
+        if (isPointUpdated && isCouponUpdated) {
+            checkout.done();
+        }
+    }
 }

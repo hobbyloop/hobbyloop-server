@@ -1,5 +1,6 @@
 package com.example.ticketservice.point.dto;
 
+import com.example.ticketservice.point.entity.Point;
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.entity.enums.PointTypeEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PointHistoryResponseDto {
-    @Schema(description = "포인트 유형(EARN, USE)", example = "EARN")
+    @Schema(description = "포인트 유형(EARN, USE, EXPIRE, EXPIRING_SOON)", example = "EARN")
     private String type;
 
     @Schema(description = "적립/사용 금액", example = "2500")
@@ -37,6 +38,14 @@ public class PointHistoryResponseDto {
                 .balance(pointHistory.getBalance())
                 .description(pointHistory.getDescription())
                 .createdAt(pointHistory.getCreatedAt())
+                .build();
+    }
+
+    public static PointHistoryResponseDto from(Point point) {
+        return PointHistoryResponseDto.builder()
+                .type("EXPIRING_SOON")
+                .amount(point.getAmount())
+                .createdAt(point.getCreatedAt())
                 .build();
     }
 }
