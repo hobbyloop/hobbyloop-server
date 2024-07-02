@@ -16,4 +16,6 @@ public interface PointsRepository extends JpaRepository<Points, Long> {
     Optional<Points> findByMemberIdAndCenterId(Long memberId, Long centerId);
 
     List<Points> findByMemberId(Long memberId);
+
+    void deleteAllByMemberId(Long memberId);
 }

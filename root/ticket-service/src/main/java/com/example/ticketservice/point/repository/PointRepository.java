@@ -12,4 +12,6 @@ public interface PointRepository extends JpaRepository<Point, Long> {
     List<Point> findByPointsOrderByCreatedAtAsc(Points points);
 
     List<Point> findByMemberIdAndIsExpiringSoonTrueOrderByCreatedAtAsc(Long memberId);
+
+    void deleteAllByMemberId(Long memberId);
 }

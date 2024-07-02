@@ -7,6 +7,7 @@ import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
+import com.example.companyservice.member.dto.MemberDeletedDto;
 import com.example.companyservice.member.dto.MemberUpdatedDto;
 import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.response.MemberInfoResponseDto;
@@ -74,6 +75,7 @@ public class MemberServiceImpl implements MemberService {
         member.delete();
 
         // TODO: CenterMembership에서도 지워야 되나?
+        kafkaProducer.send("delete-member-points", new MemberDeletedDto(memberId));
     }
 
     @Override

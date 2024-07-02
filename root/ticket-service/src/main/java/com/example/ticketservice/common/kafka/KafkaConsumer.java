@@ -1,9 +1,12 @@
 package com.example.ticketservice.common.kafka;
 
+import com.example.ticketservice.point.repository.PointRepository;
+import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.repository.centermembership.CenterMembershipRepository;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,8 @@ public class KafkaConsumer {
 
     private final TicketRepository ticketRepository;
     private final CenterMembershipRepository centerMembershipRepository;
+    private final PointsRepository pointsRepository;
+    private final PointRepository pointRepository;
 
     @KafkaListener(topics = "update-address-info")
     @Transactional
@@ -72,6 +77,29 @@ public class KafkaConsumer {
                 LocalDate birthday = LocalDate.parse((String) map.get("birthday"), DateTimeFormatter.ISO_LOCAL_DATE);
 
                 centerMembershipRepository.updateMemberInfo(memberId, name, phoneNumber, birthday);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @KafkaListener(topics = "delete-member-points")
+    @Transactional
+    public void deleteMemberPoints(String kafkaMessage) {
+        try {
+            log.info("Kafka Message ->" + kafkaMessage);
+
+            Map<Object, Object> map = new HashMap<>();
+            ObjectMapper mapper = new ObjectMapper();
+
+            map = mapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {
+            });
+
+            Object memberIdObj = map.get("memberId");
+            if (memberIdObj instanceof Integer memberIdInt) {
+                Long memberId = Long.valueOf(memberIdInt);
+                pointRepository.deleteAllByMemberId(memberId);
+                pointsRepository.deleteAllByMemberId(memberId);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
