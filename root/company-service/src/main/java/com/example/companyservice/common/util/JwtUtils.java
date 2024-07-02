@@ -23,10 +23,12 @@ public class JwtUtils {
     private String secretKey;
 
     // 토큰 유효시간 60분
-    private Long accessTokenValidTime = 60 * 60 * 1000L;
+    @Value("${token.access-token-valid-time}")
+    private Long accessTokenValidTime;
 
     // 리프레시 토큰 유효시간 2주
-    private Long refreshTokenValidTime = 14 * 24 * 60 * 60 * 1000L;
+    @Value("${token.refresh-token-valid-time}")
+    private Long refreshTokenValidTime;
 
     // secretKey 객체 초기화, Base64로 인코딩
     @PostConstruct
