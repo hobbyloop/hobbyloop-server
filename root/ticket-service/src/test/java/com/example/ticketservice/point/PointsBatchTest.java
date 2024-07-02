@@ -2,8 +2,10 @@ package com.example.ticketservice.point;
 
 import com.example.ticketservice.AcceptanceTest;
 import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
+import com.example.ticketservice.point.entity.Point;
 import com.example.ticketservice.point.entity.PointHistory;
 import com.example.ticketservice.point.repository.PointHistoryRepository;
+import com.example.ticketservice.point.repository.PointRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.BatchStatus;
@@ -21,7 +23,7 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBatchTest
-public class PointBatchTest extends AcceptanceTest {
+public class PointsBatchTest extends AcceptanceTest {
 
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
@@ -33,6 +35,9 @@ public class PointBatchTest extends AcceptanceTest {
     @Autowired
     @Qualifier("expiringSoonPointJob")
     private Job expiringSoonPointJob;
+
+    @Autowired
+    private PointRepository pointRepository;
 
     @Autowired
     private PointHistoryRepository pointHistoryRepository;
@@ -53,9 +58,9 @@ public class PointBatchTest extends AcceptanceTest {
         Long memberPoints = PointSteps.getMyTotalPoints(memberId);
         assertThat(memberPoints).isEqualTo(3000L);
 
-        PointHistory expiredHistory = pointHistoryRepository.findByMemberId(memberId).get(0);
-        ReflectionTestUtils.setField(expiredHistory, "expirationDateTime", LocalDateTime.now().minusDays(1));
-        pointHistoryRepository.save(expiredHistory);
+        Point expiringSoonPoint = pointRepository.findAll().get(0);
+        ReflectionTestUtils.setField(expiringSoonPoint, "expirationDateTime", LocalDateTime.now().minusDays(1));
+        pointRepository.save(expiringSoonPoint);
 
         // when
         jobLauncherTestUtils.setJob(expiredPointJob);
@@ -67,9 +72,6 @@ public class PointBatchTest extends AcceptanceTest {
         assertThat(pointHistories.size()).isEqualTo(2);
         memberPoints = PointSteps.getMyTotalPoints(memberId);
         assertThat(memberPoints).isEqualTo(0L);
-        expiredHistory = pointHistoryRepository.findById(expiredHistory.getId()).orElseThrow();
-        assertThat(expiredHistory.getIsProcessedByBatch()).isTrue();
-        assertThat(expiredHistory.getUpdatedBy()).isEqualTo("batch");
     }
 
     @Test
@@ -78,9 +80,9 @@ public class PointBatchTest extends AcceptanceTest {
         Long memberPoints = PointSteps.getMyTotalPoints(memberId);
         assertThat(memberPoints).isEqualTo(3000L);
 
-        PointHistory expiringSoonHistory = pointHistoryRepository.findByMemberId(memberId).get(0);
-        ReflectionTestUtils.setField(expiringSoonHistory, "expirationDateTime", LocalDateTime.now().plusDays(29));
-        pointHistoryRepository.save(expiringSoonHistory);
+        Point expiringSoonPoint = pointRepository.findAll().get(0);
+        ReflectionTestUtils.setField(expiringSoonPoint, "expirationDateTime", LocalDateTime.now().plusDays(29));
+        pointRepository.save(expiringSoonPoint);
 
         // when
         jobLauncherTestUtils.setJob(expiringSoonPointJob);

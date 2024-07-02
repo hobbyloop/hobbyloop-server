@@ -7,6 +7,7 @@ import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
+import com.example.companyservice.member.dto.MemberDeletedDto;
 import com.example.companyservice.member.dto.MemberUpdatedDto;
 import com.example.companyservice.member.dto.response.MemberDetailResponseDto;
 import com.example.companyservice.member.dto.response.MemberInfoResponseDto;
@@ -33,6 +34,10 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public TokenResponseDto createMember(CreateMemberRequestDto requestDto) {
         Member member = Member.of(requestDto);
+        if (memberRepository.existsByProviderAndSubject(member.getProvider(), member.getSubject())) {
+            throw new ApiException(ExceptionEnum.DUPLICATE_MEMBER_EXCEPTION);
+        }
+
         Member savedMember = memberRepository.save(member);
 
         ticketServiceClient.earnPointsWhenJoining(savedMember.getId()); // 회원가입 포인트 적립
@@ -45,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void updateMember(long memberId, MemberUpdateRequestDto request, MultipartFile profileImage) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndIsDeletedFalse(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         if (profileImage != null) {
@@ -64,18 +69,19 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void deleteMember(long memberId) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndIsDeletedFalse(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         member.delete();
 
         // TODO: CenterMembership에서도 지워야 되나?
+        kafkaProducer.send("delete-member-points", new MemberDeletedDto(memberId));
     }
 
     @Override
     @Transactional(readOnly = true)
     public MemberDetailResponseDto getMemberDetail(long memberId) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndIsDeletedFalse(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         return MemberDetailResponseDto.from(member);
@@ -84,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public MemberInfoResponseDto getMemberInfo(long memberId) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndIsDeletedFalse(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         return MemberInfoResponseDto.from(member);
@@ -93,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public MemberMyPageHomeResponseDto myPageHome(long memberId) {
-        Member member = memberRepository.findById(memberId)
+        Member member = memberRepository.findByIdAndIsDeletedFalse(memberId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.MEMBER_NOT_EXIST_EXCEPTION));
 
         Long points = ticketServiceClient.getMyTotalPoints(memberId).getData();

@@ -25,9 +25,9 @@ import com.example.ticketservice.pay.repository.PaymentRepository;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
 import com.example.ticketservice.pay.toss.PSPConfirmationException;
 import com.example.ticketservice.pay.toss.TossPaymentClient;
-import com.example.ticketservice.point.entity.Point;
+import com.example.ticketservice.point.entity.Points;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
-import com.example.ticketservice.point.repository.PointRepository;
+import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
@@ -55,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final TicketRepository ticketRepository;
     private final MemberCouponRepository memberCouponRepository;
-    private final PointRepository pointRepository;
+    private final PointsRepository pointsRepository;
     private final CompanyServiceClient companyServiceClient;
     private final TossPaymentClient tossPaymentClient;
     private final ApplicationEventPublisher eventPublisher;
@@ -106,10 +106,10 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         // 포인트 조회
-        List<Point> points = pointRepository.findByMemberId(memberId);
-        Long totalPoints = points.stream().mapToLong(Point::getBalance).sum();
+        List<Points> points = pointsRepository.findByMemberId(memberId);
+        Long totalPoints = points.stream().mapToLong(Points::getBalance).sum();
         Long usablePoints = 0L;
-        for (Point point : points) {
+        for (Points point : points) {
             if (point.getUsableScope() == PointUsableScopeEnum.GENERAL.getValue()
                 || (point.getUsableScope() == PointUsableScopeEnum.SPECIFIC_COMPANY.getValue() && point.getCompanyId() == companyId)
                 || (point.getUsableScope() == PointUsableScopeEnum.SPECIFIC_CENTER.getValue() && point.getCenterId() == ticket.getCenterId())) {
@@ -134,52 +134,52 @@ public class PaymentServiceImpl implements PaymentService {
         List<PointUsage> pointUsages = new ArrayList<>();
 
         // 포인트 계산
-        List<Point> points = pointRepository.findByMemberId(memberId);
+        List<Points> points = pointsRepository.findByMemberId(memberId);
         // 1. scope이 SPECIFIC_CENTER인 Point로, PointUsage를 만듦
         // 2. scope이 SPECIFIC_COMPANY인 Point로, PointUsage를 만듦
         // 실제 포인트 차감은 결제 완료 후.
-        Point centerPoint = points.stream()
+        Points centerPoints = points.stream()
                 .filter(point -> point.getUsableScope() == PointUsableScopeEnum.SPECIFIC_CENTER.getValue())
                 .findFirst().orElse(null);
-        if (centerPoint != null) {
-            if (usingPoints <= centerPoint.getBalance()) {
-                PointUsage pointUsage = new PointUsage(centerPoint.getId(), usingPoints);
+        if (centerPoints != null) {
+            if (usingPoints <= centerPoints.getBalance()) {
+                PointUsage pointUsage = new PointUsage(centerPoints.getId(), usingPoints);
                 pointUsages.add(pointUsage);
                 usingPoints = 0L;
             } else {
-                PointUsage pointUsage = new PointUsage(centerPoint.getId(), centerPoint.getBalance());
+                PointUsage pointUsage = new PointUsage(centerPoints.getId(), centerPoints.getBalance());
                 pointUsages.add(pointUsage);
-                usingPoints -= centerPoint.getBalance();
+                usingPoints -= centerPoints.getBalance();
             }
         }
 
-        Point companyPoint = points.stream()
+        Points companyPoints = points.stream()
                 .filter(point -> point.getUsableScope() == PointUsableScopeEnum.SPECIFIC_COMPANY.getValue())
                 .findFirst().orElse(null);
-        if (companyPoint != null && usingPoints > 0L) {
-            if (usingPoints <= companyPoint.getBalance()) {
-                PointUsage pointUsage = new PointUsage(companyPoint.getId(), usingPoints);
+        if (companyPoints != null && usingPoints > 0L) {
+            if (usingPoints <= companyPoints.getBalance()) {
+                PointUsage pointUsage = new PointUsage(companyPoints.getId(), usingPoints);
                 pointUsages.add(pointUsage);
                 usingPoints = 0L;
             } else {
-                PointUsage pointUsage = new PointUsage(companyPoint.getId(), companyPoint.getBalance());
+                PointUsage pointUsage = new PointUsage(companyPoints.getId(), companyPoints.getBalance());
                 pointUsages.add(pointUsage);
-                usingPoints -= companyPoint.getBalance();
+                usingPoints -= companyPoints.getBalance();
             }
         }
 
-        Point generalPoint = points.stream()
+        Points generalPoints = points.stream()
                 .filter(point -> point.getUsableScope() == PointUsableScopeEnum.GENERAL.getValue())
                 .findFirst().orElse(null);
-        if (generalPoint != null && usingPoints > 0L) {
-            if (usingPoints <= generalPoint.getBalance()) {
-                PointUsage pointUsage = new PointUsage(generalPoint.getId(), usingPoints);
+        if (generalPoints != null && usingPoints > 0L) {
+            if (usingPoints <= generalPoints.getBalance()) {
+                PointUsage pointUsage = new PointUsage(generalPoints.getId(), usingPoints);
                 pointUsages.add(pointUsage);
                 usingPoints = 0L;
             } else {
-                PointUsage pointUsage = new PointUsage(generalPoint.getId(), generalPoint.getBalance());
+                PointUsage pointUsage = new PointUsage(generalPoints.getId(), generalPoints.getBalance());
                 pointUsages.add(pointUsage);
-                usingPoints -= generalPoint.getBalance();
+                usingPoints -= generalPoints.getBalance();
             }
         }
 

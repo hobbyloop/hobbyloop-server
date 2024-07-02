@@ -12,5 +12,5 @@ public interface PointHistoryRepository extends JpaRepository<PointHistory, Long
 
     List<PointHistory> findByMemberIdAndTypeNot(Long memberId, int type);
 
-    List<PointHistory> findByMemberIdAndTypeIsAndIsExpiringSoonIs(Long memberId, int type, boolean isExpiringSoon);
+    //List<PointHistory> findByMemberIdAndTypeIsAndIsExpiringSoonIs(Long memberId, int type, boolean isExpiringSoon);
 }

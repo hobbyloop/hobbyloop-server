@@ -7,6 +7,7 @@ import com.example.ticketservice.point.policy.PlatformPointPolicy;
 import com.example.ticketservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.util.Pair;
 
 import java.time.LocalDateTime;
 
@@ -56,17 +57,26 @@ public class PointEventPolicy extends TimeStamped implements PlatformPointPolicy
     }
 
     @Override
-    public PointHistory earnOrUse(Point point) {
-        point.earn(earnAmount);
+    public Pair<Point, PointHistory> earn(Points points) {
+        points.earn(earnAmount);
 
-        return PointHistory.builder()
-                .memberId(point.getMemberId())
+        // TODO: usableScope은 어떻게 하지?
+        Point point = Point.builder()
+                .memberId(points.getMemberId())
+                .usableScope(points.getUsableScope())
+                .amount(earnAmount)
+                .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
+                .isExpiringSoon(false)
+                .build();
+
+        PointHistory pointHistory = PointHistory.builder()
+                .memberId(points.getMemberId())
                 .type(PointTypeEnum.EARN.getValue())
                 .amount(earnAmount)
-                .balance(point.getBalance())
-                .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))
+                .balance(points.getBalance())
                 .description(description)
-                .isProcessedByBatch(false)
                 .build();
+
+        return Pair.of(point, pointHistory);
     }
 }

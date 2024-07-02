@@ -22,7 +22,7 @@ spring:
     jdbc:
       initialize-schema: always
   profiles:
-    include: s3, db, secret, oauth, swagger
+    include: s3, db, dev, oauth, swagger
 
 eureka:
   instance:

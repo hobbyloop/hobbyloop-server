@@ -21,7 +21,7 @@ public class PurchaseHistory extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Payment payment;
 
     private int type;
@@ -47,6 +47,7 @@ public class PurchaseHistory extends TimeStamped {
 
     private int newStatus;
 
+    @Column(length = 1000)
     private String updateReason;
 
     // test
