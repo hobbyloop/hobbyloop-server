@@ -126,6 +126,29 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         assertThat(response.getStatus()).isEqualTo("FAILURE");
     }
 
+    @Test
+    public void paymentRefundSuccess() throws Exception {
+        // given
+        mockForPrepareCheckout();
+        CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
+        CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
+
+        mockForConfirm(checkoutResponse);
+        PaymentSteps.confirm(memberId, PaymentFixture.defaultPaymentConfirmRequest(checkoutResponse));
+
+        // when
+        mockForRefund(checkoutResponse);
+        PaymentConfirmResponseDto response = PaymentSteps.refund(memberId, checkoutResponse.getPaymentId());
+
+        // then
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+
+        Long points = PointSteps.getMyTotalPoints(memberId);
+        assertThat(points).isEqualTo(3000L);
+        List<MemberCouponResponseDto> coupons = CouponSteps.getAvailableMemberCoupons(memberId);
+        assertThat(coupons.size()).isEqualTo(1);
+    }
+
     private void mockForPrepareCheckout() {
         given(companyServiceClient.getCompanyIdOfCenter(centerId)).willReturn(new BaseResponseDto<>(1L));
     }
@@ -136,5 +159,9 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
 
     private void mockForConfirmFailure() {
         given(tossPaymentClient.executeConfirm(any())).willReturn(Mono.error(PSPConfirmationException.from(TossPaymentException.REJECT_TOSSPAY_INVALID_ACCOUNT)));
+    }
+
+    private void mockForRefund(CheckoutResponseDto response) {
+        given(tossPaymentClient.executeFullCancel(any(), any())).willReturn(Mono.just(PaymentFixture.defaultPaymentRefundExecuteSuccessResponse(response)));
     }
 }
