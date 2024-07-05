@@ -37,9 +37,12 @@ public class Payment extends TimeStamped {
 
     private int psp; // toss, ... // TODO: 이거 언제 업뎃함?
 
+    @Column(length = 1000)
     private String pspRawData;
 
     private int status; // not_started, executing, success
+
+    private boolean isRefunded;
 
     private boolean isLedgerUpdated;
 
@@ -69,7 +72,7 @@ public class Payment extends TimeStamped {
                 .centerId(ticket.getCenterId())
                 .ticket(ticket)
                 .amount(checkout.getFinalAmount())
-                .status(1)
+                .status(PaymentStatusEnum.NOT_STARTED.getValue())
                 .isLedgerUpdated(false)
                 .isWalletUpdated(false)
                 .isPointUpdated(isPointUpdated)
@@ -116,5 +119,9 @@ public class Payment extends TimeStamped {
         if (isPointUpdated && isCouponUpdated) {
             checkout.done();
         }
+    }
+
+    public void refund() {
+        this.isRefunded = true;
     }
 }

@@ -24,6 +24,9 @@ public class PurchaseHistory extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Payment payment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PaymentRefund refund;
+
     private int type;
 
     private LocalDateTime date;
@@ -77,6 +80,23 @@ public class PurchaseHistory extends TimeStamped {
                 .isRefund(false)
                 .memberId(payment.getMemberId())
                 .ticket(payment.getTicket())
+                .previousStatus(previousStatus.getValue())
+                .newStatus(newStatus.getValue())
+                .updateReason(updateReason)
+                .build();
+    }
+
+    public static PurchaseHistory record(PaymentRefund refund,
+                                         PaymentStatusEnum previousStatus,
+                                         PaymentStatusEnum newStatus,
+                                         String updateReason) {
+        return PurchaseHistory.builder()
+                .refund(refund)
+                .type(1)
+                .amount(refund.getAmount())
+                .isRefund(true)
+                .memberId(refund.getMemberId())
+                .ticket(refund.getPayment().getTicket())
                 .previousStatus(previousStatus.getValue())
                 .newStatus(newStatus.getValue())
                 .updateReason(updateReason)

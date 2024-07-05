@@ -17,6 +17,7 @@ import reactor.util.retry.Retry;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 @Component
@@ -66,5 +67,40 @@ public class TossPaymentClient {
                                 || throwable instanceof TimeoutException)
                         .onRetryExhaustedThrow((retries, retrySignal) -> retrySignal.failure()));
 
+    }
+
+    public Mono<PaymentConfirmExecuteResponseDto> executeFullCancel(String paymentKey,
+                                                                String idempotencyKey) {
+        Base64.Encoder encoder = Base64.getEncoder();
+        byte[] encodedKey = encoder.encode((SECRET_KEY + ":").getBytes(StandardCharsets.UTF_8));
+        String authorizations = "Basic " + encoder.encodeToString(encodedKey);
+
+        WebClient webClient = WebClient.builder()
+                .baseUrl(BASE_URL)
+                .defaultHeader("Authorization", authorizations)
+                .build();
+
+        return webClient.post()
+                .uri("/v1/payments/" + paymentKey + "/cancel")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(Map.of("cancelReason", "고객이 취소를 원함")))
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    return response.bodyToMono(TossPaymentConfirmResponseDto.TossFailureResponseDto.class)
+                            .flatMap(error -> {
+                                TossPaymentException tossException = TossPaymentException.get(error.getCode());
+                                return Mono.error(PSPConfirmationException.from(tossException));
+                            });
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                    return Mono.error(new RuntimeException("Toss payment 5xx error"));
+                })
+                .bodyToMono(TossPaymentConfirmResponseDto.class)
+                .map(PaymentConfirmExecuteResponseDto::from)
+                .retryWhen(Retry.backoff(2, Duration.ofSeconds(1))
+                        .jitter(0.1)
+                        .filter(throwable -> (throwable instanceof PSPConfirmationException && ((PSPConfirmationException) throwable).isRetryableError())
+                                || throwable instanceof TimeoutException)
+                        .onRetryExhaustedThrow((retries, retrySignal) -> retrySignal.failure()));
     }
 }

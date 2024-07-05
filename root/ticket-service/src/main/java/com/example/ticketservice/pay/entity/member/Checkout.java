@@ -38,6 +38,7 @@ public class Checkout extends TimeStamped {
 
     private Long memberCouponId;
 
+    @Setter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "used_points", joinColumns = @JoinColumn(name = "checkout_id"))
     private List<PointUsage> pointUsages;
@@ -55,7 +56,6 @@ public class Checkout extends TimeStamped {
     private LocalDateTime approvedAt;
 
     public static Checkout prepare(Long memberId, Ticket ticket) {
-
         return Checkout.builder()
                 .memberId(memberId)
                 .ticketId(ticket.getId())

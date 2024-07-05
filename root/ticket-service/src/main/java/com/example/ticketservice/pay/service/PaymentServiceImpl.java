@@ -15,10 +15,12 @@ import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseD
 import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
 import com.example.ticketservice.pay.entity.member.Checkout;
 import com.example.ticketservice.pay.entity.member.Payment;
+import com.example.ticketservice.pay.entity.member.PaymentRefund;
 import com.example.ticketservice.pay.entity.member.PurchaseHistory;
 import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.pay.event.PaymentCompletedEvent;
+import com.example.ticketservice.pay.event.PaymentRefundedEvent;
 import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
 import com.example.ticketservice.pay.repository.PaymentRepository;
@@ -37,6 +39,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -199,7 +202,7 @@ public class PaymentServiceImpl implements PaymentService {
         return CheckoutResponseDto.of(checkout, payment);
     }
 
-    // TODO: 결제 완료 이후 할일: Ledger, Wallet에 기록, 포인트 차감, 쿠폰 상태 변경
+    // TODO: 결제 완료 이후 할일: Ledger, Wallet에 기록
     @Override
     @Transactional
     public PaymentConfirmResponseDto confirm(Long memberId, PaymentConfirmRequestDto requestDto) {
@@ -216,7 +219,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         PaymentConfirmExecuteResponseDto response;
         try {
-            // e두 번째 인자가 previousStatus, 세번째 인자가 NewStatus, 마지막 인자가 updateReason
+            // 두 번째 인자가 previousStatus, 세번째 인자가 NewStatus, 마지막 인자가 updateReason
             PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.NOT_STARTED, PaymentStatusEnum.EXECUTING, "결제 승인 시작");
             purchaseHistoryRepository.save(executingHistory);
             payment.execute();
@@ -232,13 +235,11 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentStatusEnum paymentStatus;
             String errorCode;
             String errorMessage;
-            if (ex instanceof PSPConfirmationException) {
-                PSPConfirmationException exception = (PSPConfirmationException) ex;
+            if (ex instanceof PSPConfirmationException exception) {
                 paymentStatus = exception.paymentStatus();
                 errorCode = exception.getErrorCode();
                 errorMessage = exception.getErrorMessage();
-            } else if (ex instanceof PaymentAlreadyProcessedException) {
-                PaymentAlreadyProcessedException exception = (PaymentAlreadyProcessedException) ex;
+            } else if (ex instanceof PaymentAlreadyProcessedException exception) {
                 paymentStatus = exception.getStatus();
                 errorCode = exception.getClass().getSimpleName();
                 errorMessage = exception.getMessage();
@@ -260,6 +261,66 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         eventPublisher.publishEvent(new PaymentCompletedEvent(payment));
+
+        return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), "", "");
+    }
+
+    @Override
+    @Transactional
+    public PaymentConfirmResponseDto refund(Long memberId, Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.PAYMENT_NOT_EXIST_EXCEPTION));
+
+        // validation
+        if (!payment.getMemberId().equals(memberId)) {
+            throw new ApiException(ExceptionEnum.UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION);
+        }
+
+        Long refundAmount = RefundAmountCalculator.calculate(payment.getTicket(), payment.getAmount(), LocalDate.now());
+        PaymentRefund refund = PaymentRefund.of(payment, refundAmount);
+
+        PaymentConfirmExecuteResponseDto response;
+        try {
+            PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.EXECUTING, "결제 취소 시작");
+            purchaseHistoryRepository.save(executingHistory);
+            refund.execute();
+
+            response = tossPaymentClient.executeFullCancel(payment.getCheckout().getPspPaymentKey(), payment.getIdempotencyKey())
+                    .blockOptional()
+                    .orElse(null);
+
+            refund.refund(response);
+        } catch (Exception ex) {
+            PaymentStatusEnum refundStatus;
+            String errorCode;
+            String errorMessage;
+            if (ex instanceof PSPConfirmationException exception) {
+                refundStatus = exception.paymentStatus();
+                errorCode = exception.getErrorCode();
+                errorMessage = exception.getErrorMessage();
+            } else if (ex instanceof PaymentAlreadyProcessedException) {
+                PaymentAlreadyProcessedException exception = (PaymentAlreadyProcessedException) ex;
+                refundStatus = exception.getStatus();
+                errorCode = exception.getClass().getSimpleName();
+                errorMessage = exception.getMessage();
+            } else if (ex instanceof TimeoutException) {
+                refundStatus = PaymentStatusEnum.UNKNOWN;
+                errorCode = ex.getClass().getSimpleName();
+                errorMessage = ex.getMessage();
+            } else {
+                refundStatus = PaymentStatusEnum.UNKNOWN;
+                errorCode = ex.getClass().getSimpleName();
+                errorMessage = ex.getMessage();
+            }
+
+            PurchaseHistory failedHistory = PurchaseHistory.record(refund, PaymentStatusEnum.findByValue(refund.getStatus()), refundStatus, errorMessage);
+            purchaseHistoryRepository.save(failedHistory);
+            refund.failOrUnknown(refundStatus, errorCode, errorMessage);
+
+            return new PaymentConfirmResponseDto(refundStatus.name(), errorCode, errorMessage);
+        }
+
+        eventPublisher.publishEvent(new PaymentRefundedEvent(refund));
 
         return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), "", "");
     }

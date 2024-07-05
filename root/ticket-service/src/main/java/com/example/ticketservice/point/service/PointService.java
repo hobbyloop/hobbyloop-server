@@ -1,5 +1,6 @@
 package com.example.ticketservice.point.service;
 
+import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.point.dto.PointEarnedResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryListResponseDto;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface PointService {
     PointEarnedResponseDto earnPointWhenJoining(Long memberId);
 
-    PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy);
+    PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy, Payment payment);
 
     PointEarnedResponseDto earnPointSpecificCompany(Long memberId, Long companyId, PlatformPointPolicy pointPolicy);
 
@@ -20,7 +21,11 @@ public interface PointService {
 
     PointHistoryListResponseDto getExpiringSoonPointHistory(Long memberId);
 
-    void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount);
+    void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount, Payment payment);
 
-    void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName);
+    List<PointUsage> usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName);
+
+    void restoreUsedPointWhenRefund(Long memberId, List<PointUsage> pointUsages, String orderName);
+
+    void revokeEarnedPointWhenRefund(Payment payment);
 }

@@ -50,7 +50,15 @@ public class Points extends TimeStamped {
         balance += amount;
     }
 
+    public void restore(Long amount) {
+        balance += amount;
+    }
+
     public void use(Long amount) {
+        balance -= amount;
+    }
+
+    public void revoke(Long amount) {
         balance -= amount;
     }
 

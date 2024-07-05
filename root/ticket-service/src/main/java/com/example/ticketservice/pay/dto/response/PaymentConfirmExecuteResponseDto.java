@@ -19,6 +19,7 @@ public class PaymentConfirmExecuteResponseDto {
     private String type;
     private String method;
     private LocalDateTime approvedAt;
+    private LocalDateTime canceledAt;
     private String pspRawData;
     private String orderName;
     private int pspConfirmationStatus;
@@ -29,12 +30,18 @@ public class PaymentConfirmExecuteResponseDto {
     private Boolean isRetryable;
 
     public static PaymentConfirmExecuteResponseDto from(TossPaymentConfirmResponseDto responseDto) {
+        LocalDateTime canceledAt = null;
+        if (responseDto.getCancels() != null && !responseDto.getCancels().isEmpty()) {
+            canceledAt = LocalDateTime.parse(responseDto.getCancels().get(0).getCanceledAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        }
+
         return PaymentConfirmExecuteResponseDto.builder()
                 .paymentKey(responseDto.getPaymentKey())
                 .IdempotencyKey(responseDto.getOrderId())
                 .type(responseDto.getType())
                 .method(responseDto.getMethod())
                 .approvedAt(LocalDateTime.parse(responseDto.getApprovedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+                .canceledAt(canceledAt)
                 .pspRawData(responseDto.toString())
                 .orderName(responseDto.getOrderName())
                 .pspConfirmationStatus(PSPConfirmationStatusEnum.get(responseDto.getStatus()).getValue())
