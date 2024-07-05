@@ -9,8 +9,14 @@ import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
 import com.example.ticketservice.pay.repository.PaymentRefundRepository;
 import com.example.ticketservice.pay.repository.PaymentRepository;
+import com.example.ticketservice.pay.service.PaymentService;
 import com.example.ticketservice.point.service.PointService;
+import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
+import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
+import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +26,18 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentEventHandler {
+    private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
     private final PaymentRefundRepository paymentRefundRepository;
     private final CheckoutRepository checkoutRepository;
     private final PointService pointService;
     private final MemberCouponRepository memberCouponRepository;
+    private final TicketRepository ticketRepository;
+    private final UserTicketRepository userTicketRepository;
 
+    // TODO: TransactionTemplate으로 트랜잭션 쪼개기
     @TransactionalEventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handlePaymentCompletedEvent(PaymentCompletedEvent event) {
@@ -49,6 +60,17 @@ public class PaymentEventHandler {
 
         paymentRepository.save(payment);
         checkoutRepository.save(checkout);
+
+        Ticket ticket = ticketRepository.findById(payment.getTicket().getId()).orElseThrow();
+        if (!ticket.canPurchase()) {
+
+            paymentService.refund(payment.getMemberId(), payment.getId());
+            return;
+        }
+        log.info("totalCount: " + ticket.getTotalCount());
+        log.info("issueCount: " + ticket.getIssueCount());
+        UserTicket userTicket = UserTicket.of(ticket, payment.getMemberId());
+        userTicketRepository.save(userTicket);
     }
 
     @TransactionalEventListener

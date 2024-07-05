@@ -16,11 +16,15 @@ import com.example.ticketservice.pay.toss.TossPaymentException;
 import com.example.ticketservice.point.PointSteps;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
+import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
@@ -42,6 +46,9 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
     @MockBean
     TossPaymentClient tossPaymentClient;
 
+    @Autowired
+    TicketRepository ticketRepository;
+
     long centerId = 1L;
     long memberId = 1L;
 
@@ -57,6 +64,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         given(amazonS3Service.getFileUrl("test-image-key")).willReturn("test-image-url");
 
         ticketId = AdminTicketSteps.createTicket(centerId, TicketFixture.defaultTicketCreateRequest()).getTicketId();
+        AdminTicketSteps.uploadTicket(ticketId);
 
         Long generalCouponId = AdminCouponSteps.createCoupon(1L, CouponFixture.generalPercentageDiscountCouponCreateRequest());
         CouponSteps.issueSingleCoupon(memberId, generalCouponId);
@@ -109,6 +117,26 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         assertThat(points).isNotEqualTo(3000L);
         List<MemberCouponResponseDto> coupons = CouponSteps.getAvailableMemberCoupons(memberId);
         assertThat(coupons.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void refundSuccessWhenTicketIssuanceFailureAfterPaymentConfirmation() throws Exception {
+        // given
+        mockForPrepareCheckout();
+        CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
+        CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
+
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
+        ReflectionTestUtils.setField(ticket, "issueCount", ticket.getTotalCount() + 1);
+        ticketRepository.save(ticket);
+
+        mockForConfirm(checkoutResponse);
+        PaymentConfirmResponseDto response = PaymentSteps.confirm(memberId, PaymentFixture.defaultPaymentConfirmRequest(checkoutResponse));
+
+        // then
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+        Long points = PointSteps.getMyTotalPoints(memberId);
+        assertThat(points).isEqualTo(3000L);
     }
 
     @Test

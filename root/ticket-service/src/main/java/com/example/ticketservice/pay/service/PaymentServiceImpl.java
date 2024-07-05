@@ -32,7 +32,9 @@ import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
 import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
+import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -57,6 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final CheckoutRepository checkoutRepository;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final TicketRepository ticketRepository;
+    private final UserTicketRepository userTicketRepository;
     private final MemberCouponRepository memberCouponRepository;
     private final PointsRepository pointsRepository;
     private final CompanyServiceClient companyServiceClient;
@@ -84,6 +87,9 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseGet(() -> Checkout.prepare(memberId, ticket));
 
         Long companyId = companyServiceClient.getCompanyIdOfCenter(ticket.getCenterId()).getData();
+
+        // 현재 이용권 구매 가능한지 확인
+        ticket.checkCanPurchase();
 
         // 쿠폰 조회
         // 쿠폰의 scope을 확인함
