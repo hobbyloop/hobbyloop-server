@@ -10,7 +10,9 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
+import com.example.ticketservice.pay.toss.PSPConfirmationException;
 import com.example.ticketservice.pay.toss.TossPaymentClient;
+import com.example.ticketservice.pay.toss.TossPaymentException;
 import com.example.ticketservice.point.PointSteps;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
@@ -109,11 +111,30 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         assertThat(coupons.size()).isEqualTo(0);
     }
 
+    @Test
+    public void paymentConfirmationFailure() throws Exception {
+        // given
+        mockForPrepareCheckout();
+        CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
+        CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
+
+        // when
+        mockForConfirmFailure();
+        PaymentConfirmResponseDto response = PaymentSteps.confirm(memberId, PaymentFixture.defaultPaymentConfirmRequest(checkoutResponse));
+
+        // then
+        assertThat(response.getStatus()).isEqualTo("FAILURE");
+    }
+
     private void mockForPrepareCheckout() {
         given(companyServiceClient.getCompanyIdOfCenter(centerId)).willReturn(new BaseResponseDto<>(1L));
     }
 
     private void mockForConfirm(CheckoutResponseDto response) {
         given(tossPaymentClient.executeConfirm(any())).willReturn(Mono.just(PaymentFixture.defaultPaymentConfirmExecuteSuccessResponse(response)));
+    }
+
+    private void mockForConfirmFailure() {
+        given(tossPaymentClient.executeConfirm(any())).willReturn(Mono.error(PSPConfirmationException.from(TossPaymentException.REJECT_TOSSPAY_INVALID_ACCOUNT)));
     }
 }
