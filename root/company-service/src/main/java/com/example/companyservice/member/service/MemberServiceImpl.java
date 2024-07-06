@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public TokenResponseDto createMember(CreateMemberRequestDto requestDto) {
         Member member = Member.of(requestDto);
-        if (memberRepository.existsByProviderAndSubject(member.getProvider(), member.getSubject())) {
+        if (memberRepository.existsByProviderAndSubjectAndIsDeletedFalse(member.getProvider(), member.getSubject())) {
             throw new ApiException(ExceptionEnum.DUPLICATE_MEMBER_EXCEPTION);
         }
 

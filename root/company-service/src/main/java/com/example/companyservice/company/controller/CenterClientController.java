@@ -4,6 +4,7 @@ import com.example.companyservice.company.dto.response.IsBookmarkResponseDto;
 import com.example.companyservice.company.dto.response.CenterInfoResponseDto;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.service.CenterService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/centers")
+@Hidden
 public class CenterClientController {
     private final CenterService centerService;
 
@@ -22,7 +24,8 @@ public class CenterClientController {
     }
 
     @GetMapping("/distance/{centerId}/{memberId}")
-    public ResponseEntity<BaseResponseDto<IsBookmarkResponseDto>> getIsBookmark(@PathVariable(value = "centerId") long centerId, @PathVariable(value = "memberId") long memberId) {
+    public ResponseEntity<BaseResponseDto<IsBookmarkResponseDto>> getIsBookmark(@PathVariable(value = "centerId") long centerId,
+                                                                                @PathVariable(value = "memberId") long memberId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.getIsBookmark(centerId, memberId)));
     }

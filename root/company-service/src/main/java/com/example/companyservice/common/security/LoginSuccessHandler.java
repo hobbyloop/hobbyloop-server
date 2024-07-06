@@ -69,16 +69,6 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 }
             } else if ("instructor".equals(state)) {
 
-            } else {
-                Optional<Member> optionalMember = memberRepository.findByProviderAndSubject(provider, subject);
-                if (optionalMember.isPresent()) {
-                    Member member = optionalMember.get();
-                    String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
-                    String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
-                    sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
-                } else {
-                    sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
-                }
             }
         } else {
             throw new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION);
