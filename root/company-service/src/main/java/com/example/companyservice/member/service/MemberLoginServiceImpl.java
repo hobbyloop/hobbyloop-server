@@ -67,7 +67,7 @@ public class MemberLoginServiceImpl implements MemberLoginService {
 
             String email = userInfo.get("email");
             String subject = userInfo.get("subject");
-            Optional<Member> memberOptional = memberRepository.findByProviderAndSubject(provider, subject);
+            Optional<Member> memberOptional = memberRepository.findByProviderAndSubjectAndIsDeletedFalse(provider, subject);
             if (memberOptional.isPresent()) {
                 Member member = memberOptional.get();
                 String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
