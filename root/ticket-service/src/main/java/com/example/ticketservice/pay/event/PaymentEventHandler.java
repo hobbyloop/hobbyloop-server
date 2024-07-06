@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class PaymentEventHandler {
+    private final TransactionTemplate transactionTemplate;
     private final PaymentService paymentService;
     private final PaymentRepository paymentRepository;
     private final PaymentRefundRepository paymentRefundRepository;
@@ -63,12 +65,12 @@ public class PaymentEventHandler {
 
         Ticket ticket = ticketRepository.findById(payment.getTicket().getId()).orElseThrow();
         if (!ticket.canPurchase()) {
-
-            paymentService.refund(payment.getMemberId(), payment.getId());
-            return;
+            transactionTemplate.execute(status -> {
+                paymentService.refund(payment.getMemberId(), payment.getId());
+                return null;
+            });
         }
-        log.info("totalCount: " + ticket.getTotalCount());
-        log.info("issueCount: " + ticket.getIssueCount());
+
         UserTicket userTicket = UserTicket.of(ticket, payment.getMemberId());
         userTicketRepository.save(userTicket);
     }

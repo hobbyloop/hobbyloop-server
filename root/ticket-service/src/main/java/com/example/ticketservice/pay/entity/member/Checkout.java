@@ -30,8 +30,6 @@ public class Checkout extends TimeStamped {
 
     private String idempotencyKey;
 
-    private String pspPaymentKey;
-
     private int type; // 결제 유형?
 
     private int method; // card, ...

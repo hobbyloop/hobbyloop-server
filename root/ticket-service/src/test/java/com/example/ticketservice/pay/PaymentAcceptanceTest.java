@@ -6,6 +6,7 @@ import com.example.ticketservice.coupon.CouponSteps;
 import com.example.ticketservice.coupon.dto.MemberCouponResponseDto;
 import com.example.ticketservice.fixture.CenterFixture;
 import com.example.ticketservice.fixture.CouponFixture;
+import com.example.ticketservice.fixture.MemberFixture;
 import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
@@ -92,6 +93,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
 
         // when
+        mockForCheckout();
         CheckoutResponseDto response = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
 
         // then
@@ -102,6 +104,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
     public void paymentConfirmationSuccess() throws Exception {
         // given
         mockForPrepareCheckout();
+        mockForCheckout();
         CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
         CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
 
@@ -123,6 +126,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
     public void refundSuccessWhenTicketIssuanceFailureAfterPaymentConfirmation() throws Exception {
         // given
         mockForPrepareCheckout();
+        mockForCheckout();
         CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
         CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
 
@@ -143,6 +147,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
     public void paymentConfirmationFailure() throws Exception {
         // given
         mockForPrepareCheckout();
+        mockForCheckout();
         CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
         CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
 
@@ -158,6 +163,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
     public void paymentRefundSuccess() throws Exception {
         // given
         mockForPrepareCheckout();
+        mockForCheckout();
         CheckoutPrepareResponseDto prepareResponse = PaymentSteps.prepareCheckout(memberId, ticketId);
         CheckoutResponseDto checkoutResponse = PaymentSteps.checkout(memberId, PaymentFixture.defaultCheckoutRequest(prepareResponse));
 
@@ -179,6 +185,10 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
 
     private void mockForPrepareCheckout() {
         given(companyServiceClient.getCompanyIdOfCenter(centerId)).willReturn(new BaseResponseDto<>(1L));
+    }
+
+    private void mockForCheckout() {
+        given(companyServiceClient.getMemberInfo(memberId)).willReturn(new BaseResponseDto<>(MemberFixture.defaultMemberInfoResponse()));
     }
 
     private void mockForConfirm(CheckoutResponseDto response) {

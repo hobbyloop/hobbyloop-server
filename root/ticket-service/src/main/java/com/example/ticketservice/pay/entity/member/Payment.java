@@ -4,6 +4,7 @@ import com.example.ticketservice.common.entity.TimeStamped;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
 import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
+import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,6 +38,8 @@ public class Payment extends TimeStamped {
 
     private int psp; // toss, ... // TODO: 이거 언제 업뎃함?
 
+    private String pspPaymentKey;
+
     @Column(length = 1000)
     private String pspRawData;
 
@@ -57,7 +60,11 @@ public class Payment extends TimeStamped {
     @Builder.Default
     private int threshold = 3;
 
-    public static Payment checkout(Checkout checkout, Ticket ticket) {
+    private String buyerName;
+
+    private String phoneNumber;
+
+    public static Payment checkout(Checkout checkout, Ticket ticket, MemberInfoResponseDto memberInfo) {
         Boolean isPointUpdated = null;
         Boolean isCouponUpdated = null;
         if (checkout.getPointDiscountAmount() > 0)
@@ -78,6 +85,8 @@ public class Payment extends TimeStamped {
                 .isPointUpdated(isPointUpdated)
                 .isCouponUpdated(isCouponUpdated)
                 .failedCount(0)
+                .buyerName(memberInfo.getMemberName())
+                .phoneNumber(memberInfo.getPhoneNumber())
                 .build();
     }
 
@@ -97,13 +106,15 @@ public class Payment extends TimeStamped {
         this.pspRawData = errorCode + "_" + errorMessage;
     }
 
-    public void execute() {
+    public void execute(int psp, String pspPaymentKey) {
         if (this.status == PaymentStatusEnum.SUCCESS.getValue()) {
             throw new PaymentAlreadyProcessedException(PaymentStatusEnum.SUCCESS, "이미 성공한 결제입니다.");
         } else if (this.status == PaymentStatusEnum.FAILURE.getValue()) {
             throw new PaymentAlreadyProcessedException(PaymentStatusEnum.FAILURE, "이미 실패한 결제입니다.");
         }
 
+        this.psp = psp;
+        this.pspPaymentKey = pspPaymentKey;
         this.status = PaymentStatusEnum.EXECUTING.getValue();
     }
 

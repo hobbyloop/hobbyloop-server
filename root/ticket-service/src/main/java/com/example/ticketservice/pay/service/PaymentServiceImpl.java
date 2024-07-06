@@ -9,10 +9,7 @@ import com.example.ticketservice.coupon.entity.vo.CompanyInfo;
 import com.example.ticketservice.coupon.repository.MemberCouponRepository;
 import com.example.ticketservice.pay.dto.request.CheckoutRequestDto;
 import com.example.ticketservice.pay.dto.request.PaymentConfirmRequestDto;
-import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
-import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
-import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
-import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
+import com.example.ticketservice.pay.dto.response.*;
 import com.example.ticketservice.pay.entity.member.Checkout;
 import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.entity.member.PaymentRefund;
@@ -31,6 +28,7 @@ import com.example.ticketservice.point.entity.Points;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
 import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
+import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
@@ -39,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -59,7 +58,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final CheckoutRepository checkoutRepository;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final TicketRepository ticketRepository;
-    private final UserTicketRepository userTicketRepository;
     private final MemberCouponRepository memberCouponRepository;
     private final PointsRepository pointsRepository;
     private final CompanyServiceClient companyServiceClient;
@@ -77,7 +75,6 @@ public class PaymentServiceImpl implements PaymentService {
     public CheckoutPrepareResponseDto prepareCheckout(Long memberId, Long ticketId) {
         // 사용 가능 쿠폰 목록
         // 전체 포인트 + 그 중 사용 가능 포인트 잔액
-        // Member 마이크로서비스 조회도 해야됨.
 
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
@@ -138,6 +135,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CHECKOUT_NOT_EXIST_EXCEPTION));
         Ticket ticket = ticketRepository.findById(checkout.getTicketId())
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
+
+        MemberInfoResponseDto memberInfo = companyServiceClient.getMemberInfo(memberId).getData();
 
         Long usingPoints = requestDto.getPoints();
         List<PointUsage> pointUsages = new ArrayList<>();
@@ -202,7 +201,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         checkout.checkout(requestDto, pointUsages);
-        Payment payment = Payment.checkout(checkout, ticket);
+        Payment payment = Payment.checkout(checkout, ticket, memberInfo);
         paymentRepository.save(payment);
 
         return CheckoutResponseDto.of(checkout, payment);
@@ -228,7 +227,7 @@ public class PaymentServiceImpl implements PaymentService {
             // 두 번째 인자가 previousStatus, 세번째 인자가 NewStatus, 마지막 인자가 updateReason
             PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.NOT_STARTED, PaymentStatusEnum.EXECUTING, "결제 승인 시작");
             purchaseHistoryRepository.save(executingHistory);
-            payment.execute();
+            payment.execute(requestDto.getPsp(), requestDto.getPaymentKey());
 
             response = tossPaymentClient.executeConfirm(requestDto)
                     .blockOptional()
@@ -291,7 +290,7 @@ public class PaymentServiceImpl implements PaymentService {
             purchaseHistoryRepository.save(executingHistory);
             refund.execute();
 
-            response = tossPaymentClient.executeFullCancel(payment.getCheckout().getPspPaymentKey(), payment.getIdempotencyKey())
+            response = tossPaymentClient.executeFullCancel(payment.getPspPaymentKey(), payment.getIdempotencyKey())
                     .blockOptional()
                     .orElse(null);
 
@@ -330,5 +329,9 @@ public class PaymentServiceImpl implements PaymentService {
 
         return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), "", "");
     }
+
+//    public PaymentDetailResponseDto getPaymentDetail(Long paymentId) {
+//
+//    }
 
 }
