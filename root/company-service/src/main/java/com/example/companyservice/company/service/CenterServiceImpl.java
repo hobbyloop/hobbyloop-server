@@ -3,7 +3,7 @@ package com.example.companyservice.company.service;
 import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
-import com.example.companyservice.company.client.dto.request.CenterLocationDto;
+import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
 import com.example.companyservice.company.client.dto.response.*;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
@@ -115,13 +115,31 @@ public class CenterServiceImpl implements CenterService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
 
-        amazonS3Service.delete(center.getLogoImageKey());
+//        amazonS3Service.delete(center.getLogoImageKey());
         String logoImageKey = amazonS3Service.saveS3Img(logoImage, "CenterImage");
         String logoImageUrl = amazonS3Service.getFileUrl(logoImageKey);
+
+        List<CenterOperatingHour> operatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
+        List<CenterBreakHour> breakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> operationHourDtoList = getOperationHourDtoList(operatingHourList);
+        List<HourResponseDto> breakHourDtoList = getBreakHourDtoList(breakHourList);
+
+        CenterOriginalAndUpdateInfoDto centerOriginalAndUpdateInfoDto = CenterOriginalAndUpdateInfoDto.of(
+                center,
+                operationHourDtoList,
+                breakHourDtoList,
+                requestDto,
+                logoImageKey,
+                logoImageUrl
+        );
         center.centerUpdate(requestDto, logoImageKey, logoImageUrl);
 
-        deleteAllCenterImage(centerId);
-        saveCenterImage(center, centerImageList);
+//        deleteAllCenterImage(centerId);
+        List<String> oldCenterImageKeyList = centerImageRepository.findAllByCenterId(centerId).stream().map(CenterImage::getCenterImageKey).toList();
+        List<String> newCenterImageList = saveCenterImage(center, centerImageList);
+
+        centerOriginalAndUpdateInfoDto.setOldCenterImageKeyList(oldCenterImageKeyList);
+        centerOriginalAndUpdateInfoDto.setNewCenterImageKeyList(newCenterImageList);
 
         centerOperatingHourRepository.deleteAllByCenterId(centerId);
         centerBreakHourRepository.deleteAllByCenterId(centerId);
@@ -129,7 +147,7 @@ public class CenterServiceImpl implements CenterService {
         saveOperatingHour(requestDto.getOperatingHourList(), center);
         saveBreakHour(requestDto.getBreakHourList(), center);
 
-        kafkaProducer.send("update-address-info", CenterLocationDto.of(centerId, requestDto, logoImageUrl));
+        kafkaProducer.send("update-address-info", centerOriginalAndUpdateInfoDto);
 
         return center.getId();
     }
@@ -274,13 +292,16 @@ public class CenterServiceImpl implements CenterService {
         }
     }
 
-    private void saveCenterImage(Center center, List<MultipartFile> centerImageList) {
+    private List<String> saveCenterImage(Center center, List<MultipartFile> centerImageList) {
+        List<String> newCenterImageKeyList = new ArrayList<>();
         centerImageList.forEach(i -> {
             String centerImageKey = amazonS3Service.saveS3Img(i, "CenterImage");
             String centerImageUrl = amazonS3Service.getFileUrl(centerImageKey);
             CenterImage centerImage = CenterImage.of(centerImageKey, centerImageUrl, center);
             centerImageRepository.save(centerImage);
+            newCenterImageKeyList.add(centerImageKey);
         });
+        return newCenterImageKeyList;
     }
 
     private void deleteAllCenterImage(long centerId) {
