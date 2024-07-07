@@ -1,4 +1,4 @@
-package com.example.ticketservice.pay.repository;
+package com.example.ticketservice.pay.repository.payment;
 
 import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;

@@ -11,7 +11,7 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
-import com.example.ticketservice.pay.toss.PSPConfirmationException;
+import com.example.ticketservice.pay.exception.PSPConfirmationException;
 import com.example.ticketservice.pay.toss.TossPaymentClient;
 import com.example.ticketservice.pay.toss.TossPaymentException;
 import com.example.ticketservice.point.PointSteps;

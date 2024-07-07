@@ -1,4 +1,4 @@
-package com.example.ticketservice.pay.repository;
+package com.example.ticketservice.pay.repository.payment;
 
 import com.example.ticketservice.pay.entity.member.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +13,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long>, Payment
     Optional<Payment> findByIdAndIdempotencyKey(Long id, String idempotencyKey);
 
     List<Payment> findByCenterId(Long centerId);
+
+    Optional<Payment> findByPspPaymentKey(String pspPaymentKey);
 }

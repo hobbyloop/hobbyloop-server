@@ -8,7 +8,7 @@ import com.example.ticketservice.pay.entity.member.PaymentRefund;
 import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
 import com.example.ticketservice.pay.repository.PaymentRefundRepository;
-import com.example.ticketservice.pay.repository.PaymentRepository;
+import com.example.ticketservice.pay.repository.payment.PaymentRepository;
 import com.example.ticketservice.pay.service.PaymentService;
 import com.example.ticketservice.point.service.PointService;
 import com.example.ticketservice.ticket.entity.Ticket;

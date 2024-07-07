@@ -27,7 +27,7 @@ public class Payment extends TimeStamped {
 
     private String idempotencyKey;
 
-    private Long centerId; //sellerId
+    private Long centerId; // sellerId
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket ticket;
@@ -36,7 +36,7 @@ public class Payment extends TimeStamped {
 
     private Long amount;
 
-    private int psp; // toss, ... // TODO: 이거 언제 업뎃함?
+    private int psp;
 
     private String pspPaymentKey;
 
@@ -93,6 +93,10 @@ public class Payment extends TimeStamped {
     public void confirm(PaymentConfirmExecuteResponseDto responseDto) {
         this.status = PaymentStatusEnum.SUCCESS.getValue();
         this.pspRawData = responseDto.getPspRawData();
+    }
+
+    public void confirm() {
+        this.status = PaymentStatusEnum.SUCCESS.getValue();
     }
 
     public void failOrUnknown(PaymentStatusEnum status, String errorCode, String errorMessage) {

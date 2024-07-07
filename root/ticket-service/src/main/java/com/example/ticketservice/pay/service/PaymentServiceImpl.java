@@ -20,9 +20,9 @@ import com.example.ticketservice.pay.event.PaymentCompletedEvent;
 import com.example.ticketservice.pay.event.PaymentRefundedEvent;
 import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
-import com.example.ticketservice.pay.repository.PaymentRepository;
+import com.example.ticketservice.pay.repository.payment.PaymentRepository;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
-import com.example.ticketservice.pay.toss.PSPConfirmationException;
+import com.example.ticketservice.pay.exception.PSPConfirmationException;
 import com.example.ticketservice.pay.toss.TossPaymentClient;
 import com.example.ticketservice.point.entity.Points;
 import com.example.ticketservice.point.entity.enums.PointUsableScopeEnum;
@@ -30,14 +30,11 @@ import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
-import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
-import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -224,18 +221,21 @@ public class PaymentServiceImpl implements PaymentService {
 
         PaymentConfirmExecuteResponseDto response;
         try {
-            // 두 번째 인자가 previousStatus, 세번째 인자가 NewStatus, 마지막 인자가 updateReason
+            // ---
             PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.NOT_STARTED, PaymentStatusEnum.EXECUTING, "결제 승인 시작");
             purchaseHistoryRepository.save(executingHistory);
             payment.execute(requestDto.getPsp(), requestDto.getPaymentKey());
+            // ---
 
             response = tossPaymentClient.executeConfirm(requestDto)
                     .blockOptional()
                     .orElse(null);
 
+            // ---
             PurchaseHistory confirmedHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.SUCCESS, "결제 승인 완료");
             purchaseHistoryRepository.save(confirmedHistory);
             payment.confirm(response);
+            // ---
         } catch (Exception ex) {
             PaymentStatusEnum paymentStatus;
             String errorCode;
@@ -258,9 +258,11 @@ public class PaymentServiceImpl implements PaymentService {
                 errorMessage = ex.getMessage();
             }
 
+            // ---
             PurchaseHistory failedHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), paymentStatus, errorMessage);
             purchaseHistoryRepository.save(failedHistory);
             payment.failOrUnknown(paymentStatus, errorCode, errorMessage);
+            // ---
 
             return new PaymentConfirmResponseDto(paymentStatus.name(), errorCode, errorMessage);
         }

@@ -7,7 +7,6 @@ import com.example.ticketservice.pay.dto.request.PaymentConfirmRequestDto;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
-import com.example.ticketservice.pay.dto.response.TossPaymentConfirmResponseDto;
 import com.example.ticketservice.pay.entity.member.enums.PSPConfirmationStatusEnum;
 
 import java.time.LocalDateTime;

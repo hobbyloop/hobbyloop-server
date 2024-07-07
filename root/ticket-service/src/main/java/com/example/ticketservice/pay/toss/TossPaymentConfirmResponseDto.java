@@ -1,4 +1,4 @@
-package com.example.ticketservice.pay.dto.response;
+package com.example.ticketservice.pay.toss;
 
 import lombok.Getter;
 import lombok.ToString;

@@ -26,6 +26,8 @@ public class PaymentRefund extends TimeStamped {
 
     private Long amount;
 
+    private String pspPaymentKey;
+
     private String pspRawData;
 
     private int status;
@@ -56,6 +58,7 @@ public class PaymentRefund extends TimeStamped {
                 .memberId(payment.getMemberId())
                 .amount(amount)
                 .status(PaymentStatusEnum.NOT_STARTED.getValue())
+                .pspPaymentKey(payment.getPspPaymentKey())
                 .isPointUpdated(isPointUpdated)
                 .isCouponUpdated(isCouponUpdated)
                 .failedCount(0)
@@ -74,6 +77,12 @@ public class PaymentRefund extends TimeStamped {
         this.status = PaymentStatusEnum.SUCCESS.getValue();
         this.refundedAt = responseDto.getCanceledAt();
         this.pspRawData = responseDto.getPspRawData();
+    }
+
+    public void refund(LocalDateTime canceledAt, String pspRawData) {
+        this.status = PaymentStatusEnum.SUCCESS.getValue();
+        this.refundedAt = canceledAt;
+        this.pspRawData = pspRawData;
     }
 
     public void complete() {

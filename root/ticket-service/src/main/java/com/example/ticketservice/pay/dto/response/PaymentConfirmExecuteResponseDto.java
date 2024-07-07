@@ -1,6 +1,7 @@
 package com.example.ticketservice.pay.dto.response;
 
 import com.example.ticketservice.pay.entity.member.enums.PSPConfirmationStatusEnum;
+import com.example.ticketservice.pay.toss.TossPaymentConfirmResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
