@@ -40,4 +40,10 @@ public class ApproveServiceImpl implements ApproveService {
         company.updateCreateStatus(CreateStatusEnum.findByName(answer).getTypeValue());
         return company.getId();
     }
+
+    @Override
+    public Company findDetail(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
+    }
 }
