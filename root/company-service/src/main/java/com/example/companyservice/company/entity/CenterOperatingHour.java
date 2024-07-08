@@ -1,6 +1,7 @@
 package com.example.companyservice.company.entity;
 
 import com.example.companyservice.company.dto.request.HourRequestDto;
+import com.example.companyservice.company.dto.response.HourResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,15 @@ public class CenterOperatingHour extends TimeStamped {
     private Center center;
 
     public static CenterOperatingHour of(HourRequestDto dto, Center center) {
+        return CenterOperatingHour.builder()
+                .day(DayEnum.findByName(dto.getDay()).getTypeValue())
+                .openAt(dto.getOpenAt())
+                .closeAt(dto.getCloseAt())
+                .center(center)
+                .build();
+    }
+
+    public static CenterOperatingHour of(HourResponseDto dto, Center center) {
         return CenterOperatingHour.builder()
                 .day(DayEnum.findByName(dto.getDay()).getTypeValue())
                 .openAt(dto.getOpenAt())
