@@ -11,7 +11,9 @@ import com.example.ticketservice.fixture.TicketFixture;
 import com.example.ticketservice.pay.dto.response.CheckoutPrepareResponseDto;
 import com.example.ticketservice.pay.dto.response.CheckoutResponseDto;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
+import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.exception.PSPConfirmationException;
+import com.example.ticketservice.pay.repository.payment.PaymentRepository;
 import com.example.ticketservice.pay.toss.TossPaymentClient;
 import com.example.ticketservice.pay.toss.TossPaymentException;
 import com.example.ticketservice.point.PointSteps;
@@ -21,6 +23,7 @@ import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import com.example.ticketservice.ticket.service.AmazonS3Service;
 import com.example.ticketservice.ticket.utils.AdminTicketSteps;
+import com.netflix.discovery.converters.Auto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,9 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
 
     @Autowired
     TicketRepository ticketRepository;
+
+    @Autowired
+    PaymentRepository paymentRepository;
 
     long centerId = 1L;
     long memberId = 1L;
@@ -135,6 +141,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         ticketRepository.save(ticket);
 
         mockForConfirm(checkoutResponse);
+        mockForRefund(checkoutResponse);
         PaymentConfirmResponseDto response = PaymentSteps.confirm(memberId, PaymentFixture.defaultPaymentConfirmRequest(checkoutResponse));
 
         // then
@@ -181,6 +188,8 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         assertThat(points).isEqualTo(3000L);
         List<MemberCouponResponseDto> coupons = CouponSteps.getAvailableMemberCoupons(memberId);
         assertThat(coupons.size()).isEqualTo(1);
+
+
     }
 
     private void mockForPrepareCheckout() {

@@ -6,6 +6,7 @@ import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,9 @@ public class Payment extends TimeStamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Ticket ticket;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private UserTicket userTicket;
 
     private Long looppassId; // TODO: Looppass로 바꾸기
 
@@ -138,5 +142,9 @@ public class Payment extends TimeStamped {
 
     public void refund() {
         this.isRefunded = true;
+    }
+
+    public void setUserTicket(UserTicket userTicket) {
+        this.userTicket = userTicket;
     }
 }

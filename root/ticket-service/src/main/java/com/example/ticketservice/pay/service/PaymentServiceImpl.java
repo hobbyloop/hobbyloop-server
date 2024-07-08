@@ -30,6 +30,7 @@ import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
 import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -283,12 +284,65 @@ public class PaymentServiceImpl implements PaymentService {
             throw new ApiException(ExceptionEnum.UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION);
         }
 
-        Long refundAmount = RefundAmountCalculator.calculate(payment.getTicket(), payment.getAmount(), LocalDate.now());
+        Long refundAmount = RefundAmountCalculator.calculate(payment.getUserTicket(), payment.getAmount(), LocalDate.now());
         PaymentRefund refund = PaymentRefund.of(payment, refundAmount);
 
         PaymentConfirmExecuteResponseDto response;
         try {
-            PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.EXECUTING, "결제 취소 시작");
+            PurchaseHistory executingHistory = PurchaseHistory.record(refund, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.EXECUTING, "결제 취소 시작");
+            purchaseHistoryRepository.save(executingHistory);
+            refund.execute();
+
+            response = tossPaymentClient.executeFullCancel(payment.getPspPaymentKey(), payment.getIdempotencyKey())
+                    .blockOptional()
+                    .orElse(null);
+
+            refund.refund(response);
+        } catch (Exception ex) {
+            PaymentStatusEnum refundStatus;
+            String errorCode;
+            String errorMessage;
+            if (ex instanceof PSPConfirmationException exception) {
+                refundStatus = exception.paymentStatus();
+                errorCode = exception.getErrorCode();
+                errorMessage = exception.getErrorMessage();
+            } else if (ex instanceof PaymentAlreadyProcessedException) {
+                PaymentAlreadyProcessedException exception = (PaymentAlreadyProcessedException) ex;
+                refundStatus = exception.getStatus();
+                errorCode = exception.getClass().getSimpleName();
+                errorMessage = exception.getMessage();
+            } else if (ex instanceof TimeoutException) {
+                refundStatus = PaymentStatusEnum.UNKNOWN;
+                errorCode = ex.getClass().getSimpleName();
+                errorMessage = ex.getMessage();
+            } else {
+                refundStatus = PaymentStatusEnum.UNKNOWN;
+                errorCode = ex.getClass().getSimpleName();
+                errorMessage = ex.getMessage();
+            }
+
+            PurchaseHistory failedHistory = PurchaseHistory.record(refund, PaymentStatusEnum.findByValue(refund.getStatus()), refundStatus, errorMessage);
+            purchaseHistoryRepository.save(failedHistory);
+            refund.failOrUnknown(refundStatus, errorCode, errorMessage);
+
+            return new PaymentConfirmResponseDto(refundStatus.name(), errorCode, errorMessage);
+        }
+
+        eventPublisher.publishEvent(new PaymentRefundedEvent(refund));
+
+        return new PaymentConfirmResponseDto(PaymentStatusEnum.SUCCESS.name(), "", "");
+    }
+
+    // 관리자의 이용권 거절에 의한 환불은 무조건 전액환불
+    public PaymentConfirmResponseDto refundByAdmin(Long adminId, UserTicket userTicket) {
+        Payment payment = paymentRepository.findByUserTicket(userTicket)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.PAYMENT_NOT_EXIST_EXCEPTION));
+
+        PaymentRefund refund = PaymentRefund.of(payment, payment.getAmount());
+
+        PaymentConfirmExecuteResponseDto response;
+        try {
+            PurchaseHistory executingHistory = PurchaseHistory.record(refund, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.EXECUTING, "결제 취소 시작");
             purchaseHistoryRepository.save(executingHistory);
             refund.execute();
 

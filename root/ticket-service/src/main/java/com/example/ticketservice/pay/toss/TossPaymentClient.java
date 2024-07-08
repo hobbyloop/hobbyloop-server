@@ -36,6 +36,7 @@ public class TossPaymentClient {
 
     private final String TRANSACTION_URI = "/v1/transactions";
 
+    // TODO: IdempotencyKey 헤더 추가
     public Mono<PaymentConfirmExecuteResponseDto> executeConfirm(PaymentConfirmRequestDto requestDto) {
         // 헤더 설정
         Base64.Encoder encoder = Base64.getEncoder();
@@ -109,6 +110,7 @@ public class TossPaymentClient {
                         .onRetryExhaustedThrow((retries, retrySignal) -> retrySignal.failure()));
     }
 
+    // TODO: 재시도 로직 추가
     public List<TossTransactionsResponseDto> executeTransaction(LocalDateTime startDate, LocalDateTime endDate, String startingAfter) {
         Base64.Encoder encoder = Base64.getEncoder();
         byte[] encodedKey = encoder.encode((SECRET_KEY + ":").getBytes(StandardCharsets.UTF_8));

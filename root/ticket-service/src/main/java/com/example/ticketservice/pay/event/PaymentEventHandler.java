@@ -18,6 +18,7 @@ import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -53,48 +54,71 @@ public class PaymentEventHandler {
         // TODO: companyId
         pointService.earnPointWhenPurchase(payment.getMemberId(), payment.getTicket().getCompanyId(), payment.getTicket().getCenterId(), payment.getAmount(), payment);
 
-        MemberCoupon coupon = memberCouponRepository.findById(payment.getCheckout().getMemberCouponId())
-                .orElseThrow();
-        coupon.use();
-        payment.markCouponUpdated();
+        if (payment.getCheckout().getCouponDiscountAmount() > 0L) {
+            MemberCoupon coupon = memberCouponRepository.findById(payment.getCheckout().getMemberCouponId())
+                    .orElseThrow();
+            coupon.use();
+            payment.markCouponUpdated();
+        }
 
         payment.complete();
 
         paymentRepository.save(payment);
         checkoutRepository.save(checkout);
 
+        // 결제한 사이에 이용권을 발급받을 수 없는 상황이 되면 바로 환불 진행
         Ticket ticket = ticketRepository.findById(payment.getTicket().getId()).orElseThrow();
         if (!ticket.canPurchase()) {
             transactionTemplate.execute(status -> {
                 paymentService.refund(payment.getMemberId(), payment.getId());
                 return null;
             });
+            return;
         }
 
-        UserTicket userTicket = UserTicket.of(ticket, payment.getMemberId());
-        userTicketRepository.save(userTicket);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        transactionTemplate.execute(status -> {
+            UserTicket userTicket = UserTicket.of(ticket, payment.getMemberId());
+            userTicketRepository.save(userTicket);
+            payment.setUserTicket(userTicket);
+
+            log.info("payment's user ticket has been saved" + payment.getUserTicket());
+            return null;
+        });
+
+        transactionTemplate.execute(status -> {
+            paymentRepository.save(payment);
+            return null;
+        });
     }
 
+    // 전액환불의 경우 포인트, 쿠폰 전부 반환
+    // 부분환불의 경우 포인트는 환급하나 쿠폰은 소멸
     @TransactionalEventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void handlePaymentRefundedEvent(PaymentRefundedEvent event) {
         PaymentRefund refund = event.getRefund();
         Payment payment = refund.getPayment();
 
+        // 사용한 포인트 반환
         pointService.restoreUsedPointWhenRefund(refund.getMemberId(), payment.getCheckout().getPointUsages(), payment.getTicket().getName());
         refund.markPointUpdated();
 
         // 결제로 적립된 포인트 차감
         pointService.revokeEarnedPointWhenRefund(payment);
 
-        // 쿠폰 반환
-        MemberCoupon coupon = memberCouponRepository.findById(payment.getCheckout().getMemberCouponId())
-                .orElseThrow();
-        coupon.restore();
+        if (!refund.isPartialRefund()) {
+            // 쿠폰 반환(전액환불일 시), 부분환불일 시 쿠폰 소멸
+            MemberCoupon coupon = memberCouponRepository.findById(payment.getCheckout().getMemberCouponId())
+                    .orElseThrow();
+            coupon.restore();
+        }
         refund.markCouponUpdated();
 
         refund.complete();
-        payment.refund();
+        if (refund.isRefundDone()) {
+            payment.refund();
+        }
 
         paymentRepository.save(payment);
         paymentRefundRepository.save(refund);

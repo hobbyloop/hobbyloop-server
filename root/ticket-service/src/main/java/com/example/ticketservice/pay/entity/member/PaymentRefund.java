@@ -85,9 +85,38 @@ public class PaymentRefund extends TimeStamped {
         this.pspRawData = pspRawData;
     }
 
+    // 이거 조건 이렇게 하면 안 됨... 전액환불 + 포인트 + 쿠폰일 때는 이래도 되는데.. 아 조건 복잡해지겠네
+    // 부분환불일 때는 포인트만 환급. 쿠폰은 소멸.
+    // 전액환불일 때는 포인트 환급, 쿠폰도 반환
     public void complete() {
-        if (isCouponUpdated && isPointUpdated) {
-            this.isRefundDone = true;
+        // 부분환불
+        if (isPartialRefund()) {
+            if (this.payment.getCheckout().getPointDiscountAmount() > 0L) {
+                if (this.isPointUpdated) {
+                    this.isRefundDone = true;
+                }
+            } else {
+                this.isRefundDone = true;
+            }
+        }
+        // 전액환불
+        else {
+            if (this.payment.getCheckout().getPointDiscountAmount() > 0L
+                && this.payment.getCheckout().getCouponDiscountAmount() > 0L) {
+                if (this.isCouponUpdated && this.isPointUpdated) {
+                    this.isRefundDone = true;
+                }
+            } else if (this.payment.getCheckout().getPointDiscountAmount() > 0L) {
+                if (this.isPointUpdated) {
+                    this.isRefundDone = true;
+                }
+            } else if (this.payment.getCheckout().getCouponDiscountAmount() > 0L) {
+                if (this.isCouponUpdated) {
+                    this.isRefundDone = true;
+                }
+            } else {
+                this.isRefundDone = true;
+            }
         }
     }
 
@@ -108,5 +137,9 @@ public class PaymentRefund extends TimeStamped {
 
     public void markCouponUpdated() {
         this.isCouponUpdated = true;
+    }
+
+    public boolean isPartialRefund() {
+        return this.payment.getAmount() > this.amount;
     }
 }

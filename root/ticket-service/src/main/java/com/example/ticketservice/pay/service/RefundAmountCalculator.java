@@ -1,18 +1,19 @@
 package com.example.ticketservice.pay.service;
 
 import com.example.ticketservice.ticket.entity.Ticket;
+import com.example.ticketservice.ticket.entity.UserTicket;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class RefundAmountCalculator {
 
-    public static Long calculate(Ticket ticket,
+    public static Long calculate(UserTicket userTicket,
                                  Long amount,
                                  LocalDate refundDate) {
-        int refundRegulation = ticket.getRefundRegulation();
-        LocalDate startDate = ticket.getExpirationStartDate();
-        LocalDate endDate = ticket.getExpirationEndDate();
+        int refundRegulation = userTicket.getTicket().getRefundRegulation();
+        LocalDate startDate = userTicket.getStartDate();
+        LocalDate endDate = userTicket.getEndDate();
 
         Long refundAmount = 0L;
 
