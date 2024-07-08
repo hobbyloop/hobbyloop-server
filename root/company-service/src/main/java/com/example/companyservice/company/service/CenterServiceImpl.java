@@ -115,7 +115,6 @@ public class CenterServiceImpl implements CenterService {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
 
-//        amazonS3Service.delete(center.getLogoImageKey());
         String logoImageKey = amazonS3Service.saveS3Img(logoImage, "CenterImage");
         String logoImageUrl = amazonS3Service.getFileUrl(logoImageKey);
 
@@ -134,8 +133,9 @@ public class CenterServiceImpl implements CenterService {
         );
         center.centerUpdate(requestDto, logoImageKey, logoImageUrl);
 
-//        deleteAllCenterImage(centerId);
-        List<String> oldCenterImageKeyList = centerImageRepository.findAllByCenterId(centerId).stream().map(CenterImage::getCenterImageKey).toList();
+        centerImageRepository.updateAllIsDeletedTrue(centerId);
+        List<String> oldCenterImageKeyList = centerImageRepository
+                .findAllByCenterIdAndIsDeletedTrue(centerId).stream().map(CenterImage::getCenterImageKey).toList();
         List<String> newCenterImageList = saveCenterImage(center, centerImageList);
 
         centerOriginalAndUpdateInfoDto.setOldCenterImageKeyList(oldCenterImageKeyList);
@@ -303,14 +303,14 @@ public class CenterServiceImpl implements CenterService {
         });
         return newCenterImageKeyList;
     }
-
-    private void deleteAllCenterImage(long centerId) {
-        List<CenterImage> oldCenterImageList = centerImageRepository.findAllByCenterId(centerId);
-        oldCenterImageList.forEach(i -> {
-            amazonS3Service.delete(i.getCenterImageKey());
-            centerImageRepository.delete(i);
-        });
-    }
+//
+//    private void deleteAllCenterImage(long centerId) {
+//        List<CenterImage> oldCenterImageList = centerImageRepository.findAllByCenterId(centerId);
+//        oldCenterImageList.forEach(i -> {
+//            amazonS3Service.delete(i.getCenterImageKey());
+//            centerImageRepository.delete(i);
+//        });
+//    }
 
     private CenterCreateResponseDto createCenterResponseDto(long centerId, Center center) {
         List<CenterOperatingHour> centerOpeningHourList = centerOperatingHourRepository.findAllByCenterId(centerId);

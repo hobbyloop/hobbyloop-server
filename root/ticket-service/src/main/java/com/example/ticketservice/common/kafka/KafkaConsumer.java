@@ -28,6 +28,7 @@ public class KafkaConsumer {
     private final PointsRepository pointsRepository;
     private final PointRepository pointRepository;
     private final ObjectMapper objectMapper;
+    private final KafkaProducer kafkaProducer;
 
     @KafkaListener(topics = "update-address-info")
     @Transactional
@@ -37,9 +38,16 @@ public class KafkaConsumer {
         // 역직렬화
         CenterOriginalAndUpdateInfoDto requestDto = objectMapper.readValue(kafkaMessage, CenterOriginalAndUpdateInfoDto.class);
         try {
-            log.info(requestDto.toString());
+            Long centerId = requestDto.getCenterId();
+            String centerName = requestDto.getNewCenterName();
+            String logoImageUrl = requestDto.getNewLogoImageUrl();
+            String address = requestDto.getNewAddress();
+            Double latitude = requestDto.getNewLatitude();
+            Double longitude = requestDto.getNewLongitude();
+            ticketRepository.updateCenterAddressInfo(centerId, centerName, logoImageUrl, address, latitude, longitude);
+            kafkaProducer.send("update-address-info-success", requestDto);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            kafkaProducer.send("update-address-info-fail", requestDto);
         }
     }
 

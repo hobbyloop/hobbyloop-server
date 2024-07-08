@@ -19,6 +19,8 @@ public class CenterImage extends TimeStamped {
 
     private String centerImageUrl;
 
+    private boolean isDeleted;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
@@ -27,7 +29,12 @@ public class CenterImage extends TimeStamped {
         return CenterImage.builder()
                 .centerImageKey(centerImageKey)
                 .centerImageUrl(centerImageUrl)
+                .isDeleted(false)
                 .center(center)
                 .build();
+    }
+
+    public void updateIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

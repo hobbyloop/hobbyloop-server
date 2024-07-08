@@ -1,5 +1,6 @@
 package com.example.companyservice.company.entity;
 
+import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
 import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
 import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
@@ -99,5 +100,18 @@ public class Center extends TimeStamped {
         this.businessNumber = requestDto.getBusinessNumber();
         this.openingDate = requestDto.getOpeningDate();
         this.onlineReportNumber = requestDto.getOnlineReportNumber();
+    }
+
+    public void rollbackUpdate(CenterOriginalAndUpdateInfoDto requestDto) {
+        this.centerName = requestDto.getOriginalCenterName();
+        this.logoImageKey = requestDto.getOriginalLogoImageKey();
+        this.logoImageUrl = requestDto.getOriginalLogoImageUrl();
+        this.address = requestDto.getOriginalAddress();
+        this.announcement = requestDto.getAnnouncement();
+        this.introduce = requestDto.getIntroduce();
+        this.contact = requestDto.getContact();
+        this.kakaoLink = requestDto.getKakaoLink();
+        this.latitude = requestDto.getOriginalLatitude();
+        this.longitude = requestDto.getOriginalLongitude();
     }
 }
