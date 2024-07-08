@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CheckoutReport {
-    private int checkoutCount;
-    private Long totalDiscountAmount;
+public class RefundStepMetrics {
+    private Long refundAmount;
+    private Integer refundCount;
 }

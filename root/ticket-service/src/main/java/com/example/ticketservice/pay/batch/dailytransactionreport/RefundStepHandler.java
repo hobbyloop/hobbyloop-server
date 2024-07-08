@@ -1,12 +1,13 @@
 package com.example.ticketservice.pay.batch.dailytransactionreport;
 
-import com.example.ticketservice.pay.batch.dailytransactionreport.dto.CheckoutStepMetrics;
-import com.example.ticketservice.pay.entity.member.Checkout;
+import com.example.ticketservice.pay.batch.dailytransactionreport.dto.RefundStepMetrics;
 import com.example.ticketservice.pay.entity.member.DailyTransactionReport;
+import com.example.ticketservice.pay.entity.member.Payment;
+import com.example.ticketservice.pay.entity.member.PaymentRefund;
+import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.StepSynchronizationManager;
 import org.springframework.batch.item.ExecutionContext;
@@ -24,22 +25,19 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class CheckoutStepHandler {
+public class RefundStepHandler {
     private final EntityManagerFactory entityManagerFactory;
-
-//    @Value("#{jobParameters['startDate']}") LocalDateTime startDate,
-//    @Value("#{jobParameters['endDate']}") LocalDateTime endDate
 
     @Bean
     @StepScope
-    public JpaPagingItemReader<Checkout> checkoutReader() {
+    public JpaPagingItemReader<PaymentRefund> refundReader() {
         LocalDateTime startDate = LocalDate.now().minusDays(1).atStartOfDay();
         LocalDateTime endDate = LocalDate.now().minusDays(1).atTime(23, 59, 59);
 
-        return new JpaPagingItemReaderBuilder<Checkout>()
-                .name("checkoutReader")
+        return new JpaPagingItemReaderBuilder<PaymentRefund>()
+                .name("refundReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("SELECT c FROM Checkout c WHERE c.createdAt BETWEEN :startDate AND :endDate")
+                .queryString("SELECT p FROM PaymentRefund p WHERE p.createdAt BETWEEN :startDate AND :endDate")
                 .parameterValues(Map.of("startDate", startDate, "endDate", endDate))
                 .pageSize(100)
                 .build();
@@ -47,34 +45,41 @@ public class CheckoutStepHandler {
 
     @Bean
     @StepScope
-    public ItemProcessor<Checkout, CheckoutStepMetrics> checkoutProcessor() {
-        return checkout -> {
-            return new CheckoutStepMetrics(1, checkout.getTotalDiscountAmount());
+    public ItemProcessor<PaymentRefund, RefundStepMetrics> refundProcessor() {
+        return refund -> {
+            Long refundAmount = 0L;
+            Integer refundCount = 0;
+            if (refund.getStatus() == PaymentStatusEnum.SUCCESS.getValue()) {
+                refundAmount = refund.getAmount();
+                refundCount = 1;
+            }
+
+            return new RefundStepMetrics(refundAmount, refundCount);
         };
     }
 
     @Bean
     @StepScope
-    public ItemWriter<CheckoutStepMetrics> checkoutWriter() {
+    public ItemWriter<RefundStepMetrics> refundWriter() {
         return chunk -> {
             StepExecution stepExecution = StepSynchronizationManager.getContext().getStepExecution();
 
-            Integer checkoutCount = chunk.getItems().stream()
-                    .mapToInt(CheckoutStepMetrics::getCheckoutCount)
+            Long refundAmount = chunk.getItems().stream()
+                    .mapToLong(RefundStepMetrics::getRefundAmount)
                     .sum();
 
-            Long totalDiscountAmount = chunk.getItems().stream()
-                    .mapToLong(CheckoutStepMetrics::getTotalDiscountAmount)
+            Integer refundCount = chunk.getItems().stream()
+                    .mapToInt(RefundStepMetrics::getRefundCount)
                     .sum();
 
             ExecutionContext stepContext = stepExecution.getExecutionContext();
 
-            DailyTransactionReport report = new DailyTransactionReport();
-            report.setCheckoutCount(checkoutCount);
-            report.setTotalDiscountAmount(totalDiscountAmount);
+            DailyTransactionReport report = (DailyTransactionReport) stepContext.get("dailyTransactionReport");
+
+            report.setRefundAmount(refundAmount);
+            report.setTotalRefundCount(refundCount);
 
             stepContext.put("dailyTransactionReport", report);
         };
     }
-
 }

@@ -7,9 +7,10 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class DailyTransactionReport extends TimeStamped {
     @Id
