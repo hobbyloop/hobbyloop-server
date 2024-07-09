@@ -20,6 +20,7 @@ import com.example.ticketservice.pay.event.PaymentCompletedEvent;
 import com.example.ticketservice.pay.event.PaymentRefundedEvent;
 import com.example.ticketservice.pay.exception.PaymentAlreadyProcessedException;
 import com.example.ticketservice.pay.repository.CheckoutRepository;
+import com.example.ticketservice.pay.repository.PaymentRefundRepository;
 import com.example.ticketservice.pay.repository.payment.PaymentRepository;
 import com.example.ticketservice.pay.repository.purchasehistory.PurchaseHistoryRepository;
 import com.example.ticketservice.pay.exception.PSPConfirmationException;
@@ -32,6 +33,7 @@ import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDt
 import com.example.ticketservice.ticket.entity.Ticket;
 import com.example.ticketservice.ticket.entity.UserTicket;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
+import com.example.ticketservice.ticket.repository.ticket.UserTicketRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -56,11 +58,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final CheckoutRepository checkoutRepository;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final TicketRepository ticketRepository;
+    private final UserTicketRepository userTicketRepository;
     private final MemberCouponRepository memberCouponRepository;
     private final PointsRepository pointsRepository;
     private final CompanyServiceClient companyServiceClient;
     private final TossPaymentClient tossPaymentClient;
     private final ApplicationEventPublisher eventPublisher;
+    private final PaymentRefundRepository paymentRefundRepository;
 
     private String generateIdempotencyKey(Long memberId, Long ticketId) {
         LocalDateTime now = LocalDateTime.now();
@@ -284,8 +288,12 @@ public class PaymentServiceImpl implements PaymentService {
             throw new ApiException(ExceptionEnum.UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION);
         }
 
-        Long refundAmount = RefundAmountCalculator.calculate(payment.getUserTicket(), payment.getAmount(), LocalDate.now());
+        Long refundAmount = payment.getAmount();
+        if (payment.getUserTicket() != null) {
+            refundAmount = RefundAmountCalculator.calculate(payment.getUserTicket(), payment.getAmount(), LocalDate.now());
+        }
         PaymentRefund refund = PaymentRefund.of(payment, refundAmount);
+        paymentRefundRepository.save(refund);
 
         PaymentConfirmExecuteResponseDto response;
         try {

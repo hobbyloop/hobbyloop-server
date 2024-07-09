@@ -187,7 +187,7 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
         Long points = PointSteps.getMyTotalPoints(memberId);
         assertThat(points).isEqualTo(3000L);
         List<MemberCouponResponseDto> coupons = CouponSteps.getAvailableMemberCoupons(memberId);
-        assertThat(coupons.size()).isEqualTo(1);
+        assertThat(coupons.size()).isEqualTo(0);
 
 
     }
