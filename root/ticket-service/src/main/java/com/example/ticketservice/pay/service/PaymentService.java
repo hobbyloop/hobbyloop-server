@@ -12,4 +12,6 @@ public interface PaymentService {
     CheckoutResponseDto checkout(Long memberId, CheckoutRequestDto requestDto);
 
     PaymentConfirmResponseDto confirm(Long memberId, PaymentConfirmRequestDto requestDto);
+
+    PaymentConfirmResponseDto refund(Long memberId, Long paymentId);
 }

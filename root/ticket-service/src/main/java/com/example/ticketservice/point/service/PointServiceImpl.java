@@ -1,5 +1,6 @@
 package com.example.ticketservice.point.service;
 
+import com.example.ticketservice.pay.entity.member.Payment;
 import com.example.ticketservice.pay.entity.member.vo.PointUsage;
 import com.example.ticketservice.point.dto.PointEarnedResponseDto;
 import com.example.ticketservice.point.dto.PointHistoryByMonthResponseDto;
@@ -144,7 +145,7 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
-    public PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy) {
+    public PointEarnedResponseDto earnPointGeneral(Long memberId, PlatformPointPolicy pointPolicy, Payment payment) {
         // 모든 Member는 회원가입 때 포인트를 지급받아 scope이 GENERAL인 Point를 반드시 가지고 있음
         Points points = pointsRepository.findByMemberIdAndUsableScopeIs(memberId, PointUsableScopeEnum.GENERAL.getValue())
                 .orElseThrow();
@@ -152,6 +153,8 @@ public class PointServiceImpl implements PointService {
         Pair<Point, PointHistory> pointPair = pointPolicy.earn(points);
         Point point = pointPair.getFirst();
         PointHistory pointHistory = pointPair.getSecond();
+
+        point.setPayment(payment);
 
         pointRepository.save(point);
         pointHistoryRepository.save(pointHistory);
@@ -204,11 +207,11 @@ public class PointServiceImpl implements PointService {
     
     @Override
     @Transactional
-    public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount) {
+    public void earnPointWhenPurchase(Long memberId, Long companyId, Long centerId, Long totalAmount, Payment payment) {
         // 기본 적립 정책인 PurchasePointPolicy에 대한 적립 메소드 호출 (무조건 General)
         PurchasePointPolicy purchasePointPolicy = new PurchasePointPolicy();
         purchasePointPolicy.calculate(totalAmount);
-        PointEarnedResponseDto basicEarnedPoint = earnPointGeneral(memberId, purchasePointPolicy);
+        PointEarnedResponseDto basicEarnedPoint = earnPointGeneral(memberId, purchasePointPolicy, payment);
 
         // CompanyPointPolicy, CenterPointPolicy를 가져와서 usableScope 조회하여 그에 따라 적립 메소드 호출
         Optional<CompanyPointPolicy> optionalCompanyPointPolicy = companyPointPolicyRepository.findByCompanyId(companyId);
@@ -225,12 +228,12 @@ public class PointServiceImpl implements PointService {
                 } else if (centerPointPolicy.isSpecificCompanyScope()) {
                     earnPointSpecificCompany(memberId, companyId, companyPointPolicy);
                 } else {
-                    earnPointGeneral(memberId, centerPointPolicy);
+                    earnPointGeneral(memberId, centerPointPolicy, payment);
                 }
             } else {
                 // CompanyPointPolicy만 있는 경우 CompanyPointPolicy 적용(당연)
                 if (companyPointPolicy.isGeneralScope()) {
-                    earnPointGeneral(memberId, companyPointPolicy);
+                    earnPointGeneral(memberId, companyPointPolicy, payment);
                 } else if (companyPointPolicy.isSpecificCompanyScope()) {
                     earnPointSpecificCompany(memberId, companyId, companyPointPolicy);
                 } else {    // SPECIFIC_CENTER
@@ -249,20 +252,19 @@ public class PointServiceImpl implements PointService {
 
     @Override
     @Transactional
-    public void usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName) {
+    public List<PointUsage> usePointWhenPurchase(Long memberId, List<PointUsage> pointUsages, String orderName) {
         Long balance = 0L;
         Long amount = 0L;
         for (PointUsage pointUsage : pointUsages) {
-            Points points = pointsRepository.findById(pointUsage.getPointId())
+            Points points = pointsRepository.findById(pointUsage.getPointsId())
                     .orElseThrow(); // TODO: 어떡하지;;
 
             points.use(pointUsage.getUsedAmount());
-            pointsRepository.save(points);
 
             balance += points.getBalance();
             amount += pointUsage.getUsedAmount();
 
-            List<Point> pointList = pointRepository.findByPointsOrderByCreatedAtAsc(points);
+            List<Point> pointList = pointRepository.findByPointsAndIsDeletedFalseOrderByCreatedAtAsc(points);
             Long remainingAmount = pointUsage.getUsedAmount();
 
             for (Point point : pointList) {
@@ -273,11 +275,52 @@ public class PointServiceImpl implements PointService {
                     point.subtract(remainingAmount);
                 } else {
                     remainingAmount -= point.getAmount();
-                    pointRepository.delete(point);
+                    point.delete();
+                    pointUsage.addPoint(point.getId());
                 }
             }
         }
         PointHistory pointHistory = PointHistory.use(memberId, amount, balance, orderName);
         pointHistoryRepository.save(pointHistory);
+
+        return pointUsages;
+    }
+
+    @Override
+    @Transactional
+    public void restoreUsedPointWhenRefund(Long memberId, List<PointUsage> pointUsages, String orderName) {
+        Long balance = 0L;
+
+        for (PointUsage pointUsage : pointUsages) {
+            Points points = pointsRepository.findById(pointUsage.getPointsId())
+                    .orElseThrow(); // TODO: 어떡하지;;
+
+            points.restore(pointUsage.getUsedAmount());
+
+            balance += points.getBalance();
+
+            List<Point> pointList = pointRepository.findByPointsAndIsDeletedFalse(points);
+            for (Point point : pointList) {
+                point.restore();
+            }
+        }
+
+        Long restoredAmount = pointUsages.stream()
+                .mapToLong(PointUsage::getUsedAmount)
+                .sum();
+
+        PointHistory pointHistory = PointHistory.restore(memberId, restoredAmount, balance, orderName);
+        pointHistoryRepository.save(pointHistory);
+    }
+
+    @Override
+    @Transactional
+    public void revokeEarnedPointWhenRefund(Payment payment) {
+        Point earnedPoint = pointRepository.findByPayment(payment).orElseThrow();
+        Points points = earnedPoint.getPoints();
+
+        points.revoke(earnedPoint.getAmount());
+        pointRepository.delete(earnedPoint);
+        pointsRepository.save(points);
     }
 }

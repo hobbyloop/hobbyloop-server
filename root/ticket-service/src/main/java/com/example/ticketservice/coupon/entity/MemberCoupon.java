@@ -42,4 +42,9 @@ public class MemberCoupon extends TimeStamped {
         this.usedAt = LocalDateTime.now();
     }
 
+    public void restore() {
+        this.isUsed = false;
+        this.usedAt = null;
+    }
+
 }

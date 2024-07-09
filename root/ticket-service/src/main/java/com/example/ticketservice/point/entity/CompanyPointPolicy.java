@@ -43,6 +43,7 @@ public class CompanyPointPolicy extends TimeStamped implements PlatformPointPoli
 
         Point point = Point.builder()
                 .memberId(points.getMemberId())
+                .points(points)
                 .centerId(points.getCenterId())
                 .usableScope(points.getUsableScope())
                 .amount(earnAmount)

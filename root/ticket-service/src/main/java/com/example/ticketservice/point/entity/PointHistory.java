@@ -55,4 +55,14 @@ public class PointHistory extends TimeStamped {
                 .description(description + " 구매")
                 .build();
     }
+
+    public static PointHistory restore(Long memberId, Long amount, Long balance, String description) {
+        return PointHistory.builder()
+                .memberId(memberId)
+                .type(PointTypeEnum.EARN.getValue())
+                .amount(amount)
+                .balance(balance)
+                .description(description + " 환불로 인한 포인트 반환")
+                .build();
+    }
 }

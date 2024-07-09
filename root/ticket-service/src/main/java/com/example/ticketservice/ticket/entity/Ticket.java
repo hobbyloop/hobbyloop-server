@@ -6,6 +6,7 @@ import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -41,6 +42,7 @@ public class Ticket extends TimeStamped {
 
     private int useCount;
 
+    @JsonProperty("isTotalCount")
     private boolean isTotalCount;
 
     private int totalCount;
@@ -151,6 +153,18 @@ public class Ticket extends TimeStamped {
         if (this.isTotalCount && this.totalCount <= this.issueCount) {
             throw new ApiException(ExceptionEnum.TICKET_SOLD_OUT_EXCEPTION);
         }
+    }
+
+    public boolean canPurchase() {
+        if (!this.isUpload) {
+            return false;
+        }
+
+        if (this.isTotalCount && this.totalCount <= this.issueCount) {
+            return false;
+        }
+
+        return true;
     }
 
     public void issue() {

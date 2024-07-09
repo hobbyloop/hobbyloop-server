@@ -63,6 +63,7 @@ public class PointEventPolicy extends TimeStamped implements PlatformPointPolicy
         // TODO: usableScope은 어떻게 하지?
         Point point = Point.builder()
                 .memberId(points.getMemberId())
+                .points(points)
                 .usableScope(points.getUsableScope())
                 .amount(earnAmount)
                 .expirationDateTime(LocalDateTime.now().plusDays(pointExpirationPeriodDays))

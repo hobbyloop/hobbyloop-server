@@ -1,6 +1,7 @@
-package com.example.ticketservice.pay.toss;
+package com.example.ticketservice.pay.exception;
 
 import com.example.ticketservice.pay.entity.member.enums.PaymentStatusEnum;
+import com.example.ticketservice.pay.toss.TossPaymentException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

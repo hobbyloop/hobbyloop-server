@@ -47,8 +47,6 @@ public class UserTicketServiceImpl implements UserTicketService {
                 .orElseThrow(() -> new ApiException(ExceptionEnum.TICKET_NOT_EXIST_EXCEPTION));
 
         ticket.checkCanPurchase();
-        // TODO: 쿠폰, 포인트 적용
-        // TODO: 결제 -> PayClient.pay(ticket.getPrice());
         UserTicket userTicket = UserTicket.of(ticket, memberId);
         userTicketRepository.save(userTicket);
 

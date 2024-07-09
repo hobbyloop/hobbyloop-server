@@ -5,11 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Embeddable
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class PointUsage {
-    private Long pointId;
+    private Long pointsId;
     private Long usedAmount;
+    private List<Long> pointIds = new ArrayList<>();
+
+    public PointUsage(Long pointsId, Long usedAmount) {
+        this.pointsId = pointsId;
+        this.usedAmount = usedAmount;
+    }
+
+    public void addPoint(Long pointId) {
+        pointIds.add(pointId);
+    }
 }

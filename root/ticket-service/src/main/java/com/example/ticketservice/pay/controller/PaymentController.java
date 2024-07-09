@@ -75,4 +75,14 @@ public class PaymentController {
                 .body(new BaseResponseDto<>(paymentService.confirm(memberId, requestDto)));
     }
 
+    @PostMapping("/refund/{paymentId}")
+    public ResponseEntity<BaseResponseDto<PaymentConfirmResponseDto>> refund(
+            @PathVariable(value = "paymentId") Long paymentId,
+            HttpServletRequest request
+    ) {
+        Long memberId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(paymentService.refund(memberId, paymentId)));
+    }
+
 }
