@@ -21,8 +21,4 @@ public interface PaymentRepository extends JpaRepository<Payment, Long>, Payment
     Optional<Payment> findByPspPaymentKey(String pspPaymentKey);
 
     Optional<Payment> findByUserTicket(UserTicket userTicket);
-
-    @Modifying(clearAutomatically = true)
-    @Query("update Payment p set p.userTicket = :userTicket where p.id = :id")
-    int updateUserTicket(@Param("userTicket") UserTicket userTicket, @Param("id") Long id);
 }

@@ -1,5 +1,6 @@
 package com.example.ticketservice.ticket.service;
 
+import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
 import com.example.ticketservice.ticket.dto.response.*;
 import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.dto.response.userticket.UnapprovedUserTicketListResponseDto;
@@ -18,6 +19,8 @@ public interface UserTicketService {
     List<UnapprovedUserTicketListResponseDto> getUnapprovedUserTicketList(long centerId);
 
     void approveUserTicket(long userTicketId);
+
+    PaymentConfirmResponseDto rejectUserTicket(long adminId, long userTicketId);
 
     List<AvailableUserTicketsWithCenterInfo> getAvailableUserTicketList(long memberId);
 

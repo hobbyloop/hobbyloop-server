@@ -2,6 +2,8 @@ package com.example.ticketservice.ticket.controller;
 
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.common.swagger.ApiExceptionResponse;
+import com.example.ticketservice.common.util.Utils;
+import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.request.CenterMembershipJoinRequestDto;
 import com.example.ticketservice.ticket.dto.response.centermembership.CenterMemberResponseDto;
@@ -19,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,5 +106,20 @@ public class CenterMembershipController {
         userTicketService.approveUserTicket(userTicketId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>());
+    }
+
+    @PatchMapping("/{userTicketId}/reject")
+    @Operation(summary = "이용권 거절", description = "[피그마 링크](https://www.figma.com/design/nYEBH6aqCI37ZX0X6w7Ena/%ED%95%98%EB%B9%84%EB%A3%A8%ED%94%84_Team-share?node-id=14001-27230&m=dev)")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = PaymentConfirmResponseDto.class)))
+    @ApiExceptionResponse({
+            ExceptionEnum.USER_TICKET_NOT_EXIST_EXCEPTION
+    })
+    public ResponseEntity<BaseResponseDto<PaymentConfirmResponseDto>> rejectUserTicket(
+            @PathVariable long userTicketId,
+            HttpServletRequest request
+    ) {
+        Long adminId = Utils.parseAuthorizedId(request);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(userTicketService.rejectUserTicket(adminId, userTicketId)));
     }
 }

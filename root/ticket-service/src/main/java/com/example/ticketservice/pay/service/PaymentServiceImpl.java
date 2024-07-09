@@ -58,7 +58,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final CheckoutRepository checkoutRepository;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final TicketRepository ticketRepository;
-    private final UserTicketRepository userTicketRepository;
     private final MemberCouponRepository memberCouponRepository;
     private final PointsRepository pointsRepository;
     private final CompanyServiceClient companyServiceClient;
@@ -301,7 +300,7 @@ public class PaymentServiceImpl implements PaymentService {
             purchaseHistoryRepository.save(executingHistory);
             refund.execute();
 
-            response = tossPaymentClient.executeFullCancel(payment.getPspPaymentKey(), payment.getIdempotencyKey())
+            response = tossPaymentClient.executeFullCancel(payment.getPspPaymentKey(), payment.getIdempotencyKey(), "고객이 취소를 원함")
                     .blockOptional()
                     .orElse(null);
 
@@ -354,7 +353,7 @@ public class PaymentServiceImpl implements PaymentService {
             purchaseHistoryRepository.save(executingHistory);
             refund.execute();
 
-            response = tossPaymentClient.executeFullCancel(payment.getPspPaymentKey(), payment.getIdempotencyKey())
+            response = tossPaymentClient.executeFullCancel(payment.getPspPaymentKey(), payment.getIdempotencyKey(), "판매자의 거절")
                     .blockOptional()
                     .orElse(null);
 

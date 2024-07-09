@@ -4,6 +4,7 @@ import com.example.ticketservice.pay.dto.request.PaymentConfirmRequestDto;
 import com.example.ticketservice.pay.dto.request.TossPaymentConfirmRequestDto;
 import com.example.ticketservice.pay.dto.response.PaymentConfirmExecuteResponseDto;
 import com.example.ticketservice.pay.exception.PSPConfirmationException;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -36,17 +37,22 @@ public class TossPaymentClient {
 
     private final String TRANSACTION_URI = "/v1/transactions";
 
-    // TODO: IdempotencyKey 헤더 추가
-    public Mono<PaymentConfirmExecuteResponseDto> executeConfirm(PaymentConfirmRequestDto requestDto) {
-        // 헤더 설정
+    private WebClient webClient;
+
+    @PostConstruct
+    public void init() {
         Base64.Encoder encoder = Base64.getEncoder();
         byte[] encodedKey = encoder.encode((SECRET_KEY + ":").getBytes(StandardCharsets.UTF_8));
         String authorizations = "Basic " + encoder.encodeToString(encodedKey);
 
-        WebClient webClient = WebClient.builder()
+        webClient = WebClient.builder()
                 .baseUrl(BASE_URL)
                 .defaultHeader("Authorization", authorizations)
                 .build();
+    }
+
+    // TODO: IdempotencyKey 헤더 추가
+    public Mono<PaymentConfirmExecuteResponseDto> executeConfirm(PaymentConfirmRequestDto requestDto) {
 
         TossPaymentConfirmRequestDto tossPaymentConfirmRequestDto = TossPaymentConfirmRequestDto.from(requestDto);
 
@@ -76,20 +82,42 @@ public class TossPaymentClient {
     }
 
     public Mono<PaymentConfirmExecuteResponseDto> executeFullCancel(String paymentKey,
-                                                                String idempotencyKey) {
-        Base64.Encoder encoder = Base64.getEncoder();
-        byte[] encodedKey = encoder.encode((SECRET_KEY + ":").getBytes(StandardCharsets.UTF_8));
-        String authorizations = "Basic " + encoder.encodeToString(encodedKey);
-
-        WebClient webClient = WebClient.builder()
-                .baseUrl(BASE_URL)
-                .defaultHeader("Authorization", authorizations)
-                .build();
+                                                                String idempotencyKey,
+                                                                    String cancelReason) {
 
         return webClient.post()
                 .uri("/v1/payments/" + paymentKey + "/cancel")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(Map.of("cancelReason", "고객이 취소를 원함")))
+                .body(BodyInserters.fromValue(Map.of("cancelReason", cancelReason)))
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                    return response.bodyToMono(TossPaymentConfirmResponseDto.TossFailureResponseDto.class)
+                            .flatMap(error -> {
+                                TossPaymentException tossException = TossPaymentException.get(error.getCode());
+                                return Mono.error(PSPConfirmationException.from(tossException));
+                            });
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                    return Mono.error(new RuntimeException("Toss payment 5xx error"));
+                })
+                .bodyToMono(TossPaymentConfirmResponseDto.class)
+                .map(PaymentConfirmExecuteResponseDto::from)
+                .retryWhen(Retry.backoff(2, Duration.ofSeconds(1))
+                        .jitter(0.1)
+                        .filter(throwable -> (throwable instanceof PSPConfirmationException && ((PSPConfirmationException) throwable).isRetryableError())
+                                || throwable instanceof TimeoutException)
+                        .onRetryExhaustedThrow((retries, retrySignal) -> retrySignal.failure()));
+    }
+
+    public Mono<PaymentConfirmExecuteResponseDto> executePartialCancel(String paymentKey,
+                                                                    String idempotencyKey,
+                                                                    String cancelReason,
+                                                                       Long cancelAmount) {
+
+        return webClient.post()
+                .uri("/v1/payments/" + paymentKey + "/cancel")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(Map.of("cancelReason", cancelReason, "cancelAmount", cancelAmount)))
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
                     return response.bodyToMono(TossPaymentConfirmResponseDto.TossFailureResponseDto.class)
@@ -112,14 +140,6 @@ public class TossPaymentClient {
 
     // TODO: 재시도 로직 추가
     public List<TossTransactionsResponseDto> executeTransaction(LocalDateTime startDate, LocalDateTime endDate, String startingAfter) {
-        Base64.Encoder encoder = Base64.getEncoder();
-        byte[] encodedKey = encoder.encode((SECRET_KEY + ":").getBytes(StandardCharsets.UTF_8));
-        String authorizations = "Basic " + encoder.encodeToString(encodedKey);
-
-        WebClient webClient = WebClient.builder()
-                .baseUrl(BASE_URL)
-                .defaultHeader("Authorization", authorizations)
-                .build();
 
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
