@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface TransactionErrorRepository extends JpaRepository<TransactionError, Long> {
     List<TransactionError> findAllByStatusAndCreatedAtBetweenOrderByCreatedAtAsc(int status, LocalDateTime startDate, LocalDateTime endDate);
+
+    void deleteAllByTransactionAtBetween(LocalDateTime startDate, LocalDateTime endDate);
 }

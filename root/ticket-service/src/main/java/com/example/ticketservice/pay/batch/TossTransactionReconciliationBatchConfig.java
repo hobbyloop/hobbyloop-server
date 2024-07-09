@@ -13,8 +13,7 @@ import com.example.ticketservice.pay.toss.TossPaymentClient;
 import com.example.ticketservice.pay.toss.TossTransactionsResponseDto;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -32,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
@@ -51,6 +51,34 @@ public class TossTransactionReconciliationBatchConfig {
     public Job tossTransactionReconciliationJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("tossTransactionReconciliationJob", jobRepository)
                 .start(tossTransactionReconciliationStep(jobRepository, transactionManager))
+                .listener(new JobExecutionListener() {
+                    @Override
+                    public void beforeJob(JobExecution jobExecution) {
+                        JobInstance currentJobInstance = jobExecution.getJobInstance();
+
+                        LocalDateTime startOfYesterday = LocalDate.now().minusDays(1).atStartOfDay();
+                        LocalDateTime endOfYesterday = startOfYesterday.plusDays(1).minusNanos(1);
+
+                        List<JobExecution> yesterdayJobExecutions = jobRepository.findJobExecutions(currentJobInstance).stream()
+                                .filter(execution -> {
+                                    LocalDateTime createTime = execution.getCreateTime();
+                                    return createTime.isAfter(startOfYesterday) && createTime.isBefore(endOfYesterday);
+                                })
+                                .collect(Collectors.toUnmodifiableList());
+
+                        boolean hasStoppedExecution = yesterdayJobExecutions.stream()
+                                .anyMatch(execution -> execution.getStatus() == BatchStatus.STOPPED);
+
+                        if (hasStoppedExecution) {
+                            transactionErrorRepository.deleteAllByTransactionAtBetween(startOfYesterday, endOfYesterday);
+                        }
+                    }
+
+                    @Override
+                    public void afterJob(JobExecution jobExecution) {
+                        JobExecutionListener.super.afterJob(jobExecution);
+                    }
+                })
                 .build();
     }
 
@@ -62,7 +90,7 @@ public class TossTransactionReconciliationBatchConfig {
         return new StepBuilder("tossTransactionReconciliationStep", jobRepository)
                 .<TossTransactionsResponseDto, Payment>chunk(100, transactionManager)
                 .reader(tossTransactionReader())
-                .processor(tossTransactionItemProcessor())
+                .processor(tossTransactionProcessor())
                 .writer(paymentItemWriter())
                 .build();
     }
@@ -93,7 +121,7 @@ public class TossTransactionReconciliationBatchConfig {
     }
 
     @Bean
-    public ItemProcessor<TossTransactionsResponseDto, Payment> tossTransactionItemProcessor() {
+    public ItemProcessor<TossTransactionsResponseDto, Payment> tossTransactionProcessor() {
         return transaction -> {
             if (transaction.getStatus().equals(PSPConfirmationStatusEnum.CANCELED.name()) ||
                 transaction.getStatus().equals(PSPConfirmationStatusEnum.PARTIAL_CANCELED.name())) {
@@ -129,6 +157,7 @@ public class TossTransactionReconciliationBatchConfig {
                             refund.refund(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME), "");
                             eventPublisher.publishEvent(new PaymentRefundedEvent(refund));
                         }
+
                     } else {
                         TransactionError transactionError = TransactionError.refundNotFoundOf(transaction);
                         transactionErrorRepository.save(transactionError);

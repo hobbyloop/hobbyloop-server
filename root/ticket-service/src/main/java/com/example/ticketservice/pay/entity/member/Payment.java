@@ -68,6 +68,8 @@ public class Payment extends TimeStamped {
 
     private String phoneNumber;
 
+    private boolean isReconciled;
+
     public static Payment checkout(Checkout checkout, Ticket ticket, MemberInfoResponseDto memberInfo) {
         Boolean isPointUpdated = null;
         Boolean isCouponUpdated = null;
@@ -142,6 +144,10 @@ public class Payment extends TimeStamped {
 
     public void refund() {
         this.isRefunded = true;
+    }
+
+    public void reconcile() {
+        this.isReconciled = true;
     }
 
     public void setUserTicket(UserTicket userTicket) {
