@@ -226,7 +226,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentConfirmExecuteResponseDto response;
         try {
             // ---
-            PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.NOT_STARTED, PaymentStatusEnum.EXECUTING, "결제 승인 시작");
+            PurchaseHistory executingHistory = PurchaseHistory.record(payment, PaymentStatusEnum.findByValue(payment.getStatus()), PaymentStatusEnum.EXECUTING, "결제 승인 시작");
             purchaseHistoryRepository.save(executingHistory);
             payment.execute(requestDto.getPsp(), requestDto.getPaymentKey());
             // ---
@@ -287,11 +287,19 @@ public class PaymentServiceImpl implements PaymentService {
             throw new ApiException(ExceptionEnum.UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION);
         }
 
-        Long refundAmount = payment.getAmount();
+        Long refundAmount;
         if (payment.getUserTicket() != null) {
             refundAmount = RefundAmountCalculator.calculate(payment.getUserTicket(), payment.getAmount(), LocalDate.now());
+        } else {
+            refundAmount = payment.getAmount();
         }
-        PaymentRefund refund = PaymentRefund.of(payment, refundAmount);
+        PaymentRefund refund = paymentRefundRepository.findByPaymentAndPspPaymentKey(payment, payment.getPspPaymentKey())
+                        .orElseGet(() -> PaymentRefund.of(payment, refundAmount));
+
+        if (refund.getStatus() == PaymentStatusEnum.SUCCESS.getValue()) {
+            throw new ApiException(ExceptionEnum.REFUND_ALREADY_PROCESSED_EXCEPTION);
+        }
+
         paymentRefundRepository.save(refund);
 
         PaymentConfirmExecuteResponseDto response;

@@ -51,13 +51,13 @@ public class TossPaymentClient {
                 .build();
     }
 
-    // TODO: IdempotencyKey 헤더 추가
     public Mono<PaymentConfirmExecuteResponseDto> executeConfirm(PaymentConfirmRequestDto requestDto) {
 
         TossPaymentConfirmRequestDto tossPaymentConfirmRequestDto = TossPaymentConfirmRequestDto.from(requestDto);
 
         return webClient.post()
                 .uri(CONFIRM_URI)
+                .header("Idempotency-Key", requestDto.getIdempotencyKey())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(tossPaymentConfirmRequestDto))
                 .retrieve()
@@ -87,6 +87,7 @@ public class TossPaymentClient {
 
         return webClient.post()
                 .uri("/v1/payments/" + paymentKey + "/cancel")
+                .header("Idempotency-Key", idempotencyKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(Map.of("cancelReason", cancelReason)))
                 .retrieve()
@@ -116,6 +117,7 @@ public class TossPaymentClient {
 
         return webClient.post()
                 .uri("/v1/payments/" + paymentKey + "/cancel")
+                .header("Idempotency-Key", idempotencyKey)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(Map.of("cancelReason", cancelReason, "cancelAmount", cancelAmount)))
                 .retrieve()

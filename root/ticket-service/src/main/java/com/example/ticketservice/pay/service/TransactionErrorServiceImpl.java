@@ -3,7 +3,7 @@ package com.example.ticketservice.pay.service;
 import com.example.ticketservice.pay.dto.response.TransactionErrorResponseDto;
 import com.example.ticketservice.pay.entity.member.TransactionError;
 import com.example.ticketservice.pay.entity.member.enums.TransactionErrorStatusEnum;
-import com.example.ticketservice.pay.repository.TransactionErrorRepository;
+import com.example.ticketservice.pay.repository.transactionerror.TransactionErrorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
