@@ -68,7 +68,7 @@ public class TransactionError extends TimeStamped {
                 .recordedAmount(payment.getAmount())
                 .diffAmount(transaction.getAmount() - payment.getAmount())
                 .description("PG사 금액 불일치")
-                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_DATE_TIME))
+                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
     }
 
@@ -83,7 +83,7 @@ public class TransactionError extends TimeStamped {
                 .recordedAmount(refund.getAmount())
                 .diffAmount(transaction.getAmount() - refund.getAmount())
                 .description("PG사 금액 불일치")
-                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_DATE_TIME))
+                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
     }
 
@@ -94,8 +94,8 @@ public class TransactionError extends TimeStamped {
                 .status(TransactionErrorStatusEnum.OPEN.getValue())
                 .type(TransactionErrorTypeEnum.PAYMENT_NOT_FOUND.getValue())
                 .pspAmount(Long.valueOf(transaction.getAmount()))
-                .description("누락")
-                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_DATE_TIME))
+                .description("결제 누락")
+                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
     }
 
@@ -106,8 +106,8 @@ public class TransactionError extends TimeStamped {
                 .status(TransactionErrorStatusEnum.OPEN.getValue())
                 .type(TransactionErrorTypeEnum.REFUND_NOT_FOUND.getValue())
                 .pspAmount(Long.valueOf(transaction.getAmount()))
-                .description("누락")
-                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_DATE_TIME))
+                .description("환불 누락")
+                .transactionAt(LocalDateTime.parse(transaction.getTransactionAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME))
                 .build();
     }
 

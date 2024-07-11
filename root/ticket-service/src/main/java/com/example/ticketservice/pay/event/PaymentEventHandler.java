@@ -50,7 +50,6 @@ public class PaymentEventHandler {
 
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
 
-        // 저장됨
         transactionTemplate.execute(status -> {
             List<PointUsage> pointUsages = pointService.usePointWhenPurchase(payment.getMemberId(), payment.getCheckout().getPointUsages(), payment.getTicket().getName());
             checkout.setPointUsages(pointUsages);
@@ -60,7 +59,6 @@ public class PaymentEventHandler {
             return null;
         });
 
-        // 저장됨
         transactionTemplate.execute(status -> {
             // TODO: companyId
             pointService.earnPointWhenPurchase(payment.getMemberId(), payment.getTicket().getCompanyId(), payment.getTicket().getCenterId(), payment.getAmount(), payment);
@@ -93,7 +91,6 @@ public class PaymentEventHandler {
 //            return;
 //        }
 
-        // 저장 됨
         UserTicket userTicket = transactionTemplate.execute(status -> {
             UserTicket newUserTicket = UserTicket.of(ticket, payment.getMemberId());
             userTicketRepository.save(newUserTicket);

@@ -45,6 +45,8 @@ public class PaymentRefund extends TimeStamped {
     @Builder.Default
     private int threshold = 3;
 
+    private boolean isReconciled;
+
     public static PaymentRefund of(Payment payment, Long amount) {
         Boolean isPointUpdated = null;
         Boolean isCouponUpdated = null;
@@ -141,5 +143,9 @@ public class PaymentRefund extends TimeStamped {
 
     public boolean isPartialRefund() {
         return this.payment.getAmount() > this.amount;
+    }
+
+    public void reconcile() {
+        this.isReconciled = true;
     }
 }

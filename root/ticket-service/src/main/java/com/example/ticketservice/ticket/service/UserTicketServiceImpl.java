@@ -1,5 +1,7 @@
 package com.example.ticketservice.ticket.service;
 
+import com.example.ticketservice.pay.dto.response.PaymentConfirmResponseDto;
+import com.example.ticketservice.pay.service.PaymentService;
 import com.example.ticketservice.ticket.client.CompanyServiceClient;
 import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.MemberInfoResponseDto;
@@ -39,6 +41,7 @@ public class UserTicketServiceImpl implements UserTicketService {
     private final CompanyServiceClient companyServiceClient;
     private final PurchaseHistoryRepository purchaseHistoryRepository;
     private final LectureReservationRepository lectureReservationRepository;
+    private final PaymentService paymentService;
 
     @Override
     @Transactional
@@ -89,7 +92,7 @@ public class UserTicketServiceImpl implements UserTicketService {
     @Override
     @Transactional
     public void approveUserTicket(long userTicketId) {
-        UserTicket userTicket = userTicketRepository.findById(userTicketId)
+        UserTicket userTicket = userTicketRepository.findByIdAndIsDeletedFalse(userTicketId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.USER_TICKET_NOT_EXIST_EXCEPTION));
         Ticket ticket = userTicket.getTicket();
 
@@ -97,6 +100,19 @@ public class UserTicketServiceImpl implements UserTicketService {
         ticket.issue();
 
         eventPublisher.publishEvent(new UserTicketApprovedEvent(ticket.getCenterId(), userTicket.getMemberId()));
+    }
+
+    @Override
+    @Transactional
+    public PaymentConfirmResponseDto rejectUserTicket(long adminId, long userTicketId) {
+        UserTicket userTicket = userTicketRepository.findByIdAndIsDeletedFalse(userTicketId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.USER_TICKET_NOT_EXIST_EXCEPTION));
+
+        PaymentConfirmResponseDto response = paymentService.refundByAdmin(adminId, userTicket);
+
+        userTicket.reject();
+
+        return response;
     }
 
     @Override

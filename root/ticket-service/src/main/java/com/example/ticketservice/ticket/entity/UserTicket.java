@@ -37,7 +37,7 @@ public class UserTicket extends TimeStamped {
 
     private LocalDateTime approveTime;
 
-    private boolean isDelete;
+    private boolean isDeleted;
 
     public static UserTicket of(Ticket ticket, Long memberId) {
         return UserTicket.builder()
@@ -52,6 +52,10 @@ public class UserTicket extends TimeStamped {
     public void approve() {
         this.isApprove = true;
         this.approveTime = LocalDateTime.now();
+    }
+
+    public void reject() {
+        this.isDeleted = true;
     }
 
     public void use() {

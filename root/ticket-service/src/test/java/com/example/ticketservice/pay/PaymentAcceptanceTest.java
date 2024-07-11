@@ -209,6 +209,6 @@ public class PaymentAcceptanceTest extends AcceptanceTest {
     }
 
     private void mockForRefund(CheckoutResponseDto response) {
-        given(tossPaymentClient.executeFullCancel(any(), any())).willReturn(Mono.just(PaymentFixture.defaultPaymentRefundExecuteSuccessResponse(response)));
+        given(tossPaymentClient.executeFullCancel(any(), any(), any())).willReturn(Mono.just(PaymentFixture.defaultPaymentRefundExecuteSuccessResponse(response)));
     }
 }
