@@ -1,9 +1,9 @@
 package com.example.companyservice.company.repository.company;
 
 import com.example.companyservice.admin.dto.response.CompanyApplyResponseDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CompanyRepositoryCustom {
-    List<CompanyApplyResponseDto> getCompanyApplyInfo();
+    Page<CompanyApplyResponseDto> getCompanyApplyInfo(Pageable pageable);
 }
