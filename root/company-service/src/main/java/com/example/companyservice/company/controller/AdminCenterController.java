@@ -122,4 +122,16 @@ public class AdminCenterController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(centerService.updateBusinessInfo(centerId, requestDto)));
     }
+
+    @PostMapping("/blind/review/{centerId}/{reviewId}")
+    @Operation(summary = "리뷰 블라인드 요청")
+    @ApiResponse(responseCode = "201", description = "성공", content = @Content(schema = @Schema(implementation = String.class)))
+    public ResponseEntity<BaseResponseDto<String>> blindReview(@Parameter(description = "시설 아이디", required = true)
+                                                               @PathVariable(value = "centerId") long centerId,
+                                                               @Parameter(description = "리뷰 아이디", required = true)
+                                                               @PathVariable(value = "reviewId") long reviewId,
+                                                               @RequestBody String reason) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new BaseResponseDto<>(centerService.blindReview(centerId, reviewId, reason)));
+    }
 }

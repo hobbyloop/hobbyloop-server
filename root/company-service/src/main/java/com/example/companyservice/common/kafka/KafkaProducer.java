@@ -1,5 +1,6 @@
 package com.example.companyservice.common.kafka;
 
+import com.example.companyservice.company.client.dto.request.BlindReviewRequestDto;
 import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
 import com.example.companyservice.member.dto.MemberDeletedDto;
 import com.example.companyservice.member.dto.MemberUpdatedDto;
@@ -27,7 +28,18 @@ public class KafkaProducer {
             ex.printStackTrace();
         }
 
-        log.info(jsonInString);
+        kafkaTemplate.send(topic, jsonInString);
+        log.info("Kafka Producer sent data from User microservice: " + requestDto);
+    }
+
+    public void send(String topic, BlindReviewRequestDto requestDto) {
+        String jsonInString = "";
+        try {
+            jsonInString = objectMapper.writeValueAsString(requestDto);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+        }
+
         kafkaTemplate.send(topic, jsonInString);
         log.info("Kafka Producer sent data from User microservice: " + requestDto);
     }

@@ -115,13 +115,20 @@ public class ReviewServiceImpl implements ReviewService {
         return scoreSum / reviewList.size();
     }
 
+    @Override
+    @Transactional
+    public void blindReview(long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.REVIEW_NOT_EXIST_EXCEPTION));
+        review.blindReview();
+    }
+
     private List<ReviewCommentResponseDto> getReviewCommentResponseDtoList(long ticketId, long reviewId) {
         List<ReviewCommentResponseDto> reviewCommentResponseDtoList = new ArrayList<>();
         List<Review> reviewList = reviewRepository.getReviewList(ticketId, reviewId);
         reviewList.forEach(r -> {
-            List<Comment> commentList = commentRepository.findAllByReviewId(r.getId());
-            List<String> commentString = commentList.stream().map(Comment::getContent).toList();
-            ReviewCommentResponseDto reviewCommentResponseDto = ReviewCommentResponseDto.of(r, commentString);
+            List<String> commentList = commentRepository.findAllCommentByReviewId(r.getId());
+            ReviewCommentResponseDto reviewCommentResponseDto = ReviewCommentResponseDto.of(r, commentList);
             reviewCommentResponseDtoList.add(reviewCommentResponseDto);
         });
         return reviewCommentResponseDtoList;

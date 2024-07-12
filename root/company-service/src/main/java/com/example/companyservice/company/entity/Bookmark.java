@@ -1,5 +1,6 @@
 package com.example.companyservice.company.entity;
 
+import com.example.companyservice.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,12 +20,14 @@ public class Bookmark extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    public static Bookmark of(Center center, Long memberId) {
+    public static Bookmark of(Center center, Member member) {
         return Bookmark.builder()
                 .center(center)
-                .memberId(memberId)
+                .member(member)
                 .build();
     }
 }

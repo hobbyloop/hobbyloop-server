@@ -1,6 +1,7 @@
 package com.example.ticketservice.common.kafka;
 
 import com.example.ticketservice.ticket.client.dto.request.CenterOriginalAndUpdateInfoDto;
+import com.example.ticketservice.ticket.client.dto.response.BlindReviewRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,18 @@ public class KafkaProducer {
             ex.printStackTrace();
         }
 
-        log.info(jsonInString);
+        kafkaTemplate.send(topic, jsonInString);
+        log.info("Kafka Producer sent data from User microservice: " + requestDto);
+    }
+
+    public void send(String topic, BlindReviewRequestDto requestDto) {
+        String jsonInString = "";
+        try {
+            jsonInString = objectMapper.writeValueAsString(requestDto);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+        }
+
         kafkaTemplate.send(topic, jsonInString);
         log.info("Kafka Producer sent data from User microservice: " + requestDto);
     }

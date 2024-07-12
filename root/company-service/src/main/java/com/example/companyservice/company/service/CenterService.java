@@ -41,4 +41,6 @@ public interface CenterService {
     IsBookmarkResponseDto getIsBookmark(long centerId, long memberId);
 
     Long getCompanyIdOfCenter(Long centerId);
+
+    String blindReview(long centerId, long reviewId, String reason);
 }

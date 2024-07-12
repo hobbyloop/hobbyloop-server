@@ -180,16 +180,7 @@ public class TicketServiceImpl implements TicketService{
         for (Ticket ticket : ticketListByCategoryAroundMe) {
             Double dist = locationService.getDistance(ticket.getLatitude(), ticket.getLongitude(), latitude, longitude);
             if (dist <= distance) {
-                IsBookmarkResponseDto isBookmark;
-                if (centerInfoMap.containsKey(ticket.getCenterId())) {
-                    isBookmark = centerInfoMap.get(ticket.getCenterId());
-                } else {
-                    isBookmark = companyServiceClient.getIsBookmark(ticket.getCenterId(), memberId).getData();
-                    centerInfoMap.put(ticket.getCenterId(), isBookmark);
-                }
-                List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
-                float reviewScore = getScore(reviewList);
-                result.add(CategoryTicketResponseDto.of(ticket, isBookmark.isBookmark(), reviewScore, reviewList.size()));
+                addResponseDto(memberId, centerInfoMap, result, ticket);
             }
         }
         return result;
@@ -207,23 +198,24 @@ public class TicketServiceImpl implements TicketService{
         Map<Long, IsBookmarkResponseDto> centerInfoMap = new HashMap<>();
         int categoryId = CategoryEnum.findByName(category).getCategoryType();
         List<CategoryTicketResponseDto> result = new ArrayList<>();
-
         List<Ticket> ticketList = ticketRepository.getTicketListByCategory(categoryId, sortId, refundable, score, pageNo, locations);
         for (Ticket ticket : ticketList) {
-            IsBookmarkResponseDto isBookmark;
-            if (centerInfoMap.containsKey(ticket.getCenterId())) {
-                isBookmark = centerInfoMap.get(ticket.getCenterId());
-            } else {
-                isBookmark = companyServiceClient.getIsBookmark(ticket.getCenterId(), memberId).getData();
-                centerInfoMap.put(ticket.getCenterId(), isBookmark);
-            }
-
-            List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
-            float reviewScore = getScore(reviewList);
-            result.add(CategoryTicketResponseDto.of(ticket, isBookmark.isBookmark(), reviewScore, reviewList.size()));
+            addResponseDto(memberId, centerInfoMap, result, ticket);
         }
-
         return result;
+    }
+
+    private void addResponseDto(long memberId, Map<Long, IsBookmarkResponseDto> centerInfoMap, List<CategoryTicketResponseDto> result, Ticket ticket) {
+        IsBookmarkResponseDto isBookmark;
+        if (centerInfoMap.containsKey(ticket.getCenterId())) {
+            isBookmark = centerInfoMap.get(ticket.getCenterId());
+        } else {
+            isBookmark = companyServiceClient.getIsBookmark(ticket.getCenterId(), memberId).getData();
+            centerInfoMap.put(ticket.getCenterId(), isBookmark);
+        }
+        List<Review> reviewList = reviewRepository.findAllByCenterId(ticket.getCenterId());
+        float reviewScore = getScore(reviewList);
+        result.add(CategoryTicketResponseDto.of(ticket, isBookmark.isBookmark(), reviewScore, reviewList.size()));
     }
 
     private float getScore(List<Review> reviewList) {
