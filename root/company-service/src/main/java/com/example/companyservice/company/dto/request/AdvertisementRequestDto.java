@@ -75,7 +75,7 @@ public class AdvertisementRequestDto {
     private int totalPrice;
 
     @NotBlank
-    @Schema(description = "결제 방법", example = "선결제 후불결제", required = true)
+    @Schema(description = "결제 방법", example = "선결제/후불결제", required = true)
     private String paymentType;
 
     @NotBlank

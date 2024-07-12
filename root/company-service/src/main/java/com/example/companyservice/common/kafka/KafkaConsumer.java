@@ -1,8 +1,11 @@
 package com.example.companyservice.common.kafka;
 
+import com.example.companyservice.admin.entity.BlindRequest;
+import com.example.companyservice.admin.repository.BlindRequestRepository;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.service.AmazonS3Service;
+import com.example.companyservice.company.client.dto.request.BlindReviewRequestDto;
 import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
 import com.example.companyservice.company.entity.Center;
 import com.example.companyservice.company.entity.CenterBreakHour;
@@ -39,6 +42,8 @@ public class KafkaConsumer {
     private final CenterBreakHourRepository centerBreakHourRepository;
 
     private final CenterImageRepository centerImageRepository;
+
+    private final BlindRequestRepository blindRequestRepository;
 
     @KafkaListener(topics = "update-address-info-success")
     @Transactional
@@ -91,5 +96,19 @@ public class KafkaConsumer {
                 centerImageRepository.delete(centerImageKey.get());
             }
         });
+    }
+
+    @KafkaListener(topics = "blind-review-fail")
+    @Transactional
+    public void blindReviewFail(String kafkaMessage) throws JsonProcessingException {
+        log.info("Kafka Message ->" + kafkaMessage);
+
+        // 역직렬화
+        BlindReviewRequestDto requestDto = objectMapper.readValue(kafkaMessage, BlindReviewRequestDto.class);
+        Optional<BlindRequest> blindRequestOptional = blindRequestRepository.findById(requestDto.getBlindRequestId());
+        if (blindRequestOptional.isPresent()) {
+            BlindRequest blindRequest = blindRequestOptional.get();
+            blindRequestRepository.delete(blindRequest);
+        }
     }
 }

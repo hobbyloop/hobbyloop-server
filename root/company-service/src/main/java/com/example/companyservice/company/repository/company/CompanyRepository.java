@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company, Long>, CompanyRepositoryCustom {
 
-    Optional<Company> findByProviderAndSubject(String provider, String subject);
+    Optional<Company> findByProviderAndSubjectAndIsDeleteFalse(String provider, String subject);
 }

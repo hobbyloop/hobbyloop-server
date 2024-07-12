@@ -53,4 +53,8 @@ public class Review extends TimeStamped {
                 .centerId(centerId)
                 .build();
     }
+
+    public void blindReview() {
+        this.isBlind = true;
+    }
 }

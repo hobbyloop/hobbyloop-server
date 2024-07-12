@@ -58,7 +58,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             log.info("state : {}", state);
 
             if ("company".equals(state)) {
-                Optional<Company> optionalCompany = companyRepository.findByProviderAndSubject(provider, subject);
+                Optional<Company> optionalCompany = companyRepository.findByProviderAndSubjectAndIsDeleteFalse(provider, subject);
                 if (optionalCompany.isPresent()) {
                     Company company = optionalCompany.get();
                     String accessToken = jwtUtils.createToken(company.getId(), company.getRole());

@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CenterRepository extends JpaRepository<Center, Long> {
 
-    List<Center> findAllByCompanyId(long companyId);
+    List<Center> findAllByCompanyIdAndIsDeleteFalse(long companyId);
 }

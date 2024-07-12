@@ -1,8 +1,12 @@
 package com.example.companyservice.company.service;
 
+import com.example.companyservice.admin.entity.BlindRequest;
+import com.example.companyservice.admin.entity.RequestStatus;
+import com.example.companyservice.admin.repository.BlindRequestRepository;
 import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
+import com.example.companyservice.company.client.dto.request.BlindReviewRequestDto;
 import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
 import com.example.companyservice.company.client.dto.response.*;
 import com.example.companyservice.common.exception.ApiException;
@@ -54,6 +58,8 @@ public class CenterServiceImpl implements CenterService {
 
     private final KafkaProducer kafkaProducer;
 
+    private final BlindRequestRepository blindRequestRepository;
+
     @Override
     @Transactional
     public CenterCreateResponseDto createCenter(long companyId,
@@ -80,7 +86,7 @@ public class CenterServiceImpl implements CenterService {
     public CenterResponseListDto getCenterList(long companyId) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
-        List<Center> centerList = centerRepository.findAllByCompanyId(companyId);
+        List<Center> centerList = centerRepository.findAllByCompanyIdAndIsDeleteFalse(companyId);
         return CenterResponseListDto.of(company.getStartAt(), company.getEndAt(), centerList);
     }
 
@@ -192,26 +198,25 @@ public class CenterServiceImpl implements CenterService {
         boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(centerId, memberId);
         TicketDetailClientResponseDto ticketInfo = ticketServiceClient.getTicketDetailInfo(centerId).getData();
         List<CenterOperatingHour> operatingHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
+        List<HourResponseDto> operatingHourResponseDtoList = getOperationHourDtoList(operatingHourList);
         List<CenterBreakHour> breakHourList = centerBreakHourRepository.findAllByCenterId(centerId);
-        List<HourResponseDto> hourResponseDtoList = getOperationHourDtoList(operatingHourList);
         List<HourResponseDto> breakHourDtoList = getBreakHourDtoList(breakHourList);
-        return CenterInfoDetailResponseDto.of(center, centerImageUrlList, isBookmark, hourResponseDtoList, breakHourDtoList, ticketInfo);
+        return CenterInfoDetailResponseDto.of(center, centerImageUrlList, isBookmark, operatingHourResponseDtoList, breakHourDtoList, ticketInfo);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<BookmarkCenterResponseDto> getBookmarkCenterList(long memberId, long bookmarkId, int sortId) {
-        List<Bookmark> bookmarkList = bookmarkRepository.getBookmarkList(memberId, bookmarkId, sortId);
-        List<Long> centerIdList = bookmarkList.stream().map(b -> b.getCenter().getId()).toList();
+        List<BookmarkCenterDto> bookmarkCenterDtoList = bookmarkRepository.getBookmarkList2(memberId, bookmarkId, sortId);
+        List<Long> centerIdList = bookmarkCenterDtoList.stream().map(BookmarkCenterDto::getCenterId).toList();
         Map<Long, BookmarkScoreTicketResponseDto> bookmarkTicketResponseDtoMap = ticketServiceClient.getBookmarkTicketList(centerIdList).getData();
         List<BookmarkCenterResponseDto> result = new ArrayList<>();
-        bookmarkList.forEach((b) -> {
-            Center center = b.getCenter();
+        bookmarkCenterDtoList.forEach((b) -> {
             BookmarkCenterResponseDto bookmarkCenterResponseDto =
-                    BookmarkCenterResponseDto.of(b, center,
-                            bookmarkTicketResponseDtoMap.get(center.getId()).getScore(),
-                            bookmarkTicketResponseDtoMap.get(center.getId()).getReviewCount(),
-                            bookmarkTicketResponseDtoMap.getOrDefault(center.getId(), null)
+                    BookmarkCenterResponseDto.of(b,
+                            bookmarkTicketResponseDtoMap.get(b.getCenterId()).getScore(),
+                            bookmarkTicketResponseDtoMap.get(b.getCenterId()).getReviewCount(),
+                            bookmarkTicketResponseDtoMap.getOrDefault(b.getCenterId(), null)
                                     .getBookmarkTicketResponseDtoList()
                     );
             result.add(bookmarkCenterResponseDto);
@@ -277,6 +282,17 @@ public class CenterServiceImpl implements CenterService {
         return center.getCompany().getId();
     }
 
+    @Override
+    @Transactional
+    public String blindReview(long centerId, long reviewId, String reason) {
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        BlindRequest blindRequest = BlindRequest.of(center, reviewId, reason, RequestStatus.WAIT.getName());
+        blindRequestRepository.save(blindRequest);
+        kafkaProducer.send("blind-review", BlindReviewRequestDto.of(reviewId, blindRequest.getId()));
+        return blindRequest.getStatus();
+    }
+
     private void toMainHomeCenterResponseDto(long memberId, int allowLocation, double latitude, double longitude, List<MainHomeCenterResponseDto> responseDtoList, List<Advertisement> advertisementList, List<Long> centerIdList) {
         for (Advertisement advertisement : advertisementList) {
             if (centerIdList.size() >= 30) break;
@@ -303,14 +319,6 @@ public class CenterServiceImpl implements CenterService {
         });
         return newCenterImageKeyList;
     }
-//
-//    private void deleteAllCenterImage(long centerId) {
-//        List<CenterImage> oldCenterImageList = centerImageRepository.findAllByCenterId(centerId);
-//        oldCenterImageList.forEach(i -> {
-//            amazonS3Service.delete(i.getCenterImageKey());
-//            centerImageRepository.delete(i);
-//        });
-//    }
 
     private CenterCreateResponseDto createCenterResponseDto(long centerId, Center center) {
         List<CenterOperatingHour> centerOpeningHourList = centerOperatingHourRepository.findAllByCenterId(centerId);
