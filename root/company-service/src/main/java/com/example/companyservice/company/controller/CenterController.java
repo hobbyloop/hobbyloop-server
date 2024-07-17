@@ -41,7 +41,7 @@ public class CenterController {
     }
 
     @GetMapping("/bookmark/{bookmarkId}/{sortId}")
-    @Operation(summary = "시설 상세 조회")
+    @Operation(summary = "북마크한 시설 리스트 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = BookmarkCenterResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<BookmarkCenterResponseDto>>> getBookmarkCenterList(HttpServletRequest request,
                                                                                                   @Parameter(description = "북마크 아이디", required = true)
@@ -54,7 +54,7 @@ public class CenterController {
     }
 
     @GetMapping("/hot-tickets/{allow-location}/{latitude}/{longitude}")
-    @Operation(summary = "시설 상세 조회")
+    @Operation(summary = "이번주 HOT 이용권 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = HotCenterTicketResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<HotCenterTicketResponseDto>>> getHotCenterTicketList(HttpServletRequest request,
                                                                                                     @Parameter(description = "위치 공유 여부", required = true)
@@ -69,7 +69,7 @@ public class CenterController {
     }
 
     @GetMapping("/recommend/{allow-location}/{latitude}/{longitude}")
-    @Operation(summary = "시설 상세 조회")
+    @Operation(summary = "하비루프 추천 시설 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = RecommendedCenterResponseDto.class)))
     public ResponseEntity<BaseResponseDto<List<RecommendedCenterResponseDto>>> getRecommendedCenterList(HttpServletRequest request,
                                                                                                         @Parameter(description = "위치 공유 여부", required = true)

@@ -7,10 +7,10 @@ import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.entity.CreateStatusEnum;
 import com.example.companyservice.company.repository.company.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,8 +20,8 @@ public class ApproveServiceImpl implements ApproveService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompanyApplyResponseDto> getCompanyApplyInfo() {
-        return companyRepository.getCompanyApplyInfo();
+    public Page<CompanyApplyResponseDto> getCompanyApplyInfo(Pageable pageable) {
+        return companyRepository.getCompanyApplyInfo(pageable);
     }
 
     @Override
@@ -39,5 +39,11 @@ public class ApproveServiceImpl implements ApproveService {
 
         company.updateCreateStatus(CreateStatusEnum.findByName(answer).getTypeValue());
         return company.getId();
+    }
+
+    @Override
+    public Company findDetail(Long companyId) {
+        return companyRepository.findById(companyId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
     }
 }

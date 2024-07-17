@@ -1,6 +1,5 @@
 package com.example.ticketservice.pay.entity.member.enums;
 
-import com.example.ticketservice.pay.entity.CompanyPaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

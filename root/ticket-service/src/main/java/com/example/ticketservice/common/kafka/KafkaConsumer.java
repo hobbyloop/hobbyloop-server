@@ -3,8 +3,11 @@ package com.example.ticketservice.common.kafka;
 import com.example.ticketservice.point.repository.PointRepository;
 import com.example.ticketservice.point.repository.PointsRepository;
 import com.example.ticketservice.ticket.client.dto.request.CenterOriginalAndUpdateInfoDto;
+import com.example.ticketservice.ticket.client.dto.response.BlindReviewRequestDto;
 import com.example.ticketservice.ticket.repository.centermembership.CenterMembershipRepository;
+import com.example.ticketservice.ticket.repository.review.ReviewRepository;
 import com.example.ticketservice.ticket.repository.ticket.TicketRepository;
+import com.example.ticketservice.ticket.service.ReviewService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +31,8 @@ public class KafkaConsumer {
     private final PointsRepository pointsRepository;
     private final PointRepository pointRepository;
     private final ObjectMapper objectMapper;
+    private final KafkaProducer kafkaProducer;
+    private final ReviewService reviewService;
 
     @KafkaListener(topics = "update-address-info")
     @Transactional
@@ -37,9 +42,30 @@ public class KafkaConsumer {
         // 역직렬화
         CenterOriginalAndUpdateInfoDto requestDto = objectMapper.readValue(kafkaMessage, CenterOriginalAndUpdateInfoDto.class);
         try {
-            log.info(requestDto.toString());
+            Long centerId = requestDto.getCenterId();
+            String centerName = requestDto.getNewCenterName();
+            String logoImageUrl = requestDto.getNewLogoImageUrl();
+            String address = requestDto.getNewAddress();
+            Double latitude = requestDto.getNewLatitude();
+            Double longitude = requestDto.getNewLongitude();
+            ticketRepository.updateCenterAddressInfo(centerId, centerName, logoImageUrl, address, latitude, longitude);
+            kafkaProducer.send("update-address-info-success", requestDto);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            kafkaProducer.send("update-address-info-fail", requestDto);
+        }
+    }
+
+    @KafkaListener(topics = "blind-review")
+    public void blindReview(String kafkaMessage) throws JsonProcessingException{
+        log.info("Kafka Message ->" + kafkaMessage);
+
+        // 역직렬화
+        BlindReviewRequestDto requestDto = objectMapper.readValue(kafkaMessage, BlindReviewRequestDto.class);
+        try {
+            Long reviewId = requestDto.getReviewId();
+            reviewService.blindReview(reviewId);
+        } catch (Exception ex) {
+            kafkaProducer.send("blind-review-fail", requestDto);
         }
     }
 

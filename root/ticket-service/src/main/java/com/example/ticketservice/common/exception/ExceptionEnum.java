@@ -33,7 +33,8 @@ public enum ExceptionEnum {
     CHECKOUT_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "CH001", "존재하지 않는 체크아웃입니다."),
     PAYMENT_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "P001", "존재하지 않는 결제입니다."),
     PAYMENT_AMOUNT_MISMATCH_EXCEPTION(HttpStatus.BAD_REQUEST, "P002", "결제 금액이 일치하지 않습니다."),
-    UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION(HttpStatus.UNAUTHORIZED, "P003", "승인되지 않은 결제 요청입니다.");
+    UNAUTHORIZED_PAYMENT_REQUEST_EXCEPTION(HttpStatus.UNAUTHORIZED, "P003", "승인되지 않은 결제 요청입니다."),
+    REFUND_ALREADY_PROCESSED_EXCEPTION(HttpStatus.BAD_REQUEST, "PR001", "이미 처리된 환불입니다.");
 
     private final HttpStatus status;
     private final String code;

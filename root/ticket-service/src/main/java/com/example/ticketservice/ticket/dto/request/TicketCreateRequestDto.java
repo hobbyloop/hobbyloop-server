@@ -1,6 +1,7 @@
 package com.example.ticketservice.ticket.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,7 @@ public class TicketCreateRequestDto {
     private int useCount;
 
     @Schema(description = "이용권 총 수량 설정 여부", example = "true")
+    @JsonProperty("isTotalCount")
     private boolean isTotalCount;
 
     @Schema(description = "이용권 총 수량(최대 판매가능 수량)", example = "100")

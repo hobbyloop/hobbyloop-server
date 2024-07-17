@@ -20,4 +20,6 @@ public interface ReviewService {
     TicketReviewListByCenterResponseDto getReviewListByCenter(long centerId, int pageNo, int sortId);
 
     float getScore(long ticketId);
+
+    void blindReview(long reviewId);
 }

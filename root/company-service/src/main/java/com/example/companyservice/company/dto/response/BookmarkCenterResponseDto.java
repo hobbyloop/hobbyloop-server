@@ -34,20 +34,19 @@ public class BookmarkCenterResponseDto {
 
     private List<BookmarkTicketResponseDto> ticketList;
 
-    public static BookmarkCenterResponseDto of(Bookmark bookmark,
-                                               Center center,
+    public static BookmarkCenterResponseDto of(BookmarkCenterDto dto,
                                                float score,
                                                int reviewCount,
                                                List<BookmarkTicketResponseDto> ticketList) {
         return BookmarkCenterResponseDto.builder()
-                .bookmarkId(bookmark.getId())
-                .centerId(center.getId())
-                .centerName(center.getCenterName())
-                .isRefundable(center.getCompany().getIsRefundable())
-                .address(center.getAddress())
+                .bookmarkId(dto.getBookmarkId())
+                .centerId(dto.getCenterId())
+                .centerName(dto.getCenterName())
+                .isRefundable(dto.isRefundable())
+                .address(dto.getAddress())
                 .score(score)
                 .reviewCount(reviewCount)
-                .logoImageUrl(center.getLogoImageUrl())
+                .logoImageUrl(dto.getLogoImageUrl())
                 .ticketList(ticketList)
                 .build();
     }

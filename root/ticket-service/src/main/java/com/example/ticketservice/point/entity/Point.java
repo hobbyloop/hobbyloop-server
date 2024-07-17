@@ -1,6 +1,7 @@
 package com.example.ticketservice.point.entity;
 
 import com.example.ticketservice.common.entity.TimeStamped;
+import com.example.ticketservice.pay.entity.member.Payment;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,10 @@ public class Point extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private Points points;
 
+    @Setter
+    @OneToOne(fetch = FetchType.LAZY)
+    private Payment payment;
+
     private Long memberId;
 
     private Long companyId;
@@ -34,8 +39,18 @@ public class Point extends TimeStamped {
 
     private LocalDateTime expirationDateTime;
 
+    private boolean isDeleted;
+
     public void subtract(Long amount) {
         this.amount -= amount;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    public void restore() {
+        this.isDeleted = false;
     }
 
     public void markExpiredSoon() {

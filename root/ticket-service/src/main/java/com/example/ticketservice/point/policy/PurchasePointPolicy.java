@@ -25,6 +25,7 @@ public class PurchasePointPolicy implements PlatformPointPolicy {
 
         Point point = Point.builder()
                 .memberId(points.getMemberId())
+                .points(points)
                 .usableScope(points.getUsableScope())
                 .amount(earnAmount)
                 .expirationDateTime(LocalDateTime.now().plusDays(EXPIRATION_PERIOD_DAYS))

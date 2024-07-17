@@ -71,4 +71,23 @@ public class PaymentSteps {
 
         return objectMapper.treeToValue(dataNode, PaymentConfirmResponseDto.class);
     }
+
+    public static PaymentConfirmResponseDto refund(Long memberId, Long paymentId) throws Exception {
+        objectMapper.registerModule(new JavaTimeModule());
+
+        String responseBody = RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON.withCharset("UTF-8"))
+                .when()
+                .headers("id", memberId, "role", "USER")
+                .post("/api/v1/payments/refund/{paymentId}", paymentId)
+                .then().log().all()
+                .statusCode(200)
+                .extract().asString();
+
+        JsonNode responseJson = objectMapper.readTree(responseBody);
+        JsonNode dataNode = responseJson.get("data");
+
+        return objectMapper.treeToValue(dataNode, PaymentConfirmResponseDto.class);
+    }
 }
