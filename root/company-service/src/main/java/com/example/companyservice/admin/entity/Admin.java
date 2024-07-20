@@ -1,6 +1,6 @@
 package com.example.companyservice.admin.entity;
 
-import com.example.companyservice.company.entity.Role;
+import com.example.companyservice.auth.entity.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

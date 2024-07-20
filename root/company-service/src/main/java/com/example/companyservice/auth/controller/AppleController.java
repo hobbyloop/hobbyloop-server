@@ -1,4 +1,4 @@
-//package com.example.companyservice.common.controller;
+package com.example.companyservice.auth.controller;//package com.example.companyservice.common.controller;
 //
 //import com.example.companyservice.common.service.AppleService;
 //import com.example.companyservice.common.dto.BaseResponseDto;

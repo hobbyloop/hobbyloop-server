@@ -2,7 +2,6 @@ package com.example.companyservice.common.security;
 
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
-import com.example.companyservice.company.entity.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

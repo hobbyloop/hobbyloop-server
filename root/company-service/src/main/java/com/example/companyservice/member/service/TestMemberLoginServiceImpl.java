@@ -1,12 +1,11 @@
 package com.example.companyservice.member.service;
 
 
-import com.example.companyservice.common.dto.TokenResponseDto;
+import com.example.companyservice.auth.dto.response.MemberLoginResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.member.dto.request.TestMemberLoginRequestDto;
-import com.example.companyservice.member.dto.response.MemberLoginResponseDto;
 import com.example.companyservice.member.entity.Member;
 import com.example.companyservice.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
