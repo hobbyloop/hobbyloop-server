@@ -1,6 +1,6 @@
 package com.example.companyservice.common.util;
 
-import com.example.companyservice.company.entity.Role;
+import com.example.companyservice.auth.entity.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -62,6 +62,10 @@ public class JwtUtils {
 
     public String getUserPk(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getRole(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("role").toString();
     }
 
     public String resolveToken(HttpServletRequest request, String keyName) {

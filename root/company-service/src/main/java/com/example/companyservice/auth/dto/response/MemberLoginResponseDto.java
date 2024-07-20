@@ -1,4 +1,4 @@
-package com.example.companyservice.member.dto.response;
+package com.example.companyservice.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
