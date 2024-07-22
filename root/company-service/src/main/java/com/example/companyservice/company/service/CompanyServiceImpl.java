@@ -1,6 +1,7 @@
 package com.example.companyservice.company.service;
 
 import com.example.companyservice.common.dto.TokenResponseDto;
+import com.example.companyservice.common.service.RedisService;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.company.client.dto.request.CompanyRatePlanRequestDto;
@@ -24,6 +25,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final JwtUtils jwtUtils;
 
+    private final RedisService redisService;
+
     @Override
     @Transactional
     public TokenResponseDto createCompany(CompanyCreateRequestDto requestDto) {
@@ -33,6 +36,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyRepository.save(company);
         String accessToken = jwtUtils.createToken(company.getId(), company.getRole());
         String refreshToken = jwtUtils.createRefreshToken(company.getId(), company.getRole());
+        redisService.setValues(refreshToken, company.getSubject());
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 
