@@ -69,6 +69,9 @@ dependencies {
     // Monitoring
     implementation 'io.micrometer:micrometer-registry-prometheus:1.12.4'
     implementation 'io.micrometer:micrometer-core:1.12.4'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
 
 def querydslSrcDir = 'src/main/generated'

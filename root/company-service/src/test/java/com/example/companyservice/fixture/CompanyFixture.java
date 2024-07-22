@@ -4,7 +4,7 @@ import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.entity.CreateStatusEnum;
 import com.example.companyservice.company.entity.PaymentTypeEnum;
-import com.example.companyservice.company.entity.Role;
+import com.example.companyservice.auth.entity.Role;
 
 import java.time.LocalDate;
 

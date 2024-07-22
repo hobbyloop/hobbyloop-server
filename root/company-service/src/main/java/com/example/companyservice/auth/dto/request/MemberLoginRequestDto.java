@@ -1,4 +1,4 @@
-package com.example.companyservice.member.dto.request;
+package com.example.companyservice.auth.dto.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

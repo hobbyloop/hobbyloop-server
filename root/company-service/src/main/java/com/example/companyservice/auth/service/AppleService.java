@@ -1,4 +1,4 @@
-//package com.example.companyservice.common.service;
+package com.example.companyservice.auth.service;//package com.example.companyservice.common.service;
 //
 //import com.example.companyservice.common.exception.ApiException;
 //import com.example.companyservice.common.exception.ExceptionEnum;

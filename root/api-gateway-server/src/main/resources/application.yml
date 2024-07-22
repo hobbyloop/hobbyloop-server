@@ -91,6 +91,14 @@ spring:
         - id: company-service
           uri: lb://COMPANY-SERVICE
           predicates:
+            - Path=/company-service/api/v1/refresh-access-token
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/company-service/(?<segment>.*), /$\{segment}
+        - id: company-service
+          uri: lb://COMPANY-SERVICE
+          predicates:
             - Path=/company-service/api/v1/instructors/**
             - Method=GET, POST, PATCH, DELETE
           filters:
