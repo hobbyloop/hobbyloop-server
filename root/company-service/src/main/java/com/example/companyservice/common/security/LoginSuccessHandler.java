@@ -3,8 +3,7 @@ package com.example.companyservice.common.security;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.example.companyservice.member.entity.Member;
-import com.example.companyservice.member.repository.MemberRepository;
+import com.example.companyservice.common.service.RedisService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -36,7 +35,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final InstructorRepository instructorRepository;
 
-    private final MemberRepository memberRepository;
+    private final RedisService redisService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -63,12 +62,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     Company company = optionalCompany.get();
                     String accessToken = jwtUtils.createToken(company.getId(), company.getRole());
                     String refreshToken = jwtUtils.createRefreshToken(company.getId(), company.getRole());
+                    redisService.setValues(refreshToken, subject);
                     sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
                 } else {
                     sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }
             } else if ("instructor".equals(state)) {
 
+            } else {
+                throw new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION);
             }
         } else {
             throw new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION);

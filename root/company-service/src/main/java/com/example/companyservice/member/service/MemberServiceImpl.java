@@ -5,6 +5,7 @@ import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.kafka.KafkaProducer;
 import com.example.companyservice.common.service.AmazonS3Service;
+import com.example.companyservice.common.service.RedisService;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.member.dto.MemberDeletedDto;
@@ -29,6 +30,7 @@ public class MemberServiceImpl implements MemberService {
     private final TicketServiceClient ticketServiceClient;
     private final JwtUtils jwtUtils;
     private final KafkaProducer kafkaProducer;
+    private final RedisService redisService;
 
     @Override
     @Transactional
@@ -44,6 +46,7 @@ public class MemberServiceImpl implements MemberService {
 
         String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
         String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
+        redisService.setValues(refreshToken, savedMember.getSubject());
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 

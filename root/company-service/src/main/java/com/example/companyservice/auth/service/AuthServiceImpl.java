@@ -96,6 +96,7 @@ public class AuthServiceImpl implements AuthService {
                 Member member = memberOptional.get();
                 String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
                 String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
+                redisService.setValues(refreshToken, subject);
                 return MemberLoginResponseDto.of(accessToken, refreshToken, null, null, null, null);
             } else {
                 return MemberLoginResponseDto.of(null, null, email, provider, subject, oAuthAccessToken);
@@ -163,11 +164,16 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public TokenResponseDto refreshAccessToken(HttpServletRequest request) {
-        String accessToken = jwtUtils.resolveToken(request, "authorization");
-        String refreshToken = jwtUtils.resolveToken(request, "refreshtoken");
+        String accessToken = jwtUtils.resolveToken(request, "Authorization");
+        String refreshToken = jwtUtils.resolveToken(request, "RefreshAuthorization");
 
         Long refreshTokenPk = Long.parseLong(jwtUtils.getUserPk(refreshToken));
-        String role = jwtUtils.getRole(accessToken);
+        String role;
+        try {
+            role = jwtUtils.getRole(refreshToken);
+        } catch (Exception e) {
+            throw new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
+        }
         String subject = getSubject(refreshTokenPk, role);
         tokenValidation(accessToken, refreshToken, subject);
 
