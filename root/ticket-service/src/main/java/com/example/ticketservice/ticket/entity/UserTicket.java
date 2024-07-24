@@ -46,6 +46,7 @@ public class UserTicket extends TimeStamped {
                 .remainingCount(ticket.getUseCount())
                 .ticket(ticket)
                 .memberId(memberId)
+                .isDeleted(false)
                 .build();
     }
 
