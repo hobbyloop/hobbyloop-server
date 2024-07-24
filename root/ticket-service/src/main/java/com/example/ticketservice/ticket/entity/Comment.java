@@ -31,6 +31,7 @@ public class Comment extends TimeStamped {
                 .content(content)
                 .review(review)
                 .companyId(companyId)
+                .isDelete(false)
                 .build();
     }
 }
