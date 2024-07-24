@@ -51,6 +51,7 @@ public class Review extends TimeStamped {
                 .memberId(memberId)
                 .nickname(nickname)
                 .centerId(centerId)
+                .isDelete(false)
                 .build();
     }
 
