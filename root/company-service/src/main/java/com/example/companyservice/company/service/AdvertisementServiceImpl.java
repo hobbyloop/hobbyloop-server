@@ -5,6 +5,9 @@ import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.TicketServiceClient;
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
+import com.example.companyservice.company.dto.response.AdvertisementDataResponseDto;
+import com.example.companyservice.company.entity.AdvertisementLog;
+import com.example.companyservice.company.repository.advertisement.AdvertisementLogRepository;
 import com.example.companyservice.company.repository.advertisement.AdvertisementRepository;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.company.entity.Advertisement;
@@ -28,6 +31,8 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private final AmazonS3Service amazonS3Service;
 
     private final TicketServiceClient ticketServiceClient;
+
+    private final AdvertisementLogRepository advertisementLogRepository;
 
     @Override
     @Transactional
@@ -72,5 +77,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Transactional(readOnly = true)
     public List<Integer> getUsedRank() {
         return advertisementRepository.getUsedRank();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdvertisementDataResponseDto getAdvertisementData(long centerId, int year) {
+        List<AdvertisementLog> advertisementLogs = advertisementLogRepository.findAllByCenterIdBetweenYear(centerId, year);
+        return null;
     }
 }

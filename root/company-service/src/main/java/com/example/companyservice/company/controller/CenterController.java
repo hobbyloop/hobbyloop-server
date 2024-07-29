@@ -29,15 +29,17 @@ public class CenterController {
 
     private final CenterService centerService;
 
-    @GetMapping("/info/detail/{centerId}")
+    @GetMapping("/info/detail/{centerId}/{advertisementId}")
     @Operation(summary = "시설 상세 조회")
     @ApiResponse(responseCode = "200", description = "성공", content = @Content(schema = @Schema(implementation = CenterInfoDetailResponseDto.class)))
     public ResponseEntity<BaseResponseDto<CenterInfoDetailResponseDto>> getCenterInfoDetail(HttpServletRequest request,
                                                                                             @Parameter(description = "시설 아이디", required = true)
-                                                                                            @PathVariable(value = "centerId") long centerId) {
+                                                                                            @PathVariable(value = "centerId") long centerId,
+                                                                                            @Parameter(description = "광고 아이디", required = true)
+                                                                                            @PathVariable(value = "advertisementId") long advertisementId) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new BaseResponseDto<>(centerService.getCenterInfoDetail(centerId, memberId)));
+                .body(new BaseResponseDto<>(centerService.getCenterInfoDetail(centerId, memberId, advertisementId)));
     }
 
     @GetMapping("/bookmark/{bookmarkId}/{sortId}")
