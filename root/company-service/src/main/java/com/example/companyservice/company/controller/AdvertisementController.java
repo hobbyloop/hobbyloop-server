@@ -1,6 +1,7 @@
 package com.example.companyservice.company.controller;
 
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
+import com.example.companyservice.company.dto.response.AdvertisementDataResponseDto;
 import com.example.companyservice.company.service.AdvertisementService;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
@@ -53,5 +54,14 @@ public class AdvertisementController {
     public ResponseEntity<BaseResponseDto<List<Integer>>> getUsedRank() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(advertisementService.getUsedRank()));
+    }
+
+    @GetMapping("/advertisement/data/{centerId}/{year}")
+    public ResponseEntity<BaseResponseDto<AdvertisementDataResponseDto>> getAdvertisementData(@Parameter(description = "시설 아이디", required = true)
+                                                                                              @PathVariable(value = "centerId") long centerId,
+                                                                                              @Parameter(description = "연도", required = true)
+                                                                                              @PathVariable(value = "year") int year) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(advertisementService.getAdvertisementData(centerId, year)));
     }
 }

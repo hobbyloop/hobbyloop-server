@@ -1,16 +1,13 @@
 package com.example.companyservice.admin.entity;
 
+import com.example.companyservice.common.entity.TimeStamped;
 import com.example.companyservice.company.entity.Center;
-import com.example.companyservice.company.entity.TimeStamped;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class BlindRequest extends TimeStamped {

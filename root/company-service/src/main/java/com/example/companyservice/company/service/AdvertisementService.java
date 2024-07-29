@@ -1,6 +1,7 @@
 package com.example.companyservice.company.service;
 
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
+import com.example.companyservice.company.dto.response.AdvertisementDataResponseDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,4 +14,6 @@ public interface AdvertisementService {
     List<AdvertisementResponseDto> getAdvertisementList();
 
     List<Integer> getUsedRank();
+
+    AdvertisementDataResponseDto getAdvertisementData(long centerId, int year);
 }

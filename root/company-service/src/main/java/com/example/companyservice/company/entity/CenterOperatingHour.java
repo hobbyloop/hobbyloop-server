@@ -1,5 +1,6 @@
 package com.example.companyservice.company.entity;
 
+import com.example.companyservice.common.entity.TimeStamped;
 import com.example.companyservice.company.dto.request.HourRequestDto;
 import com.example.companyservice.company.dto.response.HourResponseDto;
 import jakarta.persistence.*;

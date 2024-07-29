@@ -191,9 +191,14 @@ public class CenterServiceImpl implements CenterService {
 
     @Override
     @Transactional(readOnly = true)
-    public CenterInfoDetailResponseDto getCenterInfoDetail(long centerId, long memberId) {
+    public CenterInfoDetailResponseDto getCenterInfoDetail(long centerId, long memberId, long advertisementId) {
         Center center = centerRepository.findById(centerId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
+        if (advertisementId != -1) {
+            Advertisement advertisement = advertisementRepository.findById(advertisementId)
+                    .orElseThrow(() -> new ApiException(ExceptionEnum.ADVERTISEMENT_NOT_EXIST_EXCEPTION));
+            kafkaProducer.send("save-advertisement-click-log", advertisement.getId());
+        }
         List<String> centerImageUrlList = centerImageRepository.findAllCenterImage(centerId);
         boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(centerId, memberId);
         TicketDetailClientResponseDto ticketInfo = ticketServiceClient.getTicketDetailInfo(centerId).getData();
@@ -251,6 +256,8 @@ public class CenterServiceImpl implements CenterService {
         List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Long> centerIdList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCAdvertisement();
+        List<Long> advertisementIdList = advertisementList.stream().map(Advertisement::getId).toList();
+        kafkaProducer.send("save-advertisement-select-log", advertisementIdList);
         toMainHomeCenterResponseDto(memberId, allowLocation, latitude, longitude, responseDtoList, advertisementList, centerIdList);
         Map<Long, TicketInfoClientResponseDto> ticketResponseDtoMap = ticketServiceClient.getHotTicketList(centerIdList).getData();
         return responseDtoList.stream().map(c -> HotCenterTicketResponseDto.of(c, ticketResponseDtoMap.get(c.getCenterId()))).toList();
@@ -261,6 +268,8 @@ public class CenterServiceImpl implements CenterService {
     public List<RecommendedCenterResponseDto> getRecommendedCenterList(long memberId, int allowLocation, double latitude, double longitude) {
         List<MainHomeCenterResponseDto> responseDtoList = new ArrayList<>();
         List<Advertisement> advertisementList = advertisementRepository.findAllCPCCPMAdvertisement();
+        List<Long> advertisementIdList = advertisementList.stream().map(Advertisement::getId).toList();
+        kafkaProducer.send("save-advertisement-select-log", advertisementIdList);
         List<Long> centerIdList = new ArrayList<>();
         toMainHomeCenterResponseDto(memberId, allowLocation, latitude, longitude, responseDtoList, advertisementList, centerIdList);
         Map<Long, TicketInfoClientResponseDto> ticketResponseDtoMap = ticketServiceClient.getRecommendTicketList(centerIdList).getData();
@@ -277,8 +286,8 @@ public class CenterServiceImpl implements CenterService {
     @Override
     @Transactional(readOnly = true)
     public Long getCompanyIdOfCenter(Long centerId) {
-        Center center = centerRepository.findById(centerId).orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
-
+        Center center = centerRepository.findById(centerId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.CENTER_NOT_EXIST_EXCEPTION));
         return center.getCompany().getId();
     }
 
@@ -303,7 +312,7 @@ public class CenterServiceImpl implements CenterService {
             }
             centerIdList.add(center.getId());
             boolean isBookmark = bookmarkRepository.existsByCenterIdAndMemberId(center.getId(), memberId);
-            MainHomeCenterResponseDto responseDto = MainHomeCenterResponseDto.of(center, isBookmark);
+            MainHomeCenterResponseDto responseDto = MainHomeCenterResponseDto.of(center, advertisement.getId(), isBookmark);
             responseDtoList.add(responseDto);
         }
     }
