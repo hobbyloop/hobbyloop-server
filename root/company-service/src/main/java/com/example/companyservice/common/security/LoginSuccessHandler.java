@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import com.example.companyservice.common.service.RedisService;
+import com.example.companyservice.instructor.entity.Instructor;
+import com.example.companyservice.instructor.repository.InstructorRepository;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -16,7 +18,6 @@ import com.example.companyservice.common.util.CookieUtils;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.repository.company.CompanyRepository;
-import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,9 +34,9 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final CompanyRepository companyRepository;
 
-    private final InstructorRepository instructorRepository;
-
     private final RedisService redisService;
+
+    private final InstructorRepository instructorRepository;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -68,7 +69,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                     sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
                 }
             } else if ("instructor".equals(state)) {
-
+                Optional<Instructor> optionalInstructor = instructorRepository.findByProviderAndSubjectAndIsDeleteFalse(provider, subject);
+                if (optionalInstructor.isPresent()) {
+                    Instructor instructor = optionalInstructor.get();
+                    String accessToken = jwtUtils.createToken(instructor.getId(), instructor.getRole());
+                    String refreshToken = jwtUtils.createRefreshToken(instructor.getId(), instructor.getRole());
+                    sendToken(request, response, accessToken, refreshToken, null, provider, null, null);
+                } else {
+                    sendToken(request, response, null, null, email, provider, subject, oauth2AccessToken);
+                }
             } else {
                 throw new ApiException(ExceptionEnum.LOGIN_FAIL_EXCEPTION);
             }

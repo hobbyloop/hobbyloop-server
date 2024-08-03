@@ -13,7 +13,6 @@ import com.example.companyservice.common.service.RedisService;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.repository.company.CompanyRepository;
-import com.example.companyservice.instructor.infrastructure.persistence.InstructorRepository;
 import com.example.companyservice.member.entity.Member;
 import com.example.companyservice.member.repository.MemberRepository;
 import com.google.gson.JsonElement;
@@ -40,8 +39,6 @@ import java.util.Optional;
 public class AuthServiceImpl implements AuthService {
 
     private final MemberRepository memberRepository;
-
-    private final InstructorRepository instructorRepository;
 
     private final CompanyRepository companyRepository;
 

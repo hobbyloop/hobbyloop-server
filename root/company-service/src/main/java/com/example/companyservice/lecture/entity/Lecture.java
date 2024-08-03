@@ -1,24 +1,18 @@
-package com.example.companyservice.company.entity;
+package com.example.companyservice.lecture.entity;
 
 import com.example.companyservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Getter
 @Builder
-public class Tag extends TimeStamped {
+@Entity
+public class Lecture extends TimeStamped {
 
     @Id
-    @Column(name = "tag_id")
+    @Column(name = "lecture_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String tagName;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "center_id")
-    private Center center;
 }
