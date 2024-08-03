@@ -52,6 +52,8 @@ public class TicketController {
     }
 
     @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{allow-location}/{latitude}/{longitude}/{distance}")
+    @Operation(summary = "카테고리별 이용권 조회 - 내 주변 기준")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryTicketResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicketAroundMe(HttpServletRequest request,
                                                                                               @PathVariable(value = "category") String category,
                                                                                               @PathVariable(value = "sortId") int sortId,
@@ -67,6 +69,8 @@ public class TicketController {
     }
 
     @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{pageNo}")
+    @Operation(summary = "카테고리별 이용권 조회 - 필터링된 주소 기준")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryTicketResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicket(HttpServletRequest request,
                                                                                               @PathVariable(value = "category") String category,
                                                                                               @PathVariable(value = "sortId") int sortId,
