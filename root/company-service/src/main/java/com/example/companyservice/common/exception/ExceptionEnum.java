@@ -29,7 +29,8 @@ public enum ExceptionEnum {
     NOT_HAS_TICKET_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "이용권을 등록한 시설만 광고 등록이 가능합니다."),
     MEMBER_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자 계정입니다."),
     DUPLICATE_MEMBER_EXCEPTION(HttpStatus.BAD_REQUEST, "M002", "이미 존재하는 계정입니다."),
-    INSTRUCTOR_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "I001", "존재하지 않는 강사입니다.");
+    INSTRUCTOR_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "I001", "존재하지 않는 강사입니다."),
+    INSTRUCTORCENTER_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "IC001", "시설에 등록되지 않은 강사입니다.");
 
     private final HttpStatus status;
     private final String code;

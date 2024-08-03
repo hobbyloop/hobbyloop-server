@@ -32,4 +32,11 @@ public class InstructorCenterController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(instructorCenterService.getInstructorCenter(centerId, sort)));
     }
+
+    @PatchMapping("/instructor-center/{instructorCenterId}/auth/{auth}")
+    public ResponseEntity<BaseResponseDto<Void>> updateInstructorCenterAuth(@PathVariable(name = "instructorCenterId") long instructorCenterId,
+                                                                            @PathVariable(name = "auth") int auth) {
+        instructorCenterService.updateInstructorCenterAuth(instructorCenterId, auth);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new BaseResponseDto<>());
+    }
 }

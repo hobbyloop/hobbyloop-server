@@ -34,4 +34,8 @@ public class InstructorCenter extends TimeStamped {
                 .auth(InstructorAuthEnum.FULLTIME.getValue())
                 .build();
     }
+
+    public void updateAuth(int auth) {
+        this.auth = auth;
+    }
 }

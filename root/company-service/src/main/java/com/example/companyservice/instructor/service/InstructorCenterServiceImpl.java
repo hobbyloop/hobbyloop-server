@@ -8,6 +8,7 @@ import com.example.companyservice.instructor.dto.request.CreateInstructorCenterR
 import com.example.companyservice.instructor.dto.response.CreateInstructorCenterResponseDto;
 import com.example.companyservice.instructor.dto.response.InstructorCenterResponseDto;
 import com.example.companyservice.instructor.entity.Instructor;
+import com.example.companyservice.instructor.entity.InstructorAuthEnum;
 import com.example.companyservice.instructor.entity.InstructorCenter;
 import com.example.companyservice.instructor.repository.instructorCenter.InstructorCenterRepository;
 import com.example.companyservice.instructor.repository.InstructorRepository;
@@ -56,5 +57,14 @@ public class InstructorCenterServiceImpl implements InstructorCenterService {
             result.add(InstructorCenterResponseDto.of(ic, lectureDtoList));
         });
         return result;
+    }
+
+    @Override
+    @Transactional
+    public void updateInstructorCenterAuth(long instructorCenterId, int auth) {
+        InstructorAuthEnum.findByValue(auth);
+        InstructorCenter instructorCenter = instructorCenterRepository.findById(instructorCenterId)
+                .orElseThrow(() -> new ApiException(ExceptionEnum.INSTRUCTORCENTER_NOT_EXIST_EXCEPTION));
+        instructorCenter.updateAuth(auth);
     }
 }
