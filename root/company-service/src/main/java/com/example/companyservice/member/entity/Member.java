@@ -1,7 +1,7 @@
 package com.example.companyservice.member.entity;
 
 import com.example.companyservice.auth.entity.Role;
-import com.example.companyservice.company.entity.TimeStamped;
+import com.example.companyservice.common.entity.TimeStamped;
 import com.example.companyservice.member.dto.request.CreateMemberRequestDto;
 import com.example.companyservice.member.dto.request.MemberUpdateRequestDto;
 import jakarta.persistence.*;

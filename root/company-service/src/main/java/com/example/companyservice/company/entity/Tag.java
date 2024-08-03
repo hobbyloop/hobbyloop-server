@@ -1,5 +1,6 @@
 package com.example.companyservice.company.entity;
 
+import com.example.companyservice.common.entity.TimeStamped;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,8 +17,6 @@ public class Tag extends TimeStamped {
     private Long id;
 
     private String tagName;
-
-    private boolean isDelete;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")

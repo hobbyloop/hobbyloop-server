@@ -14,6 +14,8 @@ public class MainHomeCenterResponseDto {
 
     private Long centerId;
 
+    private Long advertisementId;
+
     private String centerName;
 
     private String logoImageUrl;
@@ -24,9 +26,10 @@ public class MainHomeCenterResponseDto {
 
     private boolean isBookmark;
 
-    public static MainHomeCenterResponseDto of(Center center, boolean isBookmark) {
+    public static MainHomeCenterResponseDto of(Center center, Long advertisementId, boolean isBookmark) {
         return MainHomeCenterResponseDto.builder()
                 .centerId(center.getId())
+                .advertisementId(advertisementId)
                 .centerName(center.getCenterName())
                 .logoImageUrl(center.getLogoImageUrl())
                 .address(center.getAddress())

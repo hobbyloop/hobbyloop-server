@@ -24,10 +24,13 @@ public enum ExceptionEnum {
     BOOKMARK_ALREADY_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "이미 북마크된 시설입니다."),
     BOOKMARK_ALREADY_DELETE_EXCEPTION(HttpStatus.BAD_REQUEST, "B002", "이미 북마크 해제된 시설입니다."),
     RANK_ALREADY_EXIST_EXCEPTION(HttpStatus.BAD_REQUEST, "A001", "이미 등록된 광고게재순위입니다."),
+    BANNER_NULL_POINTER_EXCEPTION(HttpStatus.BAD_REQUEST, "A002", "배너 광고 등록시 배너 이미지를 첨부해주세요."),
+    ADVERTISEMENT_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "A002", "존재하지 않은 광고입니다."),
     NOT_HAS_TICKET_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "이용권을 등록한 시설만 광고 등록이 가능합니다."),
-    BANNER_NULL_POINTER_EXCEPTION(HttpStatus.NOT_FOUND, "B001", "배너 광고 등록시 배너 이미지를 첨부해주세요."),
     MEMBER_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "M001", "존재하지 않는 사용자 계정입니다."),
-    DUPLICATE_MEMBER_EXCEPTION(HttpStatus.BAD_REQUEST, "M002", "이미 존재하는 계정입니다.");
+    DUPLICATE_MEMBER_EXCEPTION(HttpStatus.BAD_REQUEST, "M002", "이미 존재하는 계정입니다."),
+    INSTRUCTOR_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "I001", "존재하지 않는 강사입니다."),
+    INSTRUCTORCENTER_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "IC001", "시설에 등록되지 않은 강사입니다.");
 
     private final HttpStatus status;
     private final String code;

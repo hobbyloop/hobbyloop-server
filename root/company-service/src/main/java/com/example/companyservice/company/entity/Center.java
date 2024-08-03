@@ -1,5 +1,6 @@
 package com.example.companyservice.company.entity;
 
+import com.example.companyservice.common.entity.TimeStamped;
 import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
 import com.example.companyservice.company.dto.request.BusinessRequestDto;
 import com.example.companyservice.company.dto.request.CenterUpdateRequestDto;
@@ -55,8 +56,6 @@ public class Center extends TimeStamped {
 
     private double longitude;
 
-    private boolean isDelete;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
@@ -77,7 +76,6 @@ public class Center extends TimeStamped {
                 .logoImageUrl(logoImageUrl)
                 .latitude(requestDto.getLatitude())
                 .longitude(requestDto.getLongitude())
-                .isDelete(false)
                 .company(company)
                 .build();
     }

@@ -40,13 +40,13 @@ public class MemberServiceImpl implements MemberService {
             throw new ApiException(ExceptionEnum.DUPLICATE_MEMBER_EXCEPTION);
         }
 
-        Member savedMember = memberRepository.save(member);
+        memberRepository.save(member);
 
-        ticketServiceClient.earnPointsWhenJoining(savedMember.getId()); // 회원가입 포인트 적립
+        ticketServiceClient.earnPointsWhenJoining(member.getId()); // 회원가입 포인트 적립
 
         String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
         String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
-        redisService.setValues(refreshToken, savedMember.getSubject());
+        redisService.setValues(refreshToken, member.getSubject());
         return TokenResponseDto.of(accessToken, refreshToken);
     }
 

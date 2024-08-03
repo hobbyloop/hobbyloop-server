@@ -7,14 +7,10 @@ import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.common.service.AmazonS3Service;
 import com.example.companyservice.company.client.dto.request.BlindReviewRequestDto;
 import com.example.companyservice.company.client.dto.request.CenterOriginalAndUpdateInfoDto;
-import com.example.companyservice.company.entity.Center;
-import com.example.companyservice.company.entity.CenterBreakHour;
-import com.example.companyservice.company.entity.CenterImage;
-import com.example.companyservice.company.entity.CenterOperatingHour;
-import com.example.companyservice.company.repository.CenterBreakHourRepository;
-import com.example.companyservice.company.repository.CenterImageRepository;
-import com.example.companyservice.company.repository.CenterOperatingHourRepository;
-import com.example.companyservice.company.repository.CenterRepository;
+import com.example.companyservice.company.entity.*;
+import com.example.companyservice.company.repository.*;
+import com.example.companyservice.company.repository.advertisement.AdvertisementLogRepository;
+import com.example.companyservice.company.repository.advertisement.AdvertisementRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +19,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +41,10 @@ public class KafkaConsumer {
     private final CenterImageRepository centerImageRepository;
 
     private final BlindRequestRepository blindRequestRepository;
+
+    private final AdvertisementLogRepository advertisementLogRepository;
+
+    private final AdvertisementRepository advertisementRepository;
 
     @KafkaListener(topics = "update-address-info-success")
     @Transactional
@@ -109,6 +110,38 @@ public class KafkaConsumer {
         if (blindRequestOptional.isPresent()) {
             BlindRequest blindRequest = blindRequestOptional.get();
             blindRequestRepository.delete(blindRequest);
+        }
+    }
+
+    @KafkaListener(topics = "save-advertisement-select-log")
+    @Transactional
+    public void saveAdvertisementSelectLog(String kafkaMessage) throws JsonProcessingException {
+        log.info("Kafka Message ->" + kafkaMessage);
+
+        // 역직렬화
+        List<Long> advertisementIdList = Collections.singletonList(objectMapper.readValue(kafkaMessage, Long.class));
+        advertisementIdList.forEach(id -> {
+            Optional<Advertisement> advertisementOptional = advertisementRepository.findById(id);
+            if (advertisementOptional.isPresent()) {
+                Advertisement advertisement = advertisementOptional.get();
+                AdvertisementLog advertisementLog = AdvertisementLog.of(advertisement, "select");
+                advertisementLogRepository.save(advertisementLog);
+            }
+        });
+    }
+
+    @KafkaListener(topics = "save-advertisement-click-log")
+    @Transactional
+    public void saveAdvertisementClickLog(String kafkaMessage) throws JsonProcessingException {
+        log.info("Kafka Message ->" + kafkaMessage);
+
+        // 역직렬화
+        Long advertisementId = objectMapper.readValue(kafkaMessage, Long.class);
+        Optional<Advertisement> advertisementOptional = advertisementRepository.findById(advertisementId);
+        if (advertisementOptional.isPresent()) {
+            Advertisement advertisement = advertisementOptional.get();
+            AdvertisementLog advertisementLog = AdvertisementLog.of(advertisement, "click");
+            advertisementLogRepository.save(advertisementLog);
         }
     }
 }
