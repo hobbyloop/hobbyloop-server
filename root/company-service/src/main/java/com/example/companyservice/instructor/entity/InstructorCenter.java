@@ -24,4 +24,11 @@ public class InstructorCenter extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "center_id")
     private Center center;
+
+    public static InstructorCenter of(Instructor instructor, Center center) {
+        return InstructorCenter.builder()
+                .instructor(instructor)
+                .center(center)
+                .build();
+    }
 }
