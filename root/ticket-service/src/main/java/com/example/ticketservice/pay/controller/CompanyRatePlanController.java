@@ -3,6 +3,7 @@ package com.example.ticketservice.pay.controller;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.pay.dto.request.CompanyRatePlanRequestDto;
 import com.example.ticketservice.pay.service.CompanyRatePlanService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
+@Hidden
 public class CompanyRatePlanController {
 
     private final CompanyRatePlanService companyRatePlanService;
