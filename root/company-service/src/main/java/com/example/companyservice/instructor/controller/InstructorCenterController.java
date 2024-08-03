@@ -3,11 +3,14 @@ package com.example.companyservice.instructor.controller;
 import com.example.companyservice.common.dto.BaseResponseDto;
 import com.example.companyservice.instructor.dto.request.CreateInstructorCenterRequestDto;
 import com.example.companyservice.instructor.dto.response.CreateInstructorCenterResponseDto;
+import com.example.companyservice.instructor.dto.response.InstructorCenterResponseDto;
 import com.example.companyservice.instructor.service.InstructorCenterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,5 +24,12 @@ public class InstructorCenterController {
                                                                                                      @RequestBody CreateInstructorCenterRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new BaseResponseDto<>(instructorCenterService.createInstructorCenter(centerId, requestDto)));
+    }
+
+    @GetMapping("/instructor-center/{centerId}/{sort}")
+    public ResponseEntity<BaseResponseDto<List<InstructorCenterResponseDto>>> getInstructorCenter(@PathVariable(name = "centerId") long centerId,
+                                                                                                  @PathVariable(name = "sort") int sort) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(instructorCenterService.getInstructorCenter(centerId, sort)));
     }
 }

@@ -25,10 +25,13 @@ public class InstructorCenter extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
+    private int auth;
+
     public static InstructorCenter of(Instructor instructor, Center center) {
         return InstructorCenter.builder()
                 .instructor(instructor)
                 .center(center)
+                .auth(InstructorAuthEnum.FULLTIME.getValue())
                 .build();
     }
 }
