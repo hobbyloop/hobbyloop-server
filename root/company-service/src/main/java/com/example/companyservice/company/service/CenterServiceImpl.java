@@ -86,7 +86,7 @@ public class CenterServiceImpl implements CenterService {
     public CenterResponseListDto getCenterList(long companyId) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new ApiException(ExceptionEnum.COMPANY_NOT_EXIST_EXCEPTION));
-        List<Center> centerList = centerRepository.findAllByCompanyIdAndIsDeleteFalse(companyId);
+        List<Center> centerList = centerRepository.findAllByCompanyId(companyId);
         return CenterResponseListDto.of(company.getStartAt(), company.getEndAt(), centerList);
     }
 
