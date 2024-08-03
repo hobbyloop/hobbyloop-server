@@ -10,4 +10,6 @@ public interface InstructorCenterService {
     CreateInstructorCenterResponseDto createInstructorCenter(long centerId, CreateInstructorCenterRequestDto requestDto);
 
     List<InstructorCenterResponseDto> getInstructorCenter(long centerId, int sort);
+
+    void updateInstructorCenterAuth(long instructorCenterId, int auth);
 }
