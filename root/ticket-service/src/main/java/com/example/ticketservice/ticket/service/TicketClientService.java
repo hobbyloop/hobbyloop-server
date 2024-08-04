@@ -1,6 +1,7 @@
 package com.example.ticketservice.ticket.service;
 
 import com.example.ticketservice.ticket.client.dto.response.TicketClientBaseResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.TicketClientForLectureResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.TicketDetailClientResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.TicketInfoClientResponseDto;
 import com.example.ticketservice.ticket.dto.response.BookmarkScoreTicketResponseDto;
@@ -20,4 +21,5 @@ public interface TicketClientService {
     Map<Long, TicketInfoClientResponseDto> getRecommendTicketList(List<Long> centerIdList);
 
     boolean getHasTicket(long centerId);
+
 }

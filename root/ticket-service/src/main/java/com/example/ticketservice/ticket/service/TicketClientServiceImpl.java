@@ -1,9 +1,6 @@
 package com.example.ticketservice.ticket.service;
 
-import com.example.ticketservice.ticket.client.dto.response.TicketClientBaseResponseDto;
-import com.example.ticketservice.ticket.client.dto.response.TicketClientResponseDto;
-import com.example.ticketservice.ticket.client.dto.response.TicketDetailClientResponseDto;
-import com.example.ticketservice.ticket.client.dto.response.TicketInfoClientResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.*;
 import com.example.ticketservice.ticket.dto.response.BookmarkScoreTicketResponseDto;
 import com.example.ticketservice.ticket.dto.response.BookmarkTicketResponseDto;
 import com.example.ticketservice.ticket.entity.Review;
@@ -21,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

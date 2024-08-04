@@ -6,6 +6,7 @@ import com.example.ticketservice.ticket.client.dto.response.CenterInfoResponseDt
 import com.example.ticketservice.ticket.client.dto.response.OriginalBusinessResponseDto;
 import com.example.ticketservice.common.exception.ApiException;
 import com.example.ticketservice.common.exception.ExceptionEnum;
+import com.example.ticketservice.ticket.client.dto.response.TicketClientForLectureResponseDto;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
@@ -203,6 +204,18 @@ public class TicketServiceImpl implements TicketService{
             addResponseDto(memberId, centerInfoMap, result, ticket);
         }
         return result;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TicketClientForLectureResponseDto> getTicketListForLecture(long centerId) {
+        List<Ticket> ticketList = ticketRepository.findAllByCenterIdAndIsUploadTrueOrderByCreatedAtDesc(centerId);
+        CenterInfoResponseDto centerInfo = companyServiceClient.getCenterInfo(centerId).getData();
+        return ticketList.stream()
+                .map(ticket -> {
+                    return TicketClientForLectureResponseDto.from(ticket, centerInfo.getOperatingHourList(), centerInfo.getBreakHourList());
+                })
+                .collect(Collectors.toList());
     }
 
     private void addResponseDto(long memberId, Map<Long, IsBookmarkResponseDto> centerInfoMap, List<CategoryTicketResponseDto> result, Ticket ticket) {

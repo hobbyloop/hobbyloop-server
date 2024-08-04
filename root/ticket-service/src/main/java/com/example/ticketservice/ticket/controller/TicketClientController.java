@@ -1,6 +1,7 @@
 package com.example.ticketservice.ticket.controller;
 
 import com.example.ticketservice.ticket.client.dto.response.TicketClientBaseResponseDto;
+import com.example.ticketservice.ticket.client.dto.response.TicketClientForLectureResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.TicketDetailClientResponseDto;
 import com.example.ticketservice.ticket.client.dto.response.TicketInfoClientResponseDto;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
@@ -67,4 +68,5 @@ public class TicketClientController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(userTicketService.getAvailableUserTicketCount(memberId)));
     }
+
 }
