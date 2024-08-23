@@ -1,4 +1,4 @@
-package com.example.companyservice.company.entity;
+package com.example.companyservice.company.entity.enumerated;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

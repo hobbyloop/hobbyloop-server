@@ -1,6 +1,6 @@
 package com.example.companyservice.company.dto.response;
 
-import com.example.companyservice.company.entity.DayEnum;
+import com.example.companyservice.company.entity.enumerated.DayEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.example.companyservice.company.repository.advertisement;
 
 import com.example.companyservice.company.entity.Advertisement;
-import com.example.companyservice.company.entity.AdvertisementTypeEnum;
+import com.example.companyservice.company.entity.enumerated.AdvertisementTypeEnum;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

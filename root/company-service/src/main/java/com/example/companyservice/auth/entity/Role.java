@@ -1,6 +1,5 @@
 package com.example.companyservice.auth.entity;
 
-import com.example.companyservice.company.entity.DayEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

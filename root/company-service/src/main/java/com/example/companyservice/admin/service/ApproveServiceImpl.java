@@ -4,7 +4,7 @@ import com.example.companyservice.admin.dto.response.CompanyApplyResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
 import com.example.companyservice.company.entity.Company;
-import com.example.companyservice.company.entity.CreateStatusEnum;
+import com.example.companyservice.company.entity.enumerated.CreateStatusEnum;
 import com.example.companyservice.company.repository.company.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
