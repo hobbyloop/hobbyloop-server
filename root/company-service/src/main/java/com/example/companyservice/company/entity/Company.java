@@ -3,6 +3,7 @@ package com.example.companyservice.company.entity;
 import com.example.companyservice.auth.entity.Role;
 import com.example.companyservice.common.entity.TimeStamped;
 import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
+import com.example.companyservice.company.entity.enumerated.CreateStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
