@@ -1,12 +1,10 @@
 package com.example.ticketservice.ticket.controller;
 
 import com.example.ticketservice.common.exception.ExceptionEnum;
-import com.example.ticketservice.common.security.RoleAuthorization;
 import com.example.ticketservice.common.swagger.ApiExceptionResponse;
 import com.example.ticketservice.common.util.Utils;
 import com.example.ticketservice.ticket.client.dto.response.TicketClientForLectureResponseDto;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
-import com.example.ticketservice.ticket.dto.response.userticket.AvailableUserTicketsWithCenterInfo;
 import com.example.ticketservice.ticket.service.TicketService;
 import com.example.ticketservice.ticket.dto.response.CategoryTicketResponseDto;
 import com.example.ticketservice.ticket.dto.response.ReviewListTicketResponseDto;
@@ -18,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,22 +52,27 @@ public class TicketController {
     }
 
     @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{allow-location}/{latitude}/{longitude}/{distance}")
+    @Operation(summary = "카테고리별 이용권 조회 - 내 주변 기준")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryTicketResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicketAroundMe(HttpServletRequest request,
-                                                                                              @PathVariable(value = "category") String category,
-                                                                                              @PathVariable(value = "sortId") int sortId,
-                                                                                              @PathVariable(value = "refundable") int refundable,
-                                                                                              @PathVariable(value = "score") double score,
-                                                                                              @PathVariable(value = "allow-location") int allowLocation,
-                                                                                              @PathVariable(value = "latitude") double latitude,
-                                                                                              @PathVariable(value = "longitude") double longitude,
-                                                                                              @PathVariable(value = "distance") int distance) {
+                                                                                                      @PathVariable(value = "category") String category,
+                                                                                                      @PathVariable(value = "sortId") int sortId,
+                                                                                                      @PathVariable(value = "refundable") int refundable,
+                                                                                                      @PathVariable(value = "score") double score,
+                                                                                                      @PathVariable(value = "allow-location") int allowLocation,
+                                                                                                      @PathVariable(value = "latitude") double latitude,
+                                                                                                      @PathVariable(value = "longitude") double longitude,
+                                                                                                      @PathVariable(value = "distance") int distance) {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getCategoryTicketAroundMe(memberId, category, sortId, refundable, score, allowLocation, latitude, longitude, distance)));
     }
 
     @GetMapping ("/category/{category}/{sortId}/{refundable}/{score}/{pageNo}")
+    @Operation(summary = "카테고리별 이용권 조회 - 필터링된 주소 기준")
+    @ApiResponse(responseCode = "200", description = "성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryTicketResponseDto.class))))
     public ResponseEntity<BaseResponseDto<List<CategoryTicketResponseDto>>> getCategoryTicket(HttpServletRequest request,
+                                                                                              HttpServletResponse response,
                                                                                               @PathVariable(value = "category") String category,
                                                                                               @PathVariable(value = "sortId") int sortId,
                                                                                               @PathVariable(value = "refundable") int refundable,

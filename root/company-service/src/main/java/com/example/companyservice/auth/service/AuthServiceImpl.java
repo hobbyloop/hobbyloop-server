@@ -9,21 +9,30 @@ import com.example.companyservice.auth.entity.Role;
 import com.example.companyservice.common.dto.TokenResponseDto;
 import com.example.companyservice.common.exception.ApiException;
 import com.example.companyservice.common.exception.ExceptionEnum;
+import com.example.companyservice.common.security.*;
 import com.example.companyservice.common.service.RedisService;
 import com.example.companyservice.common.util.JwtUtils;
 import com.example.companyservice.company.entity.Company;
 import com.example.companyservice.company.repository.company.CompanyRepository;
 import com.example.companyservice.member.entity.Member;
 import com.example.companyservice.member.repository.MemberRepository;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +40,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -50,96 +60,50 @@ public class AuthServiceImpl implements AuthService {
 
     private final RedisService redisService;
 
+    private final OAuthFactoryProvider factoryProvider;
+
     @Override
     @Transactional(readOnly = true)
     public MemberLoginResponseDto memberLogin(MemberLoginRequestDto requestDto) {
-        String oAuthAccessToken = requestDto.getAccessToken();
         String provider = requestDto.getProvider();
-        String reqURL = getReqUrl(provider);
+        String oAuthAccessToken = requestDto.getAccessToken();
+        OAuthFactory factory = factoryProvider.getFactory(ProviderType.valueOf(provider));
+        Map<String, Object> map = getUserAttributes(factory, oAuthAccessToken);
+        OAuthAttribute attributes = factory.createOauthAttribute(map);
+
+        String subject = attributes.getSubject();
+        String email = attributes.getEmail();
+
+        Optional<Member> memberOptional = memberRepository
+                .findByProviderAndSubjectAndIsDeletedFalse(provider, attributes.getSubject());
+
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
+            String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
+            redisService.setValues(refreshToken, subject);
+            return MemberLoginResponseDto.of(accessToken, refreshToken, null, null, null, null);
+        } else {
+            return MemberLoginResponseDto.of(null, null, email, provider, subject, oAuthAccessToken);
+        }
+    }
+
+    private Map<String, Object> getUserAttributes(OAuthFactory factory, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate
+                .exchange(factory.getUserInfoRequestUrl(), HttpMethod.GET, request, String.class);
+        return parseResponseBody(response.getBody());
+    }
+
+    private Map<String, Object> parseResponseBody(String responseBody) {
         try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            if ("Kakao".equals(provider)) {
-                conn.setRequestMethod("POST");
-            } else {
-                conn.setRequestMethod("GET");
-            }
-
-            // 요청에 필요한 Header에 포함될 내용
-            conn.setRequestProperty("Authorization", "Bearer " + oAuthAccessToken);
-
-            int responseCode = conn.getResponseCode();
-            log.info("responseCode : {}", responseCode);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String line = "";
-            String result = "";
-
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-            log.info("response body : {}", result);
-
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(result);
-            HashMap<String, String> userInfo = getUserInfo(provider, element);
-
-            String email = userInfo.get("email");
-            String subject = userInfo.get("subject");
-            Optional<Member> memberOptional = memberRepository.findByProviderAndSubjectAndIsDeletedFalse(provider, subject);
-            if (memberOptional.isPresent()) {
-                Member member = memberOptional.get();
-                String accessToken = jwtUtils.createToken(member.getId(), member.getRole());
-                String refreshToken = jwtUtils.createRefreshToken(member.getId(), member.getRole());
-                redisService.setValues(refreshToken, subject);
-                return MemberLoginResponseDto.of(accessToken, refreshToken, null, null, null, null);
-            } else {
-                return MemberLoginResponseDto.of(null, null, email, provider, subject, oAuthAccessToken);
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            return new ObjectMapper().readValue(responseBody, new TypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse user attributes", e);
         }
-        return null;
-    }
-
-    private String getReqUrl(String provider) {
-        if ("Kakao".equals(provider)) {
-            return "https://kapi.kakao.com/v2/user/me";
-        } else if ("Naver".equals(provider)) {
-            return "https://openapi.naver.com/v1/nid/me";
-        } else {
-            return "https://www.googleapis.com/oauth2/v2/userinfo";
-        }
-    }
-
-    private HashMap<String, String> getUserInfo(String provider, JsonElement element) {
-        HashMap<String, String> userInfo = new HashMap<>();
-        if ("Kakao".equals(provider)) {
-            String subject = element.getAsJsonObject().get("id").getAsString();
-            JsonObject kakaoAccount = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
-
-            String email = kakaoAccount.getAsJsonObject().get("email").getAsString();
-
-            userInfo.put("email", email);
-            userInfo.put("subject", subject);
-        } else if ("Naver".equals(provider)) {
-            JsonObject naverAccount = element.getAsJsonObject().get("response").getAsJsonObject();
-
-            String subject = naverAccount.getAsJsonObject().get("id").getAsString();
-            String email = naverAccount.getAsJsonObject().get("email").getAsString();
-
-            userInfo.put("email", email);
-            userInfo.put("subject", subject);
-        } else {
-            String subject = element.getAsJsonObject().get("id").getAsString();
-            String email = element.getAsJsonObject().get("email").getAsString();
-
-            userInfo.put("email", email);
-            userInfo.put("subject", subject);
-        }
-        return userInfo;
     }
 
     @Override
@@ -209,7 +173,6 @@ public class AuthServiceImpl implements AuthService {
             log.error("refreshToken not valid");
             throw new ApiException(ExceptionEnum.ACCESS_NOW_ALLOW_EXCEPTION);
         }
-
 
         // 헤더 리프레쉬 토큰과 레디스 리프레쉬 토큰 동등성 비교
         if (!refreshToken.equals(refreshTokenRedis)) {

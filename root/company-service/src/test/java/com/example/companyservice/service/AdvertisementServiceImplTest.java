@@ -5,6 +5,8 @@ import com.example.companyservice.company.dto.request.CenterCreateRequestDto;
 import com.example.companyservice.company.dto.request.CompanyCreateRequestDto;
 import com.example.companyservice.company.dto.response.AdvertisementResponseDto;
 import com.example.companyservice.company.entity.*;
+import com.example.companyservice.company.entity.enumerated.AdvertisementTypeEnum;
+import com.example.companyservice.company.entity.enumerated.PaymentTypeEnum;
 import com.example.companyservice.company.service.AdvertisementService;
 import com.example.companyservice.company.repository.CenterRepository;
 import com.example.companyservice.company.repository.company.CompanyRepository;

@@ -2,6 +2,8 @@ package com.example.companyservice.company.entity;
 
 import com.example.companyservice.common.entity.TimeStamped;
 import com.example.companyservice.company.dto.request.AdvertisementRequestDto;
+import com.example.companyservice.company.entity.enumerated.AdvertisementTypeEnum;
+import com.example.companyservice.company.entity.enumerated.PaymentTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
 

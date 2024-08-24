@@ -21,6 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
 
+    private final OAuthFactoryProvider factoryProvider;
+    
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -41,24 +43,12 @@ public class OAuth2UserDetailsService extends DefaultOAuth2UserService {
         String oauth2AccessToken = userRequest.getAccessToken().getTokenValue();
         log.info("oauth2AccessToken : {}", oauth2AccessToken);
 
-        String subject;
-        String email;
-        if (provider.equals("Kakao")) {
-            subject = String.valueOf(oAuth2User.getAttributes().get("id"));
-            HashMap<String, String> map = oAuth2User.getAttribute("kakao_account");
-            email = map.get("email");
-        } else if (provider.equals("Naver")) {
-            HashMap<String, String> map = oAuth2User.getAttribute("response");
-            subject = map.get("id");
-            email = map.get("email");
-        } else if (provider.equals("Google")) {
-            subject = oAuth2User.getAttribute("sub");
-            email = oAuth2User.getAttribute("email");
-        } else {
-            throw new ApiException(ExceptionEnum.NOT_SUPPORT_PROVIDER_TYPE);
-        }
+        OAuthFactory factory = factoryProvider.getFactory(ProviderType.findByName(provider));
+        OAuthAttribute oauthAttribute = factory.createOauthAttribute(oAuth2User.getAttributes());
 
+        String subject = oauthAttribute.getSubject();
         log.info("subject : {}", subject);
+        String email = oauthAttribute.getEmail();
         log.info("EMAIL : {}", email);
 
         String password = UUID.randomUUID().toString();
