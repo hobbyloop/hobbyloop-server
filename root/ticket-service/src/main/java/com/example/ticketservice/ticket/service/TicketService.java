@@ -1,5 +1,6 @@
 package com.example.ticketservice.ticket.service;
 
+import com.example.ticketservice.ticket.client.dto.response.TicketClientForLectureResponseDto;
 import com.example.ticketservice.ticket.dto.request.TicketCreateRequestDto;
 import com.example.ticketservice.ticket.dto.request.TicketUpdateRequestDto;
 import com.example.ticketservice.ticket.dto.response.*;
@@ -33,4 +34,7 @@ public interface TicketService {
     List<CategoryTicketResponseDto> getCategoryTicketAroundMe(long memberId, String category, int sortId, int refundable, double score, int allowLocation, double latitude, double longitude, int distance);
 
     List<CategoryTicketResponseDto> getCategoryTicket(long memberId, String category, int sortId, int refundable, double score, int pageNo, List<String> locations);
+
+    List<TicketClientForLectureResponseDto> getTicketListForLecture(long centerId);
+
 }

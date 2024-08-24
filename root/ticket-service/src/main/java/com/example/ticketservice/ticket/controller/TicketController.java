@@ -3,6 +3,7 @@ package com.example.ticketservice.ticket.controller;
 import com.example.ticketservice.common.exception.ExceptionEnum;
 import com.example.ticketservice.common.swagger.ApiExceptionResponse;
 import com.example.ticketservice.common.util.Utils;
+import com.example.ticketservice.ticket.client.dto.response.TicketClientForLectureResponseDto;
 import com.example.ticketservice.ticket.dto.BaseResponseDto;
 import com.example.ticketservice.ticket.service.TicketService;
 import com.example.ticketservice.ticket.dto.response.CategoryTicketResponseDto;
@@ -81,5 +82,11 @@ public class TicketController {
         long memberId = Utils.parseAuthorizedId(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new BaseResponseDto<>(ticketService.getCategoryTicket(memberId, category, sortId, refundable, score, pageNo, locations)));
+    }
+
+    @GetMapping("/lecture/{centerId}")
+    public ResponseEntity<BaseResponseDto<List<TicketClientForLectureResponseDto>>> getTicketListForLecture(@PathVariable(value = "centerId") long centerId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new BaseResponseDto<>(ticketService.getTicketListForLecture(centerId)));
     }
 }

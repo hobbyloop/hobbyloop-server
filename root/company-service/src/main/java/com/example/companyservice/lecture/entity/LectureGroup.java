@@ -23,7 +23,9 @@ public class LectureGroup extends TimeStamped {
     @JoinColumn(name = "center_id")
     private Center center;
 
-    private LocalDate startDate;
+    private LocalDate repetitionStartDate;
 
-    private LocalDate endDate;
+    private LocalDate repetitionEndDate;
+
+
 }
